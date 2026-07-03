@@ -291,6 +291,14 @@ html.a11y-dark-mode .btn-tts-action.is-active {
     color: var(--color-accent);
 }
 
+/* Ensure native hover works independently */
+.a11y-row.selected:hover {
+    background: var(--color-card-border);
+}
+
+html.a11y-dark-mode .a11y-row.selected {
+    background: rgba(255, 255, 255, 0.1);
+}
 
 
 /* --- HIGH CONTRAST MODE --- */
@@ -960,4 +968,13 @@ html.a11y-high-contrast .btn-tts-speed,
 html.a11y-high-contrast .audio-time-label {
     color: var(--color-white) !important;
     opacity: 1 !important;
+}
+
+html.a11y-high-contrast .a11y-row.selected {
+    background: var(--color-black) !important;
+    color: var(--color-bg) !important;
+}
+
+html.a11y-high-contrast .a11y-row.selected .row-checkmark {
+    color: var(--color-bg) !important;
 }

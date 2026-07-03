@@ -997,6 +997,148 @@ body:not([data-active-view="case"]) #mode-toggle-divider {
 .mode-toggle-btn.is-recruiter .mode-label.recruiter {
     color: var(--color-white);
 }
+/* ==========================================================================
+   POPUP HEADERS & UNIVERSAL CLOSE ACTIONS
+   ========================================================================== */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-xs) var(--space-sm) var(--space-sm) var(--space-sm);
+    border-bottom: 1px solid var(--color-card-border);
+    margin-bottom: var(--space-xs);
+}
+
+.popup-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-gray-med);
+    letter-spacing: 0.05em;
+}
+
+.popup-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-gray-med);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--speed-fast) var(--ease-standard), color var(--speed-fast) var(--ease-standard);
+    position: relative;
+}
+
+.popup-close-btn:hover {
+    background: var(--color-gray-xlight);
+    color: var(--color-black);
+}
+
+.popup-close-btn:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: -2px;
+}
+
+.popup-close-btn .action-tooltip {
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    bottom: auto;
+    top: calc(100% + 4px);
+}
+
+.popup-close-btn:hover .action-tooltip {
+    opacity: 1;
+    display: flex !important;
+    transform: translateX(-50%) translateY(0);
+}
+
+.row-checkmark {
+    opacity: 0;
+    color: var(--color-accent);
+    transform: scale(0.8);
+    transition: opacity var(--speed-fast) var(--ease-standard), transform var(--speed-fast) var(--ease-standard);
+    margin-left: auto;
+}
+
+.a11y-row.selected .row-checkmark {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.a11y-row.selected {
+    background: var(--color-gray-xlight);
+    color: var(--color-black);
+    font-weight: 700;
+}
+
+
+
+
+
+/* ==========================================================================
+   NEW CASE TITLE & SHARE ACTIONS
+   ========================================================================== */
+.case-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.case-share-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    opacity: 1;
+    transition: opacity var(--speed-normal) var(--ease-standard);
+}
+
+.case-share-actions.is-transitioning {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.share-icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-gray-med);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: var(--radius-circle);
+    transition: background var(--speed-fast) var(--ease-standard), color var(--speed-fast) var(--ease-standard);
+    position: relative;
+}
+
+.share-icon-btn:hover {
+    background: var(--color-gray-xlight);
+    color: var(--color-black);
+}
+
+.share-icon-btn:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.share-icon-btn .action-tooltip {
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    bottom: auto;
+    top: calc(100% + 4px);
+}
+
+.share-icon-btn:hover .action-tooltip {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    display: flex !important;
+}
+
+/* (Optional CSS Cleanup) You may now remove `.inline-chat-wrapper`, `.inline-chat-header`, and `.ai-summary-actions` rules from components.css to save payload if you wish. */
 
 /* ==========================================================================
    INLINE AI CHAT WIDGETS

@@ -230,6 +230,8 @@ function updateAllCasesText() {
         if (activeCaseData && caseData.id === activeCaseData.id) {
             descBody.classList.add('is-transitioning');
             if (currentToc) currentToc.classList.add('is-transitioning');
+            const shareActions = slide.querySelector('.case-share-actions');
+            if (shareActions) shareActions.classList.add('is-transitioning');
             
             setTimeout(() => {
                 descBody.innerHTML = newContent;
@@ -237,6 +239,7 @@ function updateAllCasesText() {
                 
                 rebuildTOC(slide); 
                 initComboAssets(descBody); 
+                if (shareActions && typeof updateShareTooltips === 'function') updateShareTooltips(shareActions);
                 
                 if (window.Prism) { window.Prism.highlightAllUnder(descBody); }
                 
@@ -245,6 +248,7 @@ function updateAllCasesText() {
                         descBody.classList.remove('is-transitioning');
                         const newToc = slide.querySelector('.case-toc');
                         if (newToc) newToc.classList.remove('is-transitioning');
+                        if (shareActions) shareActions.classList.remove('is-transitioning');
                     });
                 });
             }, 400); 
@@ -253,6 +257,8 @@ function updateAllCasesText() {
             attachAudioPlayer(descBody, caseData.id);
             rebuildTOC(slide); 
             initComboAssets(descBody); 
+            const shareActions = slide.querySelector('.case-share-actions');
+            if (shareActions && typeof updateShareTooltips === 'function') updateShareTooltips(shareActions);
             if (window.Prism) { window.Prism.highlightAllUnder(descBody); }
         }
     });
@@ -953,6 +959,13 @@ function initParagraphHover() {
     const hoverMenu = document.createElement('div');
     hoverMenu.className = 'paragraph-hover-menu';
     hoverMenu.innerHTML = `
+        <div class="popup-header">
+            <span class="popup-title" data-i18n="popup_ph_title">Actions</span>
+            <button class="popup-close-btn" id="ph-close-btn" aria-label="Close" tabindex="0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span class="action-tooltip" data-i18n="popup_close">Close</span>
+            </button>
+        </div>
         <button id="ph-ask-ai"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4" /><line x1="8" y1="16" x2="8.01" y2="16" /><line x1="16" y1="16" x2="16.01" y2="16" /></svg> ${t('ph_ask_ai')}</button>
         <div class="ph-divider"></div>
         <button id="ph-autoscroll"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg> ${t('ph_autoscroll')}</button>
@@ -1008,6 +1021,15 @@ function initParagraphHover() {
 
     hoverTrigger.addEventListener('mouseenter', () => clearTimeout(hoverHideTimeout));
     hoverMenu.addEventListener('mouseenter', () => clearTimeout(hoverHideTimeout));
+
+    const phCloseBtn = hoverMenu.querySelector('#ph-close-btn');
+    if (phCloseBtn) {
+        phCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            hoverMenu.classList.remove('show');
+            hoverTrigger.classList.remove('show');
+        });
+    }
 
     hoverTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1197,69 +1219,3 @@ function initParagraphHover() {
 }
 
 initParagraphHover();
-
-/* ==========================================================================
-   INLINE AI CHAT GLOBAL METHODS
-   ========================================================================== */
-window.openInlineChat = function(caseId) {
-    const actionsBlock = document.getElementById(`ai-actions-${caseId}`);
-    if (actionsBlock) actionsBlock.style.display = 'none';
-    const chatUI = document.getElementById(`inline-chat-${caseId}`);
-    if (chatUI) {
-        chatUI.style.display = 'flex';
-        const inputEl = document.getElementById(`inline-chat-input-${caseId}`);
-        if (inputEl) inputEl.focus();
-    }
-};
-
-window.closeInlineChat = function(caseId) {
-    const actionsBlock = document.getElementById(`ai-actions-${caseId}`);
-    const chatUI = document.getElementById(`inline-chat-${caseId}`);
-    if (chatUI) chatUI.style.display = 'none';
-    if (actionsBlock) actionsBlock.style.display = 'flex';
-};
-
-window.submitInlineAi = async function(caseId, overrideQuery = null) {
-    const input = document.getElementById(`inline-chat-input-${caseId}`);
-    const messagesBox = document.getElementById(`inline-chat-messages-${caseId}`);
-    const suggestionsBox = document.getElementById(`inline-suggestions-${caseId}`);
-    const sendBtn = document.getElementById(`btn-send-inline-${caseId}`);
-    
-    if (!input || !messagesBox) return;
-    const query = overrideQuery || input.value.trim();
-    if (!query) return;
-
-    if (suggestionsBox) {
-        suggestionsBox.style.opacity = '0';
-        setTimeout(() => suggestionsBox.style.display = 'none', 300);
-    }
-
-    const caseData = portfolioCases.find(c => c.id === caseId);
-    const caseContext = `Case Title: ${caseData.title}\nSummary: ${caseData.aiSummary}\nDetails: ${caseData.desc}`;
-
-    if (!overrideQuery) {
-        input.value = '';
-        if (sendBtn) sendBtn.disabled = true; 
-    }
-    
-    messagesBox.innerHTML += `<div class="inline-user-msg">${query}</div>`;
-    messagesBox.scrollTop = messagesBox.scrollHeight;
-
-    const loadingId = 'load-' + Date.now();
-    messagesBox.innerHTML += `<div id="${loadingId}" class="inline-loading-msg">${t('thinking')}</div>`;
-
-    try {
-        const response = await fetch('api/chat.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: query, context: caseContext })
-        });
-        const data = await response.json();
-        document.getElementById(loadingId).remove();
-        messagesBox.innerHTML += `<div class="inline-bot-msg">${data.reply}</div>`;
-    } catch (e) {
-        const lEl = document.getElementById(loadingId);
-        if (lEl) lEl.innerText = t('connection_failed');
-    }
-    messagesBox.scrollTop = messagesBox.scrollHeight;
-};
