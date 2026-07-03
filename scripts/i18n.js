@@ -56,10 +56,18 @@ const translations = {
         "live_demonstration": "Live Demonstration",
         "ai_summary": "AI Summary",
         "ask_ai": "Ask AI",
-        "share": "Share",
+        "share": "Share link",
         "chat_with_ai": "Chat with AI",
         "ask_about_case": "Ask about this case...",
+        "share_exec_prefix": "Share summary on",
+        "share_tech_prefix": "Share tech view on",
+        "share_link_exec_prefix": "Share summary link",
+        "share_link_tech_prefix": "Share tech view link",
         "enter_passcode": "Enter the passcode to decrypt project details.",
+        "popup_close": "Close",
+        "popup_lang_title": "Language",
+        "popup_a11y_title": "Accessibility",
+        "popup_ph_title": "Actions",
         "passcode": "Passcode",
         "unlock": "Unlock",
         "incorrect_passcode": "Incorrect passcode.",
@@ -137,7 +145,15 @@ const translations = {
         "share": "Compartilhar",
         "chat_with_ai": "Conversar com a IA",
         "ask_about_case": "Pergunte sobre este projeto...",
+        "share_exec_prefix": "Compartilhar resumo no",
+        "share_tech_prefix": "Compartilhar visão técnica no",
+        "share_link_exec_prefix": "Compartilhar link do resumo",
+        "share_link_tech_prefix": "Compartilhar link da visão técnica",
         "enter_passcode": "Insira a senha para descriptografar os detalhes do projeto.",
+        "popup_close": "Fechar",
+        "popup_lang_title": "Idioma",
+        "popup_a11y_title": "Acessibilidade",
+        "popup_ph_title": "Ações",
         "passcode": "Senha",
         "unlock": "Desbloquear",
         "incorrect_passcode": "Senha incorreta.",
@@ -196,11 +212,17 @@ function applyTranslations() {
             langBtn.setAttribute('aria-label', "Switch to Portuguese");
         }
     }
+
+    // Assigning selected states correctly inside the translation pass
+    document.querySelectorAll('.lang-row').forEach(row => {
+        if (row.getAttribute('data-lang') === window.currentLang) {
+            row.classList.add('selected');
+            row.setAttribute('aria-selected', 'true');
+        } else {
+            row.classList.remove('selected');
+            row.setAttribute('aria-selected', 'false');
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', applyTranslations);
-
-document.querySelectorAll('.os-mod').forEach(el => {
-    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-    el.textContent = isMac ? '⌥ ' : 'Alt ';
-});

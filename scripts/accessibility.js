@@ -98,6 +98,25 @@ glassOverlay.addEventListener('click', (e) => {
     closeModal('lang-modal-window', 'btn-lang');
 });
 
+const mainPageHeader = document.getElementById('main-header');
+if (mainPageHeader) {
+    mainPageHeader.addEventListener('click', (e) => {
+        if (document.body.classList.contains('modal-open')) {
+            e.stopPropagation();
+            closeModal('a11y-modal-window', 'btn-a11y');
+            closeModal('lang-modal-window', 'btn-lang');
+        }
+    });
+}
+
+document.querySelectorAll('.popup-close-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeModal('a11y-modal-window', 'btn-a11y');
+        closeModal('lang-modal-window', 'btn-lang');
+    });
+});
+
 // --- 3. LÃ“GICA DOS SWITCHES PADRÃƒO ---
 function setupToggle(inputEl, cssClass, storageKey, isSystemFallback = false) {
     let storedVal = localStorage.getItem(storageKey);

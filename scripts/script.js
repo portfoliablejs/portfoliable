@@ -104,7 +104,7 @@ window.triggerAiTyping = function(container) {
 
 const slideObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        const actionElements = entry.target.querySelectorAll('.btn-play-case, .btn-secondary-pill');
+        const actionElements = entry.target.querySelectorAll('.btn-play-case, .btn-secondary-pill, .share-icon-btn');
         
         if (entry.isIntersecting) {
             const visibleCaseId = entry.target.dataset.caseId;
@@ -235,29 +235,76 @@ function setupCaseScrollEffect(id) {
     }
 }
 
-const attachShareBtn = (container, item) => {
-    const shareBtn = container.querySelector('.summary-share');
-    if (shareBtn) {
-        shareBtn._defaultHTML = shareBtn.innerHTML; 
-        
-        shareBtn.addEventListener('click', async (e) => {
+const updateShareTooltips = (container) => {
+    const prefixKey = typeof isRecruiterMode !== 'undefined' && isRecruiterMode ? 'share_tech_prefix' : 'share_exec_prefix';
+    const linkPrefixKey = typeof isRecruiterMode !== 'undefined' && isRecruiterMode ? 'share_link_tech_prefix' : 'share_link_exec_prefix';
+    const prefix = typeof t === 'function' ? t(prefixKey) : 'Share on';
+    const linkPrefix = typeof t === 'function' ? t(linkPrefixKey) : 'Share link';
+
+    container.querySelectorAll('.share-icon-btn').forEach(btn => {
+        const network = btn.dataset.network;
+        const tooltip = btn.querySelector('.action-tooltip');
+        let labelText = '';
+
+        if (network === 'native') labelText = linkPrefix;
+        else if (network === 'linkedin') labelText = `${prefix} LinkedIn`;
+        else if (network === 'x') labelText = `${prefix} X`;
+        else if (network === 'fb') labelText = `${prefix} Facebook`;
+
+        if (tooltip) tooltip.textContent = labelText;
+        btn.setAttribute('aria-label', labelText);
+    });
+};
+
+const attachNewShareBtns = (container, item) => {
+    const shareActionsContainer = container.querySelector(`#share-actions-${item.id}`);
+    if (!shareActionsContainer) return;
+    
+    updateShareTooltips(shareActionsContainer);
+
+    const shareBtns = shareActionsContainer.querySelectorAll('.share-icon-btn');
+    shareBtns.forEach(btn => {
+        btn.addEventListener('click', async (e) => {
             e.stopPropagation();
-            
+            const network = btn.dataset.network;
             const urlParams = new URLSearchParams(window.location.search);
-            const currentLang = urlParams.get('lang');
-            const langQuery = currentLang ? `&lang=${currentLang}` : '';
-            
-            const url = `${window.location.origin}${window.location.pathname}?case=${item.slug || item.id}${langQuery}`;
-            
-            if (navigator.share) {
-                try { await navigator.share({ title: item.title, text: item.aiSummary, url: url }); } catch(err) {}
-            } else {
-                navigator.clipboard.writeText(url);
-                shareBtn.innerHTML = typeof t === 'function' ? t('copied') : 'Copied';
-                setTimeout(() => shareBtn.innerHTML = shareBtn._defaultHTML, 2000);
+            const currentLang = urlParams.get('lang') || (typeof window.currentLang !== 'undefined' ? window.currentLang : 'en');
+            const viewParam = typeof isRecruiterMode !== 'undefined' && isRecruiterMode ? 'tech' : 'exec';
+
+            const url = `${window.location.origin}${window.location.pathname}?case=${item.slug || item.id}&lang=${currentLang}&view=${viewParam}`;
+            const shareText = (typeof isRecruiterMode !== 'undefined' && isRecruiterMode) ? (item.descRecruiter ? item.descRecruiter.substring(0, 100) + '...' : item.title) : item.aiSummary;
+            const encodedUrl = encodeURIComponent(url);
+            const encodedText = encodeURIComponent(shareText);
+
+            if (network === 'native') {
+                if (navigator.share) {
+                    try { await navigator.share({ title: item.title, text: shareText, url: url }); } catch(err) {}
+                } else {
+                    navigator.clipboard.writeText(url);
+                    const tt = btn.querySelector('.action-tooltip');
+                    if(tt) {
+                        const oldText = tt.textContent;
+                        tt.textContent = typeof t === 'function' ? t('copied') : 'Copied';
+                        setTimeout(() => tt.textContent = oldText, 2000);
+                    }
+                }
+            } else if (network === 'linkedin') {
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`, '_blank');
+            } else if (network === 'x') {
+                window.open(`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`, '_blank');
+            } else if (network === 'fb') {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank');
             }
         });
-    }
+        
+        // Ensure buttons can be triggered via keyboard
+        btn.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                btn.click();
+            }
+        });
+    });
 };
 
 function initPortfolio() {
@@ -378,7 +425,29 @@ function initPortfolio() {
 
         const caseTitleHTML = isLocked
             ? ``
-            : `<h3 class="case-year-label">${item.year}</h3><h2>${item.title}</h2>${actionsHTML}`;
+            : `<h3 class="case-year-label">${item.year}</h3>
+               <div class="case-title-row">
+                   <h2>${item.title}</h2>
+                   <div class="case-share-actions" id="share-actions-${item.id}">
+                       <button class="share-icon-btn" aria-label="Share" data-network="native" tabindex="-1">
+                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                           <span class="action-tooltip">Share</span>
+                       </button>
+                       <button class="share-icon-btn" aria-label="Share on LinkedIn" data-network="linkedin" tabindex="-1">
+                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                           <span class="action-tooltip">LinkedIn</span>
+                       </button>
+                       <button class="share-icon-btn" aria-label="Share on X" data-network="x" tabindex="-1">
+                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.73 16h5L9 4H4z"></path><path d="M4 20l6.76-6.76"></path><path d="M20 4l-6.76 6.76"></path></svg>
+                           <span class="action-tooltip">X</span>
+                       </button>
+                       <button class="share-icon-btn" aria-label="Share on Facebook" data-network="fb" tabindex="-1">
+                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                           <span class="action-tooltip">Facebook</span>
+                       </button>
+                   </div>
+               </div>
+               ${actionsHTML}`;
         
         let initialContent = item.desc || "";
         if (isRecruiterMode && item.descRecruiter) initialContent = item.descRecruiter;
@@ -396,27 +465,6 @@ function initPortfolio() {
                 </div>
                 <p class="ai-summary-text" data-text="${item.aiSummary.replace(/"/g, '&quot;')}"></p>
                 ${metricsHTML}
-                <div class="ai-summary-actions" id="ai-actions-${item.id}">
-                    <button class="ai-summary-btn summary-ask-ai" onclick="openInlineChat('${item.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> ${t('ask_ai')}</button>
-                    <button class="ai-summary-btn summary-share" data-id="${item.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg> ${t('share')}</button>
-                </div>
-                <div class="inline-chat-wrapper" id="inline-chat-${item.id}">
-                    <div class="inline-chat-header">
-                        <span class="inline-chat-title">${t('chat_with_ai')}</span>
-                        <button onclick="closeInlineChat('${item.id}')" class="inline-chat-close" title="Close Chat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
-                    </div>
-
-                    <div id="inline-chat-messages-${item.id}" class="inline-chat-messages"></div>
-                    
-                    <div class="inline-chat-suggestions-container" id="inline-suggestions-${item.id}">${followUpsHTML}</div>
-                    
-                    <div class="inline-chat-input-row">
-                        <input type="text" id="inline-chat-input-${item.id}" class="inline-chat-input" oninput="document.getElementById('btn-send-inline-${item.id}').disabled = !this.value.trim()" onkeydown="if(event.key === 'Enter' && this.value.trim()) submitInlineAi('${item.id}')" placeholder="${t('ask_about_case')}">
-                        <button id="btn-send-inline-${item.id}" disabled onclick="submitInlineAi('${item.id}')" class="btn-send-inline">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-                        </button>
-                    </div>
-                </div>
             </div>
         ` : '';
 
@@ -525,7 +573,7 @@ function initPortfolio() {
                             if (typeof initComboAssets === 'function') initComboAssets(newDescBody);
                             if (typeof attachAudioPlayer === 'function') attachAudioPlayer(newDescBody, item.id);
                             if (typeof rebuildTOC === 'function') rebuildTOC(slide);
-                            attachShareBtn(dynContainer, item);
+                            attachNewShareBtns(slide, item);
                             if (window.triggerAiTyping) window.triggerAiTyping(dynContainer);
 
                             requestAnimationFrame(() => {
@@ -555,7 +603,7 @@ function initPortfolio() {
                 attachAudioPlayer(finalDescBody, item.id);
                 initComboAssets(finalDescBody); 
             }
-            attachShareBtn(slide, item);
+            attachNewShareBtns(slide, item);
         }
 
         if (window.Prism) { window.Prism.highlightAllUnder(slide); }
