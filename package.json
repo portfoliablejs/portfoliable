@@ -1,10 +1,20 @@
 {
-  "name": "portfolio",
-  "version": "2.1.3",
+  "name": "@portfoliablejs/portfoliable",
+  "version": "2.3.0-alpha",
+  "private": false,
+  "type": "module",
+  "main": "src/App.js",
   "scripts": {
-    "build": "esbuild scripts/src/data.js --bundle --outfile=scripts/data.js --charset=utf8"
+    "preportfoliable": "node ./scripts/check-updates.mjs",
+    "portfoliable": "vite",
+    "dev": "npm run portfoliable",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@portfoliablejs/valence": "github:portfoliablejs/valence"
   },
   "devDependencies": {
-    "esbuild": "^0.28.1"
+    "vite": "^8.1.1"
   }
 }

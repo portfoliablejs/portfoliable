@@ -1,29 +1,32 @@
-(() => {
-  // scripts/src/cases/holofante.js
-  var holofante = {
-    logoUrl: "assets/logos/holofante/logo.jpeg",
-    id: "holofante",
-    slug: "agentic-ai-design",
-    year: _t("2026 ∙ Holofante R&D lab", "2026 ∙ Laboratório P&D Holofante"),
-    audioSrc: _t("assets/audio/en/holofante/audio-holofante-summary.mp3", "assets/audio/pt/holofante/pt-audio-holofante-summary.mp3"),
-    audioSrcRecruiter: _t("assets/audio/en/holofante/audio-holofante-dev.mp3", "assets/audio/pt/holofante/pt-audio-holofante-dev.mp3"),
-    readTime: _t("3 min", "3 min"),
-    title: _t("Agentic AI Design", "Design de IA Agêntica"),
-    shortDesc: _t("DesignOps automation cuts delivery latency by 70%.", "Automação de DesignOps reduz a latência de entrega em 70%."),
-    aiSummary: _t("Holofante lab required a scalable post-sale portal to align clients. This solution introduced self-service scheduling and real-time tracking, vastly reducing operational overhead and account management blind spots.", "O laboratório Holofante exigia um portal pós-venda escalável para alinhar clientes. Esta solução introduziu agendamento self-service e rastreamento em tempo real, reduzindo drasticamente a carga operacional e os pontos cegos no gerenciamento de contas."),
+// src/data.js (Corrected)
+
+// I18N HELPER: A clean way to define multilingual strings.
+const i18n = (en, pt) => ({ en, pt });
+
+const holofante = {
+  logoUrl: "assets/logos/holofante/logo.jpeg",
+  id: "holofante",
+  slug: "agentic-ai-design",
+  year: i18n("2026 ∙ Holofante R&D lab", "2026 ∙ Laboratório P&D Holofante"),
+  audioSrc: i18n("assets/audio/en/holofante/audio-holofante-summary.mp3", "assets/audio/pt/holofante/pt-audio-holofante-summary.mp3"),
+    audioSrcRecruiter: i18n("assets/audio/en/holofante/audio-holofante-dev.mp3", "assets/audio/pt/holofante/pt-audio-holofante-dev.mp3"),
+    readTime: i18n("3 min", "3 min"),
+    title: i18n("Agentic AI Design", "Design de IA Agêntica"),
+    shortDesc: i18n("DesignOps automation cuts delivery latency by 70%.", "Automação de DesignOps reduz a latência de entrega em 70%."),
+    aiSummary: i18n("Holofante lab required a scalable post-sale portal to align clients. This solution introduced self-service scheduling and real-time tracking, vastly reducing operational overhead and account management blind spots.", "O laboratório Holofante exigia um portal pós-venda escalável para alinhar clientes. Esta solução introduziu agendamento self-service e rastreamento em tempo real, reduzindo drasticamente a carga operacional e os pontos cegos no gerenciamento de contas."),
     repositoryUrl: "https://github.com/schimanko/holofante",
     liveUrl: "https://holofante.vercel.app",
     keyIndicators: [
-      { value: "18 → 5.3", label: _t("Days to first deliverable", "Dias para a primeira entrega") },
-      { value: "10h+", label: _t("Weekly hours recovered", "Horas semanais recuperadas") },
-      { value: "100%", label: _t("UI Consistency", "Consistência de UI") },
-      { value: "< 2s", label: _t("UI Latency", "Latência da UI") }
+      { value: "18 → 5.3", label: i18n("Days to first deliverable", "Dias para a primeira entrega") },
+      { value: "10h+", label: i18n("Weekly hours recovered", "Horas semanais recuperadas") },
+      { value: "100%", label: i18n("UI Consistency", "Consistência de UI") },
+      { value: "< 2s", label: i18n("UI Latency", "Latência da UI") }
     ],
     aiFollowUps: [
-      _t("How was latency reduced by 70%?", "Como a latência foi reduzida em 70%?"),
-      _t("Explain the DesignOps automation.", "Explique a automação de DesignOps.")
+      i18n("How was latency reduced by 70%?", "Como a latência foi reduzida em 70%?"),
+      i18n("Explain the DesignOps automation.", "Explique a automação de DesignOps.")
     ],
-    desc: _t(`
+    desc: i18n(`
             <p class="p1">
     This solo product engineering project was built inside an applied R&D
     lab to solve critical post-sale delivery bottlenecks common in agency environments.
@@ -398,7 +401,7 @@
     </div>
 </div>
 `),
-    descRecruiter: _t(`
+    descRecruiter: i18n(`
 <p class="p1">
 This full-stack system architecture was solo-engineered inside an applied
 R&D lab environment. The custom solution decouples frontend interactive
@@ -795,34 +798,33 @@ nativeRuntime.launchExternalURL(SIMULATED_GOOGLE_PROFILE);
 <p class="p1">Para isolar a camada de aplicação local de contextos externos não verificados, instruções de redirecionamento de saída passam por restritos interceptores de fluxo que exigem a confirmação do usuário via alertas não bloqueantes. Métricas secundárias — como pesquisas qualitativas — são isoladas em contêineres independentes para evitar que variáveis remotas não confiáveis corrompam as tabelas do sistema local.</p>
 `),
     credits: ["Lio Schimanko"],
-    videoSrc: _t("assets/videos/en/en-holofante.mp4", "assets/videos/pt/pt-holofante.mp4"),
-    vttSrc: _t("assets/subtitles/en/en-holofante.vtt", "assets/subtitles/pt/pt-holofante.vtt"),
+    videoSrc: i18n("assets/videos/en/en-holofante.mp4", "assets/videos/pt/pt-holofante.mp4"),
+    vttSrc: i18n("assets/subtitles/en/en-holofante.vtt", "assets/subtitles/pt/pt-holofante.vtt"),
     frameSrc: "assets/frames/holofante.avif",
-    thumbSrc: _t("assets/thumbs/en/holofante.avif", "assets/thumbs/pt/pt-holofante.avif"),
+    thumbSrc: i18n("/holofante.avif", "assets/thumbs/pt/pt-holofante.avif"),
     deviceClass: "iphone-17"
-  };
+};
 
-  // scripts/src/cases/testamentus.js
-  var testamentus = {
-    logoUrl: "assets/logos/holofante/logo.jpeg",
-    id: "testamentus",
-    slug: "typographic-reader",
-    title: _t("Building an e-reader", "Construindo um e-reader"),
-    year: _t("2025 ∙ Testamentus.org", "2025 ∙ Testamentus.org"),
-    audioSrc: _t("assets/audio/en/testamentus/audio-testamentus-summary.mp3", "assets/audio/pt/testamentus/pt-audio-testamentus-summary.mp3"),
-    audioSrcRecruiter: _t("assets/audio/en/testamentus/audio-testamentus-dev.mp3", "assets/audio/pt/testamentus/pt-audio-testamentus-dev.mp3"),
-    readTime: _t("3 min", "3 min"),
-    shortDesc: _t("A privacy-first reading engine built for typographic focus.", "Um motor de leitura digital focado em privacidade e foco tipográfico."),
-    aiSummary: _t("Testamentus is a reading platform optimized for long-form retention. By strictly controlling line lengths and moving data to static edge delivery, it guarantees zero visual friction and instant load times.", "Testamentus é uma plataforma de leitura otimizada para retenção a longo prazo. Ao controlar estritamente comprimentos de linha e entregar os dados de forma estática, ela garante atrito visual zero e tempos de carregamento instantâneos."),
+const testamentus = {
+  logoUrl: "assets/logos/holofante/logo.jpeg",
+  id: "testamentus",
+  slug: "typographic-reader",
+  title: i18n("Building an e-reader", "Construindo um e-reader"),
+    year: i18n("2025 ∙ Testamentus.org", "2025 ∙ Testamentus.org"),
+    audioSrc: i18n("assets/audio/en/testamentus/audio-testamentus-summary.mp3", "assets/audio/pt/testamentus/pt-audio-testamentus-summary.mp3"),
+    audioSrcRecruiter: i18n("assets/audio/en/testamentus/audio-testamentus-dev.mp3", "assets/audio/pt/testamentus/pt-audio-testamentus-dev.mp3"),
+    readTime: i18n("3 min", "3 min"),
+    shortDesc: i18n("A privacy-first reading engine built for typographic focus.", "Um motor de leitura digital focado em privacidade e foco tipográfico."),
+    aiSummary: i18n("Testamentus is a reading platform optimized for long-form retention. By strictly controlling line lengths and moving data to static edge delivery, it guarantees zero visual friction and instant load times.", "Testamentus é uma plataforma de leitura otimizada para retenção a longo prazo. Ao controlar estritamente comprimentos de linha e entregar os dados de forma estática, ela garante atrito visual zero e tempos de carregamento instantâneos."),
     liveUrl: "https://testamentus.org/",
     repositoryUrl: "https://github.com/schimanko/testamentus.org",
     keyIndicators: [
-      { value: "+143%", label: _t("Increase in average session duration", "Aumento na duração média da sessão") },
-      { value: "US$ 5/mo", label: _t("Fixed cost for scalable infrastructure", "Custo fixo para infraestrutura escalável") },
-      { value: "0.9s", label: _t("FCP Performance (100/100 PageSpeed)", "Desempenho FCP (100/100 no PageSpeed)") },
-      { value: "92/100", label: _t("WCAG AA Accessibility Compliance", "Conformidade de Acessibilidade WCAG AA") }
+      { value: "+143%", label: i18n("Increase in average session duration", "Aumento na duração média da sessão") },
+      { value: "US$ 5/mo", label: i18n("Fixed cost for scalable infrastructure", "Custo fixo para infraestrutura escalável") },
+      { value: "0.9s", label: i18n("FCP Performance (100/100 PageSpeed)", "Desempenho FCP (100/100 no PageSpeed)") },
+      { value: "92/100", label: i18n("WCAG AA Accessibility Compliance", "Conformidade de Acessibilidade WCAG AA") }
     ],
-    desc: _t(`<p class="p1">Testamentus was designed and solo-engineered to completely reinvent modern digital interaction with historical text by prioritizing extreme typographic discipline. Traditional digital reading options are heavily compromised by distracting ad networks, erratic layouts, and rigid viewports that create immediate visual friction and severe cognitive fatigue for the long-form reader.</p>
+    desc: i18n(`<p class="p1">Testamentus was designed and solo-engineered to completely reinvent modern digital interaction with historical text by prioritizing extreme typographic discipline. Traditional digital reading options are heavily compromised by distracting ad networks, erratic layouts, and rigid viewports that create immediate visual friction and severe cognitive fatigue for the long-form reader.</p>
 
 <h3>Typographic Ergonomics</h3>
 <p class="p1">The core interface strips away standard web layout noise to deliver an elite, distraction-free reading column. Programmed around the tracking and fixation mechanics of human eye movement, the spatial boundaries restrict maximum line lengths, character scaling parameters, and tracking definitions. This intentional constraint eliminates subvocalization fatigue and tracking loss—where the eye loses its place moving from the end of one line to the beginning of the next—optimizing long-form reading speed.</p>
@@ -905,7 +907,7 @@ nativeRuntime.launchExternalURL(SIMULATED_GOOGLE_PROFILE);
   </div>
 </div>
     `),
-    descRecruiter: _t(`
+    descRecruiter: i18n(`
     <p class="p1">This full-stack typographic delivery engine was solo-engineered to completely bypass traditional relational database lookup bottlenecks at scale. By shifting heavy relational text content queries entirely to a background pre-compilation build stage, the architecture generates immutable, flat file structures that load instantly with near-zero RAM overhead, bypassing runtime server processing completely.</p>
 
 <div class="combo-asset-card"> 
@@ -1152,33 +1154,32 @@ if (!in_array($book, $validBooksArray)) {
   <p class="combo-observation">Observação: Limpar os dados antes de servirem de índice para alvos de roteamento barra a criação de injeções de diretório via web root.</p>
 </div>`),
     credits: ["Lio Schimanko"],
-    videoSrc: _t("assets/videos/en/en-testamentus.mp4", "assets/videos/pt/pt-testamentus.mp4"),
-    vttSrc: _t("assets/subtitles/en/en-testamentus.vtt", "assets/subtitles/pt/pt-testamentus.vtt"),
+    videoSrc: i18n("assets/videos/en/en-testamentus.mp4", "assets/videos/pt/pt-testamentus.mp4"),
+    vttSrc: i18n("assets/subtitles/en/en-testamentus.vtt", "assets/subtitles/pt/pt-testamentus.vtt"),
     frameSrc: "assets/frames/holofante.avif",
     thumbSrc: "assets/thumbs/en/testamentus.avif",
     deviceClass: "iphone-17",
     customGap: "0px"
-  };
+};
 
-  // scripts/src/cases/cassiwatch.js
-  var cassiwatch = {
-    logoUrl: "assets/logos/cassi.jpeg",
-    id: "cassiwatch",
-    slug: "ux-on-wrist",
-    year: "2023 ∙ CASSI",
-    audioSrc: _t("assets/audio/en/cassiwatch/audio-cassiwatch-summary.mp3", "assets/audio/pt/cassiwatch/pt-audio-cassiwatch-summary.mp3"),
+const cassiwatch = {
+  logoUrl: "assets/logos/cassi.jpeg",
+  id: "cassiwatch",
+  slug: "ux-on-wrist",
+  year: "2023 ∙ CASSI",
+    audioSrc: i18n("assets/audio/en/cassiwatch/audio-cassiwatch-summary.mp3", "assets/audio/pt/cassiwatch/pt-audio-cassiwatch-summary.mp3"),
     employer: "CASSI",
-    readTime: _t("3 min", "3 min"),
-    title: _t("UX on Wrist ", "UX no Pulso"),
-    shortDesc: _t("Translating healthcare metrics to Apple Watch constraints.", "Traduzindo métricas de saúde para as restrições do Apple Watch."),
-    aiSummary: _t("An experimental port of CASSI's mobile app to watchOS. Focused purely on emergency data and authorization glances, relying on native Apple Wallet integrations to maintain glanceability under 3 seconds.", "Uma versão experimental do aplicativo da CASSI para o watchOS. Focado estritamente em visualizações rápidas de autorizações e carteira médica, integrando-se via Apple Wallet nativo para tempos de consulta menores que 3 segundos."),
+    readTime: i18n("3 min", "3 min"),
+    title: i18n("UX on Wrist ", "UX no Pulso"),
+    shortDesc: i18n("Translating healthcare metrics to Apple Watch constraints.", "Traduzindo métricas de saúde para as restrições do Apple Watch."),
+    aiSummary: i18n("An experimental port of CASSI's mobile app to watchOS. Focused purely on emergency data and authorization glances, relying on native Apple Wallet integrations to maintain glanceability under 3 seconds.", "Uma versão experimental do aplicativo da CASSI para o watchOS. Focado estritamente em visualizações rápidas de autorizações e carteira médica, integrando-se via Apple Wallet nativo para tempos de consulta menores que 3 segundos."),
     keyIndicators: [
-      { value: _t("2 Core", "2 Core"), label: _t("Features focused on retention", "Recursos focados em retenção") },
-      { value: _t("1 Gesture", "1 Gesto"), label: _t("Emergency access via Apple Wallet", "Acesso emergencial via Apple Wallet") },
-      { value: "< 3s", label: _t("Time to comprehension", "Tempo de compreensão cognitiva") },
-      { value: "100%", label: _t("Compliance with Apple HIG", "Conformidade com a Apple HIG") }
+      { value: i18n("2 Core", "2 Core"), label: i18n("Features focused on retention", "Recursos focados em retenção") },
+      { value: i18n("1 Gesture", "1 Gesto"), label: i18n("Emergency access via Apple Wallet", "Acesso emergencial via Apple Wallet") },
+      { value: "< 3s", label: i18n("Time to comprehension", "Tempo de compreensão cognitiva") },
+      { value: "100%", label: i18n("Compliance with Apple HIG", "Conformidade com a Apple HIG") }
     ],
-    desc: _t(`
+    desc: i18n(`
 <p class="p1">
 <strong>Note on experimental nature:</strong> This is an experimental design and proof of concept. It was not implemented in production, thus it has no measured real-world impact. The project demonstrates the application of Apple Human Interface Guidelines for watchOS 10 in a healthcare context.
 </p>
@@ -1401,33 +1402,32 @@ Baseado em projetos móveis da CASSI, o objetivo foi extrair o máximo de valor 
 </p>
         `),
     credits: ["Lio Schimanko", "Illa Penha", "Felipe Pires", "Luís Aragão"],
-    videoSrc: _t("assets/videos/en/en-cassiwatch.mp4", "assets/videos/pt/pt-cassiwatch.mp4"),
-    vttSrc: _t("assets/subtitles/en/en-cassiwatch.vtt", "assets/subtitles/pt/pt-cassiwatch.vtt"),
+    videoSrc: i18n("assets/videos/en/en-cassiwatch.mp4", "assets/videos/pt/pt-cassiwatch.mp4"),
+    vttSrc: i18n("assets/subtitles/en/en-cassiwatch.vtt", "assets/subtitles/pt/pt-cassiwatch.vtt"),
     thumbSrc: "assets/thumbs/en/cassiwatch.avif",
     deviceClass: "apple-watch",
     customGap: "0px"
-  };
+};
 
-  // scripts/src/cases/cassi.js
-  var cassi = {
-    logoUrl: "assets/logos/cassi.jpeg",
-    id: "cassi",
-    slug: "us400k-redesign",
-    year: _t("2022 ∙ CASSI", "2022 ∙ CASSI"),
-    audioSrc: _t("assets/audio/en/cassi/audio-cassi-summary.mp3", "assets/audio/pt/cassi/pt-audio-cassi-summary.mp3"),
+const cassi = {
+  logoUrl: "assets/logos/cassi.jpeg",
+  id: "cassi",
+  slug: "us400k-redesign",
+  year: i18n("2022 ∙ CASSI", "2022 ∙ CASSI"),
+    audioSrc: i18n("assets/audio/en/cassi/audio-cassi-summary.mp3", "assets/audio/pt/cassi/pt-audio-cassi-summary.mp3"),
     password: "123",
     employer: "CASSI",
-    readTime: _t("2 min", "2 min"),
-    title: _t("US$400k Redesign", "Redesign de US$400k"),
-    shortDesc: _t("Mobile redesign saving $400k in mismanaged medical expenses.", "Redesign móvel economizando $400k em despesas médicas indevidas."),
-    aiSummary: _t("By transforming a dense 20-item regulatory list into an intuitive card hierarchy, this redesign allowed 229,000 families to easily spot and dispute incorrect healthcare charges natively within the app.", "Ao transformar uma densa lista de 20 itens regulatórios em uma hierarquia de cards intuitiva, esse redesign permitiu que 229.000 famílias identificassem e contestassem facilmente cobranças incorretas de saúde nativamente dentro do aplicativo."),
+    readTime: i18n("2 min", "2 min"),
+    title: i18n("US$400k Redesign", "Redesign de US$400k"),
+    shortDesc: i18n("Mobile redesign saving $400k in mismanaged medical expenses.", "Redesign móvel economizando $400k em despesas médicas indevidas."),
+    aiSummary: i18n("By transforming a dense 20-item regulatory list into an intuitive card hierarchy, this redesign allowed 229,000 families to easily spot and dispute incorrect healthcare charges natively within the app.", "Ao transformar uma densa lista de 20 itens regulatórios em uma hierarquia de cards intuitiva, esse redesign permitiu que 229.000 famílias identificassem e contestassem facilmente cobranças incorretas de saúde nativamente dentro do aplicativo."),
     keyIndicators: [
-      { value: "USD 400,000", label: _t("Annual savings in avoided expenses", "Economia anual em despesas evitadas") },
-      { value: "13,000", label: _t("Proactively disputed authorizations", "Autorizações contestadas proativamente") },
-      { value: "15s", label: _t("Search time reduced from 3min", "Tempo de busca reduzido de 3 minutos") },
-      { value: "30,000", label: _t("Unrecognized procedures caught", "Procedimentos não reconhecidos bloqueados") }
+      { value: "USD 400,000", label: i18n("Annual savings in avoided expenses", "Economia anual em despesas evitadas") },
+      { value: "13,000", label: i18n("Proactively disputed authorizations", "Autorizações contestadas proativamente") },
+      { value: "15s", label: i18n("Search time reduced from 3min", "Tempo de busca reduzido de 3 minutos") },
+      { value: "30,000", label: i18n("Unrecognized procedures caught", "Procedimentos não reconhecidos bloqueados") }
     ],
-    desc: _t(`
+    desc: i18n(`
         <p class="p1"> 
 <strong>NDA Note:</strong> This project is protected by compliance and non-disclosure agreements. This case presents a sanitized overview focusing on methods and public results from the 2022 Annual Report. 
 </p> 
@@ -1543,17 +1543,16 @@ Nossos pais de família finalmente encontraram rapidamente registros e puderam e
 </div>
         `),
     credits: ["Lio Schimanko", "Illa Penha", "Felipe Pires", "Luís Aragão"],
-    videoSrc: _t("assets/videos/en/en-consulta.mp4", "assets/videos/pt/pt-consulta.mp4"),
-    vttSrc: _t("assets/subtitles/en/en-consulta.vtt", "assets/subtitles/pt/pt-consulta.vtt"),
+    videoSrc: i18n("assets/videos/en/en-consulta.mp4", "assets/videos/pt/pt-consulta.mp4"),
+    vttSrc: i18n("assets/subtitles/en/en-consulta.vtt", "assets/subtitles/pt/pt-consulta.vtt"),
     thumbSrc: "assets/thumbs/en/consulta.avif",
     deviceClass: "iphone-12"
-  };
+};
 
-  // scripts/src/data.js
-  window.portfolioCases = [
-    holofante,
-    testamentus,
-    cassiwatch,
-    cassi
-  ];
-})();
+// Now we export an array of the correctly defined constants.
+export const portfolioCases = [
+  holofante,
+  testamentus,
+  cassiwatch,
+  cassi
+];

@@ -1,0 +1,33 @@
+import fs from 'fs';
+import { generateDeviceMask, DEVICE_CATALOG } from './Thumbnail.js';
+
+export async function exportPortfolioDeviceManifest() {
+  const manifest = {};
+  const urls = [];
+
+  // Extract all unique device mockup URLs from catalog
+  for (const cat of Object.values(DEVICE_CATALOG)) {
+    for (const brand of Object.values(cat)) {
+      for (const model of Object.values(brand)) {
+        for (const color of Object.values(model.colors || {})) {
+          if (color.url && !urls.includes(color.url)) {
+            urls.push(color.url);
+          }
+        }
+      }
+    }
+  }
+
+  // Pre-calculate bounds for each device
+  for (const url of urls) {
+    const data = await generateDeviceMask(url);
+    if (data) {
+      manifest[url] = {
+        bounds: data.bounds,
+        url: data.url // Can be a static exported PNG path or base64 data string
+      };
+    }
+  }
+
+  return manifest;
+}

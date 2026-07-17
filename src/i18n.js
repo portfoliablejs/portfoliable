@@ -1,4 +1,4 @@
-// scripts/i18n.js
+// src/i18n.js
 
 const urlParams = new URLSearchParams(window.location.search);
 const urlLang = urlParams.get('lang');
@@ -185,11 +185,11 @@ const translations = {
     }
 };
 
-window.t = function(key) {
+export function t(key) {
     return translations[window.currentLang][key] || key;
 };
 
-function applyTranslations() {
+export function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[window.currentLang] && translations[window.currentLang][key]) {
