@@ -1,0 +1,19 @@
+/* src/style.css in the 'portfoliable' project */
+
+/* The @import line has been REMOVED from here. */
+
+/* Global resets for the portfolio app */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-black);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
