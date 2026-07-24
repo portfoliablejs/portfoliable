@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# AI instruction artifacts
+.github/skills/
+AGENTS.md
+copilot-instructions.md
+*.instructions.md
+*.prompt.md
+*.agent.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
