@@ -1,55 +1,88 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/), following the Categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed` and `Security.` 
+All notable changes to this project are documented in this file.
+The format follows [Keep a Changelog](https://keepachangelog.com/en/2.0.0/) with these sections: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, and `Security`.
 
-The format is based on a simple release log tailored to this app's public evolution.
+## [2.3.1-alpha] - 2026-07-24
+
+### Added
+- HomeView and gallery smoke gate command: `npm run smoke:homeview`.
+- Integration verification command: `npm run verify:integration` (content validation + template build + consumer build when available).
+- Consumer scaffold command and script flow for quick portfolio data injection startup.
+- Vite build chunk strategy via `vite.config.js` for vendor split visibility.
+- Repository skill/runbook notes for maintenance and low-token AI handoffs.
+
+### Changed
+- Home route now uses `ds-home-view` template behavior with stable gallery wiring.
+- Case rendering flow now uses `ds-article` detail composition in App shell.
+- Content architecture moved to markdown-first case definitions with parser/normalization pipeline.
+- CLI UX expanded with startup banner output and helper workflows.
+- Build hardening now lazy-loads Mermaid runtime to reduce entry bundle pressure.
+
+### Removed
+- Personal production case data from template package content (template-only boundary enforced).
+
+### Fixed
+- Gallery thumbnail frame fallback support by explicit device frame sources in template data.
+- Thumbnail drag/select friction in gallery interactions.
+- Local integration compatibility for valence style export path via lifecycle ensure script.
+- Consumer integration handoff stability for `portfolioCases` module export expectations.
+
+## [2.3.0-alpha] - 2026-07-03
+
+### Added
+- Initial alpha release baseline for the v2.3 line.
+
+### Removed
+- Legacy placeholders replaced by template package baseline conventions.
+
 
 ## [2.2.1] - 2026-07-03
 
-## Added
+### Added
 - New Social Sharing buttons for each case study.
 - New Pop-up Header with Close button.
 
-## Removed
+### Removed
 - AI Chat feature.
 
 ## [2.2.0] - 2026-07-02
 
-## Added
+### Added
 - `--space-xxxxl: 80px;` and `--space-xxxxxl: 100px;` as new Spacing Scale variables, and applied the first one to the `combo-asset-card`.
 - An entrance animation for `.combo-asset-card`.
 - New Keyboard Shortcuts for the AI Reader on `Shift`, separated from the other global Keyboard Shortcuts.
 - New Social Sharing buttons for each case study.
 
-## Removed
+### Removed
 - AI Chat feature.
 
-## Changed
+### Changed
 - Change the read-out-loud function from robotic TTS (Text-to-Speech) to pre-recorded AI TTS, via `generate_output.py`.
 - Player layout for the AI Reader, with on scroll animations, playback speed options (`0.7`, `1.0`, `1.15`, `1.2`), "Hide on play" and "Auto-scroll on play" buttons.
 
 ## [2.1.3] - 2026-07-01
 
-## Fixed 
-### Animations
+### Fixed 
+#### Animations
 - "Swipe to explore cases" onboarding appearing without first scroll. Now, it appears a few seconds after the first scroll of the session.
-### Design
+#### Design
 - Reader View not perfectly aligning with the center of the viewport, a few pixels to the right.
 - Onboarding tutorials `drag-tutorial` and `progress-tutorial` not A11Y compliant.
 
 
 ## [2.1.2] - 2026-06-30
 
-## Fixed 
-### Animations
+### Fixed 
+#### Animations
 - Accelerator "Pick up where you left off" Toast Overlay: removed `filter`, `opacity`, `pointer-event` and `transition` properties that were causing friction in microinteraction animation (briefly after a modal is opened).
     - Fixed a temporary horizontal shift triggered by clicking on a thumbnail mid Accelerator entrance animation, caused by `transform: translateX(-50%)` inside `.resume-reading-toast`.
 - `.progress-tutorial` onboarding player toast was showing above the glass overlay, corrected by adding `z-index: 1400 !important;` inside `body.modal-open #progress-container`.
 - Auto-scroll after clicking on TOC item sometimes pushed the item too far above or below the fold.
 - The lines ( - ) of the last title inside the contracted TOC weren't being highlighted.
-### Design 
+#### Design 
 - Issue where the loading spinner and background were not visible, when on Player View (automatic Dark Mode).
-### A11Y
+#### A11Y
 - Password dots `••••••` and Protected Case container elements not a11y compliant (Dark Mode, High Contrast mode).
 - Player button controls color bug and label displacement in High Contrast mode.
 - Accessibility menu components (toggles) not compliant in High Contrast mode.
@@ -57,7 +90,7 @@ The format is based on a simple release log tailored to this app's public evolut
 
 ## [2.1.1] - 2026-06-30
 
-## Fixed
+### Fixed
 - Contextual Menu Positioning: Added relative positioning to case-description-body paragraphs and headings in reader.css, ensuring the absolute-positioned context menu icons remain anchored to their respective text blocks during scroll.
 - Scroll-Induced Interaction Cleanup: Implemented a scroll-event interceptor in script.js that force-closes any active contextual menu triggers and popups the moment the user initiates a scroll action, preventing orphaned UI elements.
 - "Pick up where you left off" Toast Overlays: Adjusted the resume-reading-toast z-index and interaction states in reader.css to ensure it correctly respects the modal stacking context, blurring and becoming unclickable when the glass overlay is active.
