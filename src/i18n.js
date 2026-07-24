@@ -12,7 +12,7 @@ window._t = function(en, pt) {
 
 const translations = {
     "en": {
-        "h1_title": "Lio Schimanko's Portfolio",
+        "h1_title": "Your Portfolio Template",
         "nav_overview": "Overview",
         "nav_tech": "Tech View",
         "btn_return": "Return <kbd>Backspace</kbd>",
@@ -37,8 +37,8 @@ const translations = {
         "lang_pt": "Portuguese",
         "lang_pirate": "Pirate (Aargh!)",
         
-        "about_p1": "Lio started his career as a Graphic Designer, and fell in love with the intersection of design and technology. He has since evolved into a Product Engineer with a passion for crafting intuitive user experiences and seamless interfaces.",
-        "about_p2": "He holds a NN/g UX Certification, a postgrad degree in User Experience and is currently pursuing a Master's in Computer Science at BSU with a focus on HCI.",
+        "about_p1": "Template about section. Replace this paragraph with your own background, focus, and experience.",
+        "about_p2": "Template about section continuation. Add your credentials, learning path, and specialization.",
         "about_linkedin": "LinkedIn",
         "about_github": "GitHub",
 
@@ -98,7 +98,7 @@ const translations = {
         "mermaid_error": "Execution error parsing systems chart."
     },
     "pt": {
-        "h1_title": "Portfólio de Lio Schimanko",
+        "h1_title": "Seu Template de Portfolio",
         "nav_overview": "Visão Geral",
         "nav_tech": "Visão Técnica",
         "btn_return": "Voltar <kbd>Backspace</kbd>",
@@ -123,8 +123,8 @@ const translations = {
         "lang_pt": "Português",
         "lang_pirate": "Pirata (Aargh!)",
         
-        "about_p1": "Lio começou sua carreira como Designer Gráfico e se apaixonou pela interseção entre design e tecnologia. Desde então, evoluiu para Engenheiro de Produto com paixão por criar experiências de usuário intuitivas e interfaces fluidas.",
-        "about_p2": "Ele possui Certificação UX da NN/g, pós-graduação em User Experience pela PUC-RS e atualmente é Mestrando em Ciência da Computação na BSU (EUA) com foco em IHC.",
+        "about_p1": "Secao de sobre template. Substitua este paragrafo com sua propria historia, foco e experiencia.",
+        "about_p2": "Continuacao da secao de sobre template. Adicione credenciais, trilha de aprendizado e especializacao.",
         "about_linkedin": "LinkedIn",
         "about_github": "GitHub",
 

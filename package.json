@@ -4,15 +4,27 @@
   "private": false,
   "type": "module",
   "main": "src/App.js",
+  "bin": {
+    "portfoliable": "./cli/portfoliable.mjs"
+  },
   "scripts": {
+    "postinstall": "node ./scripts/ensure-valence-index-css.mjs",
+    "ensure:valence": "node ./scripts/ensure-valence-index-css.mjs",
+    "validate:content": "node ./cli/portfoliable.mjs validate",
     "preportfoliable": "node ./scripts/check-updates.mjs",
-    "portfoliable": "vite",
-    "dev": "npm run portfoliable",
-    "build": "vite build",
-    "preview": "vite preview"
+    "predev": "npm run ensure:valence && npm run validate:content",
+    "prebuild": "npm run ensure:valence && npm run validate:content",
+    "prepreview": "npm run ensure:valence && npm run validate:content",
+    "portfoliable": "node ./cli/portfoliable.mjs dev",
+    "dev": "npm run portfoliable --",
+    "build": "node ./cli/portfoliable.mjs build",
+    "preview": "node ./cli/portfoliable.mjs preview",
+    "scaffold:consumer": "node ./cli/portfoliable.mjs scaffold",
+    "verify:integration": "node ./scripts/verify-integration.mjs",
+    "smoke:homeview": "node ./scripts/smoke-homeview.mjs"
   },
   "dependencies": {
-    "@portfoliablejs/valence": "github:portfoliablejs/valence"
+    "@portfoliablejs/valence": "file:../valence"
   },
   "devDependencies": {
     "vite": "^8.1.1"

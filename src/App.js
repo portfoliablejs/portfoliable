@@ -1,8 +1,27 @@
 // src/App.js
 
-import { portfolioCases } from './data.js';
-import { t, applyTranslations } from './i18n.js';
-import '@portfoliablejs/valence';
+import { getPortfolioCases } from './cases/index.js';
+import { t } from './i18n.js';
+import portfoliableConfig from '../portfoliable.config.js';
+import {
+    Article,
+    DsDivider,
+    DsItemRow,
+    Header,
+    HomeView,
+    Thumbnail,
+    Toast,
+    VideoPlayer
+} from '@portfoliablejs/valence';
+
+void Article;
+void DsDivider;
+void DsItemRow;
+void Header;
+void HomeView;
+void Thumbnail;
+void Toast;
+void VideoPlayer;
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -34,35 +53,38 @@ template.innerHTML = `
       letter-spacing: 0.05em; color: var(--color-gray-light);
       padding: 4px var(--space-sm) 2px var(--space-sm); margin-top: 2px; display: block;
     }
-    /* Styles for the slider container, previously in case-viewer.css */
-    .case-slider-container {
-        display: flex;
-        width: 100%;
-        height: 100%;
-        overflow-x: auto;
-        overflow-y: hidden;
-        scroll-snap-type: x mandatory;
-        scroll-behavior: smooth;
-        scrollbar-width: none;
-        cursor: grab;
-    }
-    .case-slider-container::-webkit-scrollbar { display: none; }
-    .case-slider-container.dragging {
-        scroll-snap-type: none;
-        scroll-behavior: auto;
-        cursor: grabbing;
+        #view-case {
+            overflow-y: auto;
+            align-items: flex-start;
+            justify-content: center;
+            padding: clamp(12px, 2vw, 28px);
+            box-sizing: border-box;
+        }
+        .article-shell {
+            width: min(1040px, 100%);
+            display: block;
+            padding: 0;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        .article-empty {
+            width: 100%;
+            min-height: 40vh;
+            display: grid;
+            place-items: center;
+            color: var(--color-gray-light);
     }
   </style>
   
   <div id="glass-overlay"></div>
-  <ds-header id="app-header"></ds-header>
+    <ds-header id="app-header"></ds-header>
 
   <main>
     <div id="view-home" class="view">
-      <ds-gallery id="gallery-container"></ds-gallery>
+            <ds-home-view id="home-view"></ds-home-view>
     </div>
     <div id="view-case" class="view">
-      <div id="case-slider-container" class="case-slider-container"></div>
+            <div id="case-article-shell" class="article-shell"></div>
     </div>
     <div id="view-about" class="view">
       <!-- About content can be added here later -->
@@ -79,6 +101,7 @@ class AppShell extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
+        this._portfolioCases = getPortfolioCases();
 
         this.state = {
             currentView: 'home',
@@ -99,8 +122,19 @@ class AppShell extends HTMLElement {
     connectedCallback() {
         this._loadA11ySettings();
         this._initializeView();
+        this.applyThemeTokens();
         this.render();
         this._addEventListeners();
+    }
+
+    get portfolioCases() {
+        return this._portfolioCases;
+    }
+
+    set portfolioCases(value) {
+        if (!Array.isArray(value) || value.length === 0) return;
+        this._portfolioCases = value;
+        this.render();
     }
 
     setState(newState) {
@@ -112,9 +146,16 @@ class AppShell extends HTMLElement {
         return (prop && prop[this.state.lang]) ? prop[this.state.lang] : (prop && prop['en'] ? prop['en'] : prop);
     }
 
+    applyThemeTokens() {
+        const tokens = portfoliableConfig?.themeTokens || {};
+        Object.entries(tokens).forEach(([tokenName, tokenValue]) => {
+            document.documentElement.style.setProperty(tokenName, tokenValue);
+        });
+    }
+
     render() {
         this.renderHome();
-        this.renderCaseViewer();
+        this.renderCaseView();
         this.renderModals();
         this.renderOverlays();
         this.updateHeader();
@@ -126,41 +167,177 @@ class AppShell extends HTMLElement {
     }
 
     renderHome() {
-        const gallery = this.shadowRoot.getElementById('gallery-container');
-        if (gallery.children.length > 0) return;
+        const homeView = this.shadowRoot.getElementById('home-view');
+        if (!homeView) return;
 
-        portfolioCases.forEach(caseData => {
-            const item = document.createElement('ds-gallery-item');
-            item.setAttribute('title', this.getLang(caseData.title));
-            item.setAttribute('short-desc', this.getLang(caseData.shortDesc));
-            item.setAttribute('read-time', this.getLang(caseData.readTime));
-            item.setAttribute('thumb-src', this.getLang(caseData.thumbSrc));
-            item.setAttribute('device', caseData.deviceClass || 'iphone-17');
-            if (caseData.videoSrc) item.setAttribute('has-video', 'true');
-            if (caseData.repositoryUrl) item.setAttribute('has-repo', 'true');
-            if (caseData.liveUrl) item.setAttribute('has-live', 'true');
-            item.dataset.caseId = caseData.id;
-            gallery.appendChild(item);
-        });
+        const homeConfig = portfoliableConfig?.homeView || {};
+        homeView.titleText = this.getLang(homeConfig.title) || t('h1_title');
+        homeView.footerText = this.getLang(homeConfig.footer) || t('footer_text');
+        homeView.itemCount = Number(homeConfig.itemCount) || Math.min(4, this._portfolioCases.length);
+        homeView.engine = homeConfig.engine || 'minimal';
+
+        if (typeof homeConfig.showBreadcrumb === 'boolean') {
+            homeView.showBreadcrumb = homeConfig.showBreadcrumb;
+        }
+
+        if (typeof homeConfig.showLanguageMenu === 'boolean') {
+            homeView.showLanguageMenu = homeConfig.showLanguageMenu;
+        }
+
+        const mappedItems = this._portfolioCases.map((caseData) => this._mapCaseToGalleryItem(caseData));
+        const syncGalleryItems = () => {
+            const gallery = homeView.shadowRoot?.querySelector('ds-gallery');
+            if (!gallery) return false;
+            gallery.itemCount = Number(homeConfig.itemCount) || Math.min(4, mappedItems.length);
+            gallery.engine = homeConfig.engine || 'minimal';
+            gallery.items = mappedItems;
+            return true;
+        };
+
+        if (!syncGalleryItems()) {
+            requestAnimationFrame(() => {
+                syncGalleryItems();
+            });
+        }
     }
 
-    renderCaseViewer() {
-        const slider = this.shadowRoot.getElementById('case-slider-container');
-        if (slider.children.length > 0) return; // Only render once
+    _mapCaseToGalleryItem(caseData) {
+        return {
+            caseId: caseData.id,
+            title: this.getLang(caseData.title),
+            shortDesc: this.getLang(caseData.shortDesc),
+            readTime: this.getLang(caseData.readTime),
+            thumbSrc: this.getLang(caseData.thumbSrc),
+            hasVideo: Boolean(caseData.videoSrc),
+            hasRepo: Boolean(caseData.repositoryUrl),
+            hasLive: Boolean(caseData.liveUrl),
+            thumbCategory: caseData.thumbCategory || 'mobile',
+            thumbBrand: caseData.thumbBrand || 'apple',
+            thumbModel: caseData.thumbModel || 'Apple iPhone 12',
+            thumbColor: caseData.thumbColor || 'Black',
+            thumbDeviceSrc: caseData.thumbDeviceSrc || '',
+            aspectRatio: caseData.aspectRatio || ''
+        };
+    }
 
-        portfolioCases.forEach(caseData => {
-            const slide = document.createElement('ds-case-slide');
-            slide.dataset.caseId = caseData.id;
-            slide.setAttribute('title', this.getLang(caseData.title));
-            slide.setAttribute('year', this.getLang(caseData.year));
-            slide.setAttribute('thumb-src', this.getLang(caseData.thumbSrc));
-            slide.setAttribute('device', caseData.deviceClass || 'iphone-17');
-            
-            const descContent = this.state.isRecruiterMode ? caseData.descRecruiter : caseData.desc;
-            slide.innerHTML = `<div slot="description">${this.getLang(descContent)}</div>`;
-            
-            slider.appendChild(slide);
-        });
+    renderCaseView() {
+        const shell = this.shadowRoot.getElementById('case-article-shell');
+        if (!shell) return;
+
+        const activeCase = this._portfolioCases.find((item) => item.id === this.state.activeCaseId);
+        if (!activeCase) {
+            shell.innerHTML = `<div class="article-empty">${t('swipe_explore')}</div>`;
+            return;
+        }
+
+        const title = this.getLang(activeCase.title);
+        const year = this.getLang(activeCase.year);
+        const body = this.getLang(this.state.isRecruiterMode ? activeCase.descRecruiter : activeCase.desc);
+        const primaryLabel = activeCase.videoSrc ? t('btn_pitch') : t('btn_demo');
+        const secondary1Label = t('btn_repo');
+        const secondary2Label = t('btn_demo');
+        const thumbSrc = this.getLang(activeCase.thumbSrc);
+
+        shell.innerHTML = `
+          <ds-article
+            aria-label="${title}"
+            kicker="${year || ''}"
+            title-text="${title}"
+            primary-label="${primaryLabel}"
+            secondary1-label="${secondary1Label}"
+            secondary2-label="${secondary2Label}"
+                        show-action-primary="true"
+                        show-action-secondary1="${activeCase.repositoryUrl ? 'true' : 'false'}"
+                        show-action-secondary2="${activeCase.liveUrl ? 'true' : 'false'}"
+            show-player="false"
+            show-summary="false"
+            show-social-share="true"
+            show-social-linkedin="true"
+            show-social-x="true"
+            show-social-facebook="true"
+            show-navigator="false"
+          >
+            <ds-thumbnail
+              slot="thumbnail"
+              category="mobile"
+              brand="apple"
+              model="Apple iPhone 12"
+              color="Black"
+              screen-image="${thumbSrc || ''}"
+              max-height="320px"
+            ></ds-thumbnail>
+            ${body || ''}
+          </ds-article>
+        `;
+
+        const articleEl = shell.querySelector('ds-article');
+        if (articleEl) {
+            articleEl.addEventListener('ds-article-action', (event) => {
+                this._handleArticleAction(event.detail?.action, activeCase);
+            });
+
+            articleEl.addEventListener('ds-article-share', (event) => {
+                this._handleArticleShare(event.detail?.platform, activeCase);
+            });
+        }
+    }
+
+    _handleArticleAction(action, caseData) {
+        if (!caseData) return;
+
+        if (action === 'primary') {
+            if (caseData.videoSrc) {
+                const player = this.shadowRoot.getElementById('video-player');
+                if (player) {
+                    player.caseData = caseData;
+                    player.play();
+                }
+                return;
+            }
+
+            if (caseData.liveUrl) {
+                window.open(caseData.liveUrl, '_blank', 'noopener,noreferrer');
+            }
+            return;
+        }
+
+        if (action === 'secondary1' && caseData.repositoryUrl) {
+            window.open(caseData.repositoryUrl, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        if (action === 'secondary2' && caseData.liveUrl) {
+            window.open(caseData.liveUrl, '_blank', 'noopener,noreferrer');
+        }
+    }
+
+    _handleArticleShare(platform, caseData) {
+        if (!caseData) return;
+        const caseUrl = `${window.location.origin}${window.location.pathname}?case=${encodeURIComponent(caseData.slug || caseData.id)}`;
+        const shareText = `${t('share_text')} ${this.getLang(caseData.title)}`;
+
+        if (platform === 'native' && navigator.share) {
+            navigator.share({
+                title: this.getLang(caseData.title),
+                text: shareText,
+                url: caseUrl
+            }).catch(() => {});
+            return;
+        }
+
+        const encodedText = encodeURIComponent(shareText);
+        const encodedUrl = encodeURIComponent(caseUrl);
+
+        const platformUrls = {
+            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+            x: `https://x.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
+        };
+
+        const target = platformUrls[platform];
+        if (target) {
+            window.open(target, '_blank', 'noopener,noreferrer');
+        }
     }
 
     renderModals() {
@@ -214,9 +391,17 @@ class AppShell extends HTMLElement {
 
     updateHeader() {
         const header = this.shadowRoot.getElementById('app-header');
+        if (header) {
+            header.style.display = this.state.currentView === 'home' ? 'none' : 'block';
+        }
+
+        if (this.state.currentView === 'home') {
+            return;
+        }
+
         header.setAttribute('view', this.state.currentView);
         if (this.state.currentView === 'case' && this.state.activeCaseId) {
-            const activeCase = portfolioCases.find(c => c.id === this.state.activeCaseId);
+            const activeCase = this._portfolioCases.find(c => c.id === this.state.activeCaseId);
             if (activeCase) header.setAttribute('current-label', this.getLang(activeCase.title));
         }
     }
@@ -226,10 +411,20 @@ class AppShell extends HTMLElement {
         const a11yModal = this.shadowRoot.getElementById('a11y-modal');
         const langModal = this.shadowRoot.getElementById('lang-modal');
         const toast = this.shadowRoot.getElementById('app-toast');
-        const slider = this.shadowRoot.getElementById('case-slider-container');
 
         this.shadowRoot.addEventListener('ds-case-select', (e) => {
-            this.setState({ activeCaseId: e.target.dataset.caseId, currentView: 'case' });
+            const dataset = e.target?.dataset || {};
+            const directCaseId = dataset.caseId;
+            const indexFromGallery = Number.parseInt(dataset.galleryIndex || '', 10);
+
+            if (directCaseId) {
+                this.setState({ activeCaseId: directCaseId, currentView: 'case' });
+                return;
+            }
+
+            if (!Number.isNaN(indexFromGallery) && this._portfolioCases[indexFromGallery]) {
+                this.setState({ activeCaseId: this._portfolioCases[indexFromGallery].id, currentView: 'case' });
+            }
         });
 
         header.addEventListener('ds-home-click', () => this.setState({ currentView: 'home' }));
@@ -256,55 +451,13 @@ class AppShell extends HTMLElement {
         });
         
         window.addEventListener('keydown', (e) => this._handleGlobalKeyDown(e));
-
-        // Add slider logic directly here
-        this._setupSliderDrag(slider);
-    }
-
-    _setupSliderDrag(container) {
-        let isDown = false, startX, scrollLeft, draggedDistance = 0;
-        
-        container.addEventListener('mousedown', (e) => {
-            isDown = true;
-            container.classList.add('dragging');
-            startX = e.pageX;
-            scrollLeft = container.scrollLeft;
-            draggedDistance = 0;
-        });
-
-        container.addEventListener('mouseleave', () => { if(isDown) handleEnd(); });
-        container.addEventListener('mouseup', () => { if(isDown) handleEnd(); });
-
-        container.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            draggedDistance = e.pageX - startX;
-            container.scrollLeft = scrollLeft - draggedDistance;
-        });
-
-        const handleEnd = () => {
-            isDown = false;
-            container.classList.remove('dragging');
-            const slideWidth = this.offsetWidth;
-            const startIndex = Math.round(scrollLeft / slideWidth);
-            let targetIndex = startIndex;
-            const swipeThreshold = slideWidth * 0.15;
-
-            if (draggedDistance < -swipeThreshold) targetIndex = startIndex + 1;
-            else if (draggedDistance > swipeThreshold) targetIndex = startIndex - 1;
-
-            const maxIndex = container.children.length - 1;
-            targetIndex = Math.max(0, Math.min(targetIndex, maxIndex));
-            
-            container.scrollTo({ left: targetIndex * slideWidth, behavior: 'smooth' });
-        };
     }
 
     _initializeView() {
         const urlParams = new URLSearchParams(window.location.search);
         const targetCaseId = urlParams.get('case');
         if (targetCaseId) {
-            const targetCase = portfolioCases.find(c => c.slug === targetCaseId || c.id === targetCaseId);
+            const targetCase = this._portfolioCases.find(c => c.slug === targetCaseId || c.id === targetCaseId);
             if (targetCase) {
                 this.setState({ currentView: 'case', activeCaseId: targetCase.id });
                 return;
@@ -314,7 +467,7 @@ class AppShell extends HTMLElement {
         const resumeCaseId = localStorage.getItem('resumeCaseId');
         const resumeScrollTop = localStorage.getItem('resumeScrollTop');
         if (resumeCaseId && resumeScrollTop) {
-            const caseData = portfolioCases.find(c => c.id === resumeCaseId);
+            const caseData = this._portfolioCases.find(c => c.id === resumeCaseId);
             if (caseData) {
                 this.setState({
                     toast: {
