@@ -1,3 +1,10 @@
+## [2.3.4](https://github.com/portfoliablejs/portfoliable/compare/v2.3.3...v2.3.4) (2026-07-26)
+
+
+### Bug Fixes
+
+* use manual npmrc auth for github packages instead of setup-node ([55614b5](https://github.com/portfoliablejs/portfoliable/commit/55614b51066429334cc2d4858da97518d19de997))
+
 ## [2.3.3](https://github.com/portfoliablejs/portfoliable/compare/v2.3.2...v2.3.3) (2026-07-26)
 
 
