@@ -1,3 +1,14 @@
+## [2.4.9](https://github.com/portfoliablejs/portfoliable/compare/v2.4.6...v2.4.9) (2026-07-26)
+
+### Bug Fixes
+
+* fix(ci): make release signing optional when key secret is absent ([bb50ad0](https://github.com/portfoliablejs/portfoliable/commit/bb50ad080a2632f19cd84673e2cf531815f368b0))
+* fix(release): trusted-publisher auth and signed release artifacts ([e029ec8](https://github.com/portfoliablejs/portfoliable/commit/e029ec86c48b2fd90da48b04b543096ba675cf13))
+* chore(release): @portfoliablejs/portfoliable@2.4.8, create-portfoliable@0.1.8 [skip ci] ([c7b20ef](https://github.com/portfoliablejs/portfoliable/commit/c7b20efbc0044292ec234fe75a70c7d01b116049))
+* ci(release): enforce schimanko-only release identity ([05c5a4d](https://github.com/portfoliablejs/portfoliable/commit/05c5a4d7d89acb81c3871f268d67e8dc33143ee2))
+* chore(release): replace semantic-release with native auto-versioning ([160fa84](https://github.com/portfoliablejs/portfoliable/commit/160fa84661de3d2ad8c0afcd76ac3610588896af))
+* chore(release): 2.4.7 [skip ci] ([85ff988](https://github.com/portfoliablejs/portfoliable/commit/85ff988e64d0b7ef8952700f067ea6ba3ed483d8))
+
 ## [2.4.8](https://github.com/portfoliablejs/portfoliable/compare/v2.4.6...v2.4.8) (2026-07-26)
 
 ### Bug Fixes
@@ -275,4 +286,5 @@ Initial stable release of Lio Schimanko's Portfolio as an open-source Single-Pag
 
 ### Notes
 This release establishes the public baseline for future improvements and versioned updates.
+
 
