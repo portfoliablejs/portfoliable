@@ -1,6 +1,6 @@
 {
   "name": "@portfoliablejs/portfoliable",
-  "version": "2.3.4",
+  "version": "2.4.0",
   "description": "Template-first portfolio engine powered by valence web components",
   "license": "MIT",
   "private": false,
