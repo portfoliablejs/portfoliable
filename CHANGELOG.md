@@ -1,3 +1,10 @@
+## [2.4.7](https://github.com/portfoliablejs/portfoliable/compare/v2.4.6...v2.4.7) (2026-07-26)
+
+
+### Bug Fixes
+
+* **release:** set explicit angular preset for create-portfoliable ([cde3eb3](https://github.com/portfoliablejs/portfoliable/commit/cde3eb37093be3f5daa86834cee763485094f207))
+
 ## [2.4.6](https://github.com/portfoliablejs/portfoliable/compare/v2.4.5...v2.4.6) (2026-07-26)
 
 
