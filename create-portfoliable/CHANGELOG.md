@@ -1,3 +1,12 @@
+## [0.1.8](https://github.com/portfoliablejs/portfoliable/compare/create-portfoliable-v0.1.7...create-portfoliable-v0.1.8) (2026-07-26)
+
+### Bug Fixes
+
+* chore(release): replace semantic-release with native auto-versioning ([14edb78](https://github.com/portfoliablejs/portfoliable/commit/14edb78ebaf5c9533085619af864f12d0ae86e00))
+* fix(release): set explicit angular preset for create-portfoliable ([cde3eb3](https://github.com/portfoliablejs/portfoliable/commit/cde3eb37093be3f5daa86834cee763485094f207))
+* fix: add changelog plugin to create-portfoliable release config ([8c4ec88](https://github.com/portfoliablejs/portfoliable/commit/8c4ec885694c3523f80399917417bf08713567f4))
+* chore: add semantic-release ([2dec090](https://github.com/portfoliablejs/portfoliable/commit/2dec090bad598b710f14825b8d13f8f227ecc03b))
+
 # Changelog
 
 All notable changes to this initializer are documented in this file.
@@ -32,3 +41,4 @@ All notable changes to this initializer are documented in this file.
 
 ### Added
 - Initial public initializer package release.
+

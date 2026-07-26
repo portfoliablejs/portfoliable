@@ -1,3 +1,9 @@
+## [2.4.8](https://github.com/portfoliablejs/portfoliable/compare/v2.4.7...v2.4.8) (2026-07-26)
+
+### Bug Fixes
+
+* chore(release): replace semantic-release with native auto-versioning ([14edb78](https://github.com/portfoliablejs/portfoliable/commit/14edb78ebaf5c9533085619af864f12d0ae86e00))
+
 ## [2.4.7](https://github.com/portfoliablejs/portfoliable/compare/v2.4.6...v2.4.7) (2026-07-26)
 
 
@@ -267,3 +273,4 @@ Initial stable release of Lio Schimanko's Portfolio as an open-source Single-Pag
 
 ### Notes
 This release establishes the public baseline for future improvements and versioned updates.
+
