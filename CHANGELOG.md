@@ -1,3 +1,10 @@
+## [2.3.3](https://github.com/portfoliablejs/portfoliable/compare/v2.3.2...v2.3.3) (2026-07-26)
+
+
+### Bug Fixes
+
+* replace exec github packages publish with setup-node auth ([0d223af](https://github.com/portfoliablejs/portfoliable/commit/0d223afb8676b753d0fb55e756da2c16f94847db))
+
 ## [2.3.2](https://github.com/portfoliablejs/portfoliable/compare/v2.3.1...v2.3.2) (2026-07-26)
 
 
