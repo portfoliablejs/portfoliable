@@ -86,4 +86,6 @@ jobs:
       - name: Release create-portfoliable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release --config create-portfoliable/.releaserc.json
+        run: |
+          cd create-portfoliable
+          npx semantic-release
