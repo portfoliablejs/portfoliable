@@ -55,19 +55,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -x  # Enable debug output
-          before=$(node -p "require('./package.json').version")
-          echo "Version before: $before"
-          echo "Git status:"
-          git status
-          echo "Running semantic-release..."
-          npx semantic-release --debug 2>&1 || EXIT_CODE=$?
-          after=$(node -p "require('./package.json').version")
-          echo "Version after: $after"
-          if [ "$before" != "$after" ]; then
-            echo "released=true" >> $GITHUB_OUTPUT
+          # Check if there are commits since the last root release tag
+          latest_tag=$(git describe --tags --match "v*" --exclude "create-portfoliable-v*" --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$latest_tag" ]; then
+            # No previous tags, compare to first commit
+            latest_tag=$(git rev-list --max-parents=0 HEAD)
           fi
-          exit ${EXIT_CODE:-0}
+          commits_since_last=$(git log ${latest_tag}..HEAD --oneline -- . --exclude='create-portfoliable' 2>/dev/null | wc -l)
+          
+          if [ "$commits_since_last" -gt 0 ]; then
+            before=$(node -p "require('./package.json').version")
+            npx semantic-release
+            after=$(node -p "require('./package.json').version")
+            if [ "$before" != "$after" ]; then
+              echo "released=true" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "No commits since last release, skipping"
+          fi
 
       - name: Publish @portfoliablejs/portfoliable to GitHub Packages
         if: steps.portfoliable-release.outputs.released == 'true'
