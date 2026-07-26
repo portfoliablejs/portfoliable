@@ -1,3 +1,10 @@
+## [2.4.1](https://github.com/portfoliablejs/portfoliable/compare/v2.4.0...v2.4.1) (2026-07-26)
+
+
+### Bug Fixes
+
+* use hard reset instead of rebase for syncing release commit ([393fbc2](https://github.com/portfoliablejs/portfoliable/commit/393fbc2770f2e452017b2699341fffc9c7ff8195))
+
 # [2.4.0](https://github.com/portfoliablejs/portfoliable/compare/v2.3.4...v2.4.0) (2026-07-26)
 
 
