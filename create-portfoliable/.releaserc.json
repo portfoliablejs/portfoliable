@@ -1,4 +1,5 @@
 {
+  "preset": "angular",
   "tagFormat": "create-portfoliable-v${version}",
   "branches": ["main"],
   "plugins": [
