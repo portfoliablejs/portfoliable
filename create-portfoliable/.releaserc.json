@@ -4,6 +4,9 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
+    ["@semantic-release/changelog", {
+      "changelogFile": "create-portfoliable/CHANGELOG.md"
+    }],
     ["@semantic-release/npm", {
       "pkgRoot": "create-portfoliable"
     }],
@@ -12,7 +15,7 @@
       "failComment": false
     }],
     ["@semantic-release/git", {
-      "assets": ["create-portfoliable/package.json"],
+      "assets": ["create-portfoliable/CHANGELOG.md", "create-portfoliable/package.json"],
       "message": "chore(release): create-portfoliable@${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }]
   ]
