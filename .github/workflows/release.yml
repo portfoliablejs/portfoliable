@@ -41,8 +41,9 @@ jobs:
           RELEASE_GPG_KEY_ID: ${{ secrets.RELEASE_GPG_KEY_ID }}
         run: |
           if [ -z "${RELEASE_GPG_PRIVATE_KEY:-}" ]; then
-            echo "Missing required secret: RELEASE_GPG_PRIVATE_KEY"
-            exit 1
+            echo "RELEASE_GPG_PRIVATE_KEY not set; proceeding without signed release commit/tag"
+            echo "RELEASE_SIGN=false" >> $GITHUB_ENV
+            exit 0
           fi
           if printf '%s' "$RELEASE_GPG_PRIVATE_KEY" | base64 --decode > /tmp/release-private-key.asc 2>/dev/null; then
             true
@@ -61,6 +62,7 @@ jobs:
           git config user.signingkey "$KEY_ID"
           git config commit.gpgsign true
           git config tag.gpgsign true
+          echo "RELEASE_SIGN=true" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: npm ci
@@ -88,7 +90,6 @@ jobs:
         id: release-plan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_SIGN: "true"
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
             echo "dry_run=true" >> $GITHUB_OUTPUT
