@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import { runValidation } from '../scripts/validate-content.mjs';
 import { runScaffold } from '../scripts/scaffold-consumer.mjs';
+import { runCaseScaffold } from '../scripts/scaffold-case.mjs';
 
 const green = '\x1b[32m';
 const yellow = '\x1b[33m';
@@ -57,12 +58,13 @@ function parseCliArgs(argv) {
       host: true,
       port: null,
       out: null,
-      force: false
+      force: false,
+      name: null
     }
   };
 
   const commandCandidate = argv[2];
-  const knownCommands = new Set(['dev', 'build', 'preview', 'validate', 'scaffold']);
+  const knownCommands = new Set(['dev', 'build', 'preview', 'validate', 'scaffold', 'scaffold-case']);
   const startIndex = knownCommands.has(commandCandidate) ? 3 : 2;
 
   if (knownCommands.has(commandCandidate)) {
@@ -108,6 +110,15 @@ function parseCliArgs(argv) {
       continue;
     }
 
+    if (arg === '--name') {
+      const next = argv[i + 1];
+      if (next) {
+        parsed.flags.name = next;
+        i += 1;
+      }
+      continue;
+    }
+
     if (!arg.startsWith('--') && parsed.flags.port === null) {
       const asNumber = Number(arg);
       if (Number.isFinite(asNumber)) {
@@ -122,15 +133,19 @@ function parseCliArgs(argv) {
 function printStartupBox({ localUrl, networkUrl, localVersion, latestVersion }) {
   const width = 72;
   const line = (text = '') => `│ ${text.padEnd(width - 4)} │`;
+  const spacer = () => line();
 
   console.log('╭' + '─'.repeat(width - 2) + '╮');
-  console.log(line(`${green}Portfoliable ready!${reset}`));
-  console.log(line());
-  console.log(line(`- ${bold}Local:${reset} ${localUrl}`));
-  console.log(line(`- ${bold}On your network:${reset} ${networkUrl}`));
+  console.log(line(`${green}${bold}Portfoliable ready!${reset}`));
+  console.log(line(`${dim}Dev server is live and ready for editing.${reset}`));
+  console.log(spacer());
+  console.log(line(`${bold}Local:${reset} ${localUrl}`));
+  console.log(line(`${bold}On your network:${reset} ${networkUrl}`));
+  console.log(spacer());
+  console.log(line(`${bold}Next:${reset} open the local URL in your browser.`));
 
   if (latestVersion && latestVersion !== localVersion && !latestVersion.includes('alpha')) {
-    console.log(line());
+    console.log(spacer());
     console.log(line(`${yellow}A new version (${latestVersion}) is available!${reset}`));
     console.log(line(`Upgrade now: ${green}npm update @portfoliablejs/portfoliable${reset}`));
   }
@@ -175,15 +190,23 @@ async function runBuild() {
 }
 
 async function runPreview(flags) {
-  console.log(`${cyan}${bold}Starting preview server...${reset}`);
   const previewPort = Number.isFinite(flags.port) ? flags.port : 4173;
   const previewServer = await vitePreview({ preview: { host: flags.host, port: previewPort } });
   const protocol = 'http';
   const localUrl = `${protocol}://localhost:${previewPort}/`;
   const networkAddress = firstNetworkAddress();
   const networkUrl = networkAddress ? `${protocol}://${networkAddress}:${previewPort}/` : 'Not available';
-  console.log(`${green}Preview ready:${reset} ${localUrl}`);
-  console.log(`${green}Network:${reset} ${networkUrl}`);
+
+  const width = 72;
+  const line = (text = '') => `│ ${text.padEnd(width - 4)} │`;
+  console.log('╭' + '─'.repeat(width - 2) + '╮');
+  console.log(line(`${cyan}${bold}Portfoliable preview ready${reset}`));
+  console.log(line(`${dim}Serving the production build locally.${reset}`));
+  console.log(line());
+  console.log(line(`${bold}Local:${reset} ${localUrl}`));
+  console.log(line(`${bold}On your network:${reset} ${networkUrl}`));
+  console.log('╰' + '─'.repeat(width - 2) + '╯');
+  console.log(`${dim}│  Press Ctrl+C to stop the server${reset}\n`);
 
   process.on('SIGINT', async () => {
     await previewServer.httpServer.close();
@@ -221,8 +244,14 @@ async function main() {
     return;
   }
 
+  if (command === 'scaffold-case') {
+    const exitCode = runCaseScaffold({ outFile: flags.out || undefined, name: flags.name || undefined, force: flags.force });
+    process.exit(exitCode);
+    return;
+  }
+
   console.error(`${red}${bold}Unknown command:${reset} ${command}`);
-  console.log('Use one of: dev, build, preview, validate, scaffold');
+  console.log('Use one of: dev, build, preview, validate, scaffold, scaffold-case');
   process.exit(1);
 }
 

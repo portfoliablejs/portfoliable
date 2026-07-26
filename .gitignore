@@ -30,3 +30,6 @@ copilot-instructions.md
 *.njsproj
 *.sln
 *.sw?
+
+# Internal release playbooks
+.internal/

@@ -1,0 +1,4 @@
+# npm publish is controlled by the files field in package.json
+# Keep this file as an explicit guard for local clutter.
+*.log
+.DS_Store
