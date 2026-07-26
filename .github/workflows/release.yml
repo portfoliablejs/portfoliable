@@ -105,12 +105,11 @@ jobs:
           git push origin main
           git push origin --tags
 
-      - name: Setup npmjs.org publishing (OIDC)
+      - name: Upgrade npm for OIDC Trusted Publishing
         if: steps.release-plan.outputs.dry_run != 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          registry-url: https://registry.npmjs.org
+        run: |
+          npm install -g npm@latest
+          hash -r
 
       - name: Diagnostics for npm trusted publishing
         if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
