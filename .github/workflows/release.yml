@@ -79,7 +79,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sync release commit
-        run: git pull --rebase origin main
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Release create-portfoliable
         env:
