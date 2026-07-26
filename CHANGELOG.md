@@ -1,3 +1,9 @@
+## [2.4.11](https://github.com/portfoliablejs/portfoliable/compare/v2.4.10...v2.4.11) (2026-07-26)
+
+### Bug Fixes
+
+* ci: add npm trusted-publish diagnostics and explicit registries ([4802b1a](https://github.com/portfoliablejs/portfoliable/commit/4802b1ab7a34fcbdca09dc04eba3f792e7fd9e3d))
+
 ## [2.4.10](https://github.com/portfoliablejs/portfoliable/compare/v2.4.9...v2.4.10) (2026-07-26)
 
 ### Bug Fixes
@@ -292,6 +298,7 @@ Initial stable release of Lio Schimanko's Portfolio as an open-source Single-Pag
 
 ### Notes
 This release establishes the public baseline for future improvements and versioned updates.
+
 
 
 
