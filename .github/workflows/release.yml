@@ -2,29 +2,30 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
   contents: write
+  packages: write
 
 jobs:
-  deploy-release:
-    name: Deploy Release
+  release:
+    name: Release
     runs-on: ubuntu-latest
-    environment:
-      name: Release
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci
@@ -32,7 +33,10 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Deploy release site to GitHub Pages branch
+      - name: Initializer smoke
+        run: npm run smoke:initializer
+
+      - name: Deploy site to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -40,8 +44,19 @@ jobs:
           publish_dir: ./dist
           keep_files: true
 
-      - name: Publish package to npm
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: npm publish --access public
+      - name: Release @portfoliablejs/portfoliable
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
+      - name: Sync release commit
+        run: git pull --rebase origin main
+
+      - name: Release create-portfoliable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release --config create-portfoliable/.releaserc.json

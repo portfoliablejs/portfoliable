@@ -3,6 +3,20 @@
 All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/2.0.0/) with these sections: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, and `Security`.
 
+## [2.3.2-alpha] - 2026-07-24
+
+### Added
+- Markdown case scaffold command: `npm run scaffold:case` and `npx @portfoliablejs/portfoliable scaffold-case`.
+- Generator help output now lists all available runtime and scaffold commands.
+- Starter app scaffolding now exposes a dedicated markdown case folder by default.
+
+### Changed
+- Generated starter projects now include `portfoliable-scaffold-case` and `scaffold-case-portfoliable` scripts.
+
+### Fixed
+- Consumer scaffold docs now explicitly use `npm create portfoliable@latest` as the supported bootstrap command.
+- `create-portfoliable` templates now avoid deep valence asset imports that fail under package export rules.
+
 ## [2.3.1-alpha] - 2026-07-24
 
 ### Added

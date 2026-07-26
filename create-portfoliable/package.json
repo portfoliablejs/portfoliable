@@ -1,0 +1,40 @@
+{
+  "name": "create-portfoliable",
+  "version": "0.1.7",
+  "description": "Initializer for creating Portfoliable consumer portfolio apps",
+  "private": false,
+  "type": "module",
+  "keywords": [
+    "create",
+    "initializer",
+    "portfolio",
+    "portfoliable",
+    "vite"
+  ],
+  "homepage": "https://github.com/portfoliablejs/portfoliable/tree/main/create-portfoliable",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/portfoliablejs/portfoliable.git",
+    "directory": "create-portfoliable"
+  },
+  "bugs": {
+    "url": "https://github.com/portfoliablejs/portfoliable/issues"
+  },
+  "files": [
+    "bin",
+    "templates",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "create-portfoliable": "bin/create-portfoliable.mjs"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
