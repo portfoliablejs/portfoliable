@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/portfoliablejs/portfoliable/compare/v2.3.4...v2.4.0) (2026-07-26)
+
+
+### Features
+
+* use trusted publishing with oidc instead of npm token ([4c636b3](https://github.com/portfoliablejs/portfoliable/commit/4c636b34e7dec3c8b1a81e632e32eb13c1702622))
+
 ## [2.3.4](https://github.com/portfoliablejs/portfoliable/compare/v2.3.3...v2.3.4) (2026-07-26)
 
 
