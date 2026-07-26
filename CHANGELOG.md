@@ -1,3 +1,10 @@
+## [2.4.4](https://github.com/portfoliablejs/portfoliable/compare/v2.4.3...v2.4.4) (2026-07-26)
+
+
+### Bug Fixes
+
+* add changelog plugin to create-portfoliable release config ([8c4ec88](https://github.com/portfoliablejs/portfoliable/commit/8c4ec885694c3523f80399917417bf08713567f4))
+
 ## [2.4.3](https://github.com/portfoliablejs/portfoliable/compare/v2.4.2...v2.4.3) (2026-07-26)
 
 
