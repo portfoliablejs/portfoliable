@@ -86,4 +86,16 @@ jobs:
       - name: Release create-portfoliable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release --config ./create-portfoliable/.releaserc.json
+        run: |
+          # Find the latest create-portfoliable tag
+          latest_tag=$(git describe --tags --match "create-portfoliable-v*" --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$latest_tag" ]; then
+            latest_tag="HEAD~999"
+          fi
+          # Check if there are commits affecting create-portfoliable since the last tag
+          commits_since_last=$(git log ${latest_tag}..HEAD --oneline -- create-portfoliable 2>/dev/null | wc -l)
+          if [ "$commits_since_last" -gt 0 ]; then
+            npx semantic-release --config ./create-portfoliable/.releaserc.json
+          else
+            echo "No commits affecting create-portfoliable since last release, skipping"
+          fi
