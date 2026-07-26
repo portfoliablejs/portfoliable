@@ -1,3 +1,10 @@
+## [2.4.3](https://github.com/portfoliablejs/portfoliable/compare/v2.4.2...v2.4.3) (2026-07-26)
+
+
+### Bug Fixes
+
+* use config path from root for create-portfoliable release ([d03d07d](https://github.com/portfoliablejs/portfoliable/commit/d03d07d152707697c0e89a54e1f07c828397597e))
+
 ## [2.4.2](https://github.com/portfoliablejs/portfoliable/compare/v2.4.1...v2.4.2) (2026-07-26)
 
 
