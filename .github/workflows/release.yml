@@ -116,7 +116,8 @@ jobs:
       - name: Diagnostics for npm trusted publishing
         if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
-          echo "package=$(node -p \"require('./package.json').name\")"
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          echo "package=$PACKAGE_NAME"
           echo "registry=$(npm config get registry)"
           echo "scope_registry=$(npm config get @portfoliablejs:registry)"
           npm ping || true
