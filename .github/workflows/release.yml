@@ -111,10 +111,30 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
+          scope: '@portfoliablejs'
+
+      - name: Diagnostics for npm trusted publishing
+        if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        run: |
+          echo "package=$(node -p \"require('./package.json').name\")"
+          echo "registry=$(npm config get registry)"
+          echo "scope_registry=$(npm config get @portfoliablejs:registry)"
+          npm ping || true
+          npm whoami || true
+          REGISTRY="$(npm config get registry)"
+          SCOPE_REGISTRY="$(npm config get @portfoliablejs:registry)"
+          if [ "$REGISTRY" != "https://registry.npmjs.org/" ] && [ "$REGISTRY" != "https://registry.npmjs.org" ]; then
+            echo "Unexpected npm registry: $REGISTRY"
+            exit 1
+          fi
+          if [ -n "$SCOPE_REGISTRY" ] && [ "$SCOPE_REGISTRY" != "https://registry.npmjs.org/" ] && [ "$SCOPE_REGISTRY" != "https://registry.npmjs.org" ]; then
+            echo "Unexpected @portfoliablejs scope registry: $SCOPE_REGISTRY"
+            exit 1
+          fi
 
       - name: Publish @portfoliablejs/portfoliable to npm
         if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access public --registry=https://registry.npmjs.org
 
       - name: Setup GitHub Packages publishing
         if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
@@ -126,7 +146,7 @@ jobs:
 
       - name: Publish @portfoliablejs/portfoliable to GitHub Packages
         if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        run: npm publish --access public
+        run: npm publish --access public --registry=https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -134,7 +154,7 @@ jobs:
         if: steps.release-plan.outputs.released_initializer == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
           cd create-portfoliable
-          npm publish --provenance --access public
+          npm publish --provenance --access public --registry=https://registry.npmjs.org
 
       - name: Create GitHub release for @portfoliablejs/portfoliable
         if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
