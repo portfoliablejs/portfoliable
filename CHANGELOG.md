@@ -1,3 +1,10 @@
+## [2.4.6](https://github.com/portfoliablejs/portfoliable/compare/v2.4.5...v2.4.6) (2026-07-26)
+
+
+### Bug Fixes
+
+* skip root release if no commits since last tag ([9ec9eb0](https://github.com/portfoliablejs/portfoliable/commit/9ec9eb0d74db30afafa595c6d0f811e83e2e77aa))
+
 ## [2.4.5](https://github.com/portfoliablejs/portfoliable/compare/v2.4.4...v2.4.5) (2026-07-26)
 
 
