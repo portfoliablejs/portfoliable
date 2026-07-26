@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, appendFileSync } from "node:fs";
 
 const REPO_URL = "https://github.com/portfoliablejs/portfoliable";
 const isDryRun = process.argv.includes("--dry-run");
+const shouldSign = process.env.RELEASE_SIGN === "true";
 
 const packages = [
   {
@@ -274,14 +275,21 @@ function run() {
   git(["add", ...assets]);
 
   const summary = releases.map((plan) => `${plan.displayName}@${plan.nextVersion}`).join(", ");
-  git(["commit", "-m", `chore(release): ${summary} [skip ci]`]);
+  const commitArgs = ["commit", "-m", `chore(release): ${summary} [skip ci]`];
+  if (shouldSign) {
+    commitArgs.splice(1, 0, "-S");
+  }
+  git(commitArgs);
 
   for (const plan of releases) {
     const tagExists = git(["rev-parse", "-q", "--verify", `refs/tags/${plan.nextTag}`], {
       allowFailure: true,
     });
     if (!tagExists) {
-      git(["tag", plan.nextTag]);
+      const tagArgs = shouldSign
+        ? ["tag", "-s", plan.nextTag, "-m", `Release ${plan.nextTag}`]
+        : ["tag", "-a", plan.nextTag, "-m", `Release ${plan.nextTag}`];
+      git(tagArgs);
     }
   }
 }

@@ -34,6 +34,34 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Import GPG key for verified commits and tags
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
+        env:
+          RELEASE_GPG_PRIVATE_KEY: ${{ secrets.RELEASE_GPG_PRIVATE_KEY }}
+          RELEASE_GPG_KEY_ID: ${{ secrets.RELEASE_GPG_KEY_ID }}
+        run: |
+          if [ -z "${RELEASE_GPG_PRIVATE_KEY:-}" ]; then
+            echo "Missing required secret: RELEASE_GPG_PRIVATE_KEY"
+            exit 1
+          fi
+          if printf '%s' "$RELEASE_GPG_PRIVATE_KEY" | base64 --decode > /tmp/release-private-key.asc 2>/dev/null; then
+            true
+          else
+            printf '%s' "$RELEASE_GPG_PRIVATE_KEY" > /tmp/release-private-key.asc
+          fi
+          gpg --batch --import /tmp/release-private-key.asc
+          KEY_ID="$RELEASE_GPG_KEY_ID"
+          if [ -z "$KEY_ID" ]; then
+            KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | awk '/^sec/{print $2}' | awk -F/ '{print $2}' | head -n 1)
+          fi
+          if [ -z "$KEY_ID" ]; then
+            echo "Could not determine signing key id"
+            exit 1
+          fi
+          git config user.signingkey "$KEY_ID"
+          git config commit.gpgsign true
+          git config tag.gpgsign true
+
       - name: Install dependencies
         run: npm ci
 
@@ -60,6 +88,7 @@ jobs:
         id: release-plan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SIGN: "true"
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
             echo "dry_run=true" >> $GITHUB_OUTPUT
@@ -77,22 +106,19 @@ jobs:
 
       - name: Publish @portfoliablejs/portfoliable to npm
         if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access public --registry=https://registry.npmjs.org
 
       - name: Publish @portfoliablejs/portfoliable to GitHub Packages
         if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        run: |
-          echo "@portfoliablejs:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" >> ~/.npmrc
-          npm publish --registry=https://npm.pkg.github.com --access public
+        run: npm publish --registry=https://npm.pkg.github.com --access public
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish create-portfoliable to npm
         if: steps.release-plan.outputs.released_initializer == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
           cd create-portfoliable
-          npm publish --provenance --access public
+          npm publish --provenance --access public --registry=https://registry.npmjs.org
 
       - name: Create GitHub release for @portfoliablejs/portfoliable
         if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
