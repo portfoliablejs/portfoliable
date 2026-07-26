@@ -37,5 +37,6 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
-  }
+  },
+  "funding": "https://github.com/sponsors/schimanko"
 }
