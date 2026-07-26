@@ -1,3 +1,10 @@
+## [2.3.2](https://github.com/portfoliablejs/portfoliable/compare/v2.3.1...v2.3.2) (2026-07-26)
+
+
+### Bug Fixes
+
+* update @portfoliablejs/valence to 0.2.0 ([36370cc](https://github.com/portfoliablejs/portfoliable/commit/36370cc9622dbbb3b7ada2ae2d311c110fd6e935))
+
 # Changelog
 
 All notable changes to this project are documented in this file.
