@@ -1,3 +1,9 @@
+## [2.4.13](https://github.com/portfoliablejs/portfoliable/compare/v2.4.12...v2.4.13) (2026-07-26)
+
+### Bug Fixes
+
+* ci: remove scoped setup and explicit publish registry flags ([5d08c62](https://github.com/portfoliablejs/portfoliable/commit/5d08c6289d228d07cb241eb1764d90c60ac79a54))
+
 ## [2.4.12](https://github.com/portfoliablejs/portfoliable/compare/v2.4.11...v2.4.12) (2026-07-26)
 
 ### Bug Fixes
@@ -304,6 +310,7 @@ Initial stable release of Lio Schimanko's Portfolio as an open-source Single-Pag
 
 ### Notes
 This release establishes the public baseline for future improvements and versioned updates.
+
 
 
 
