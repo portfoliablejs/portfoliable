@@ -1,6 +1,6 @@
 {
   "name": "create-portfoliable",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Initializer for creating Portfoliable consumer portfolio apps",
   "private": false,
   "type": "module",
