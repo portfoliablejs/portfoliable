@@ -62,19 +62,14 @@ jobs:
             echo "released=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Setup Node (GitHub Packages auth)
-        if: steps.portfoliable-release.outputs.released == 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@portfoliablejs'
-
       - name: Publish @portfoliablejs/portfoliable to GitHub Packages
         if: steps.portfoliable-release.outputs.released == 'true'
-        run: npm publish --registry=https://npm.pkg.github.com --access public
+        run: |
+          echo "@portfoliablejs:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" >> ~/.npmrc
+          npm publish --registry=https://npm.pkg.github.com --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sync release commit
         run: git pull --rebase origin main
