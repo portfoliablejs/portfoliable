@@ -1,3 +1,9 @@
+## [2.4.15](https://github.com/portfoliablejs/portfoliable/compare/v2.4.14...v2.4.15) (2026-07-26)
+
+### Bug Fixes
+
+* chore: add funding field to package.json ([71129c8](https://github.com/portfoliablejs/portfoliable/commit/71129c8035e49c4c7390474948812a3a4de2130e))
+
 ## [2.4.14](https://github.com/portfoliablejs/portfoliable/compare/v2.4.13...v2.4.14) (2026-07-26)
 
 ### Bug Fixes
@@ -316,6 +322,7 @@ Initial stable release of Lio Schimanko's Portfolio as an open-source Single-Pag
 
 ### Notes
 This release establishes the public baseline for future improvements and versioned updates.
+
 
 
 

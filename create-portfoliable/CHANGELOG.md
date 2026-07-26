@@ -1,3 +1,9 @@
+## [0.1.10](https://github.com/portfoliablejs/portfoliable/compare/create-portfoliable-v0.1.9...create-portfoliable-v0.1.10) (2026-07-26)
+
+### Bug Fixes
+
+* chore: add funding field to package.json ([71129c8](https://github.com/portfoliablejs/portfoliable/commit/71129c8035e49c4c7390474948812a3a4de2130e))
+
 ## [0.1.9](https://github.com/portfoliablejs/portfoliable/compare/create-portfoliable-v0.1.7...create-portfoliable-v0.1.9) (2026-07-26)
 
 ### Bug Fixes
@@ -52,5 +58,6 @@ All notable changes to this initializer are documented in this file.
 
 ### Added
 - Initial public initializer package release.
+
 
 
