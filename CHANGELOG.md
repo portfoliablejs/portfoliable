@@ -1,3 +1,9 @@
+## [2.4.12](https://github.com/portfoliablejs/portfoliable/compare/v2.4.11...v2.4.12) (2026-07-26)
+
+### Bug Fixes
+
+* ci: fix bash syntax error for pkg name ([43a20d4](https://github.com/portfoliablejs/portfoliable/commit/43a20d46f156f298222aca2721c3426582f7dee7))
+
 ## [2.4.11](https://github.com/portfoliablejs/portfoliable/compare/v2.4.10...v2.4.11) (2026-07-26)
 
 ### Bug Fixes
@@ -298,6 +304,7 @@ Initial stable release of Lio Schimanko's Portfolio as an open-source Single-Pag
 
 ### Notes
 This release establishes the public baseline for future improvements and versioned updates.
+
 
 
 
