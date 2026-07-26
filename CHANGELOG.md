@@ -1,3 +1,10 @@
+## [2.4.2](https://github.com/portfoliablejs/portfoliable/compare/v2.4.1...v2.4.2) (2026-07-26)
+
+
+### Bug Fixes
+
+* cd into create-portfoliable before running semantic-release ([209c32d](https://github.com/portfoliablejs/portfoliable/commit/209c32dc4cea1ef8bdab2c8a14fc2c85396136b1))
+
 ## [2.4.1](https://github.com/portfoliablejs/portfoliable/compare/v2.4.0...v2.4.1) (2026-07-26)
 
 
