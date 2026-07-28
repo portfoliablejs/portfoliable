@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// File: scripts/scaffold-consumer.mjs
+// Purpose: Generate a starter consumer cases file for Portfoliable projects.
+// Author: Lio Schimanko
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -42,6 +45,7 @@ const TEMPLATE_CONTENT = `export const portfolioCases = [
 ];
 `;
 
+// Write the scaffold file, refusing to overwrite unless explicitly requested.
 export function runScaffold(options = {}) {
   const cwd = options.cwd || process.cwd();
   const outFile = options.outFile || DEFAULT_OUTPUT;

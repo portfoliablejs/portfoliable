@@ -1,3 +1,7 @@
+// File: create-portfoliable/templates/src/data.js
+// Purpose: Provide starter case data for generated consumer apps.
+// Author: Lio Schimanko
+
 import iPhone12BlackFrame from './assets/devices/iphone-12-black.avif';
 
 export const portfolioCases = [

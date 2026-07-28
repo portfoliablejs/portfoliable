@@ -1,4 +1,6 @@
-// src/i18n.js
+// File: src/i18n.js
+// Purpose: Provide runtime language selection and translation helpers.
+// Author: Lio Schimanko
 
 const urlParams = new URLSearchParams(window.location.search);
 const urlLang = urlParams.get('lang');

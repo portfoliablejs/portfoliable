@@ -1,13 +1,10 @@
-// src/main.js
+// File: src/main.js
+// Purpose: Boot the Portfoliable application shell in the browser.
+// Author: Lio Schimanko
 
-// Import application-specific logic first
 import './i18n.js';
-
-// Import the main App Shell component
 import './App.js';
-
-// Import global styles
 import './style.css';
 
-// Mount the application
+// Mount the custom element that renders the runtime shell.
 document.getElementById('app').innerHTML = `<app-shell></app-shell>`;

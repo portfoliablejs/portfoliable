@@ -83,7 +83,7 @@ Use `--force` to overwrite an existing file.
 
 ## Content model
 
-Case markdown files in this repo are examples under `src/content/cases/`.
+Case markdown files in this repo are examples under `src/content/cases/` and are the only runtime content source.
 
 Validation runs before `dev`, `build`, and `preview`.
 If validation fails, fix fields in frontmatter or language sections first.

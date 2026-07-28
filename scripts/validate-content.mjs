@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// File: scripts/validate-content.mjs
+// Purpose: Validate template case markdown before dev, build, or preview.
+// Author: Lio Schimanko
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,6 +11,7 @@ import { parseCaseMarkdownWithDiagnostics } from '../src/parser/markdown.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const casesDir = path.resolve(__dirname, '../src/content/cases');
 
+// Collect every markdown case file from the cases directory.
 function listMarkdownFiles(dirPath) {
   if (!fs.existsSync(dirPath)) {
     return [];
@@ -26,14 +30,17 @@ function toRelPath(filePath) {
   return path.relative(path.resolve(__dirname, '..'), filePath);
 }
 
+// Guard against empty or non-string values.
 function isNonEmptyString(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
+// Check localized values that must define both language variants.
 function isLocalizedObject(value) {
   return Boolean(value) && typeof value === 'object' && isNonEmptyString(value.en) && isNonEmptyString(value.pt);
 }
 
+// Accept only URLs or project-local asset paths for link-like fields.
 function isValidUrlOrAssetPath(value) {
   if (!isNonEmptyString(value)) return false;
   const normalized = value.trim();
@@ -47,6 +54,7 @@ function isValidUrlOrAssetPath(value) {
   );
 }
 
+// Surface non-fatal content quality warnings for case metadata.
 function collectCaseLevelWarnings(caseData, contextLabel) {
   const warnings = [];
 
@@ -85,6 +93,7 @@ function collectCaseLevelWarnings(caseData, contextLabel) {
   return warnings;
 }
 
+// Detect duplicate ids and slugs across all parsed case files.
 function collectCrossFileErrors(parsedEntries) {
   const errors = [];
   const idToFile = new Map();
@@ -113,6 +122,7 @@ function collectCrossFileErrors(parsedEntries) {
   return errors;
 }
 
+// Run the complete content validation pass and report errors or warnings.
 export function runValidation() {
   const files = listMarkdownFiles(casesDir);
 

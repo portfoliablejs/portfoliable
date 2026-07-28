@@ -19,6 +19,7 @@ Important:
 - Ensure `@portfoliablejs/portfoliable` and `@portfoliablejs/valence` are publicly installable on npm.
 - The starter app stores editable markdown cases in `src/content/cases/` and loads them into the gallery automatically.
 - A fresh app includes 4 starter markdown cases and local thumbnail frame assets in `src/assets/devices/`.
+- The starter app keeps its markdown parser local to the generated template so the initializer stays self-contained.
 
 Generated scripts:
 - `npm run portfoliable`

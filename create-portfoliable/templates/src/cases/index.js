@@ -1,4 +1,8 @@
-import { parseCaseMarkdownWithDiagnostics } from '@portfoliablejs/portfoliable/src/parser/markdown.js';
+// File: create-portfoliable/templates/src/cases/index.js
+// Purpose: Load and normalize markdown cases for generated consumer apps.
+// Author: Lio Schimanko
+
+import { parseCaseMarkdownWithDiagnostics } from '../parser/markdown.js';
 import iPhone12BlackFrame from '../assets/devices/iphone-12-black.avif';
 import iPadPro11SilverLandscapeFrame from '../assets/devices/ipad-pro-11-silver-landscape.avif';
 import macBookPro13SpaceGreyFrame from '../assets/devices/macbook-pro-13-space-grey.avif';

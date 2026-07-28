@@ -1,4 +1,7 @@
-import { portfolioCases as legacyPortfolioCases } from '../data.js';
+// File: src/cases/index.js
+// Purpose: Load markdown case data for the runtime package.
+// Author: Lio Schimanko
+
 import { parseCaseMarkdownWithDiagnostics } from '../parser/markdown.js';
 
 function toLocalized(value, fallback) {
@@ -17,18 +20,16 @@ function toLocalized(value, fallback) {
   return { en: '', pt: '' };
 }
 
-function normalizeMarkdownCase(markdownCase, legacyCase) {
-  const normalized = { ...legacyCase, ...markdownCase };
+function normalizeMarkdownCase(markdownCase) {
+  const normalized = { ...markdownCase };
 
-  normalized.id = markdownCase.id || legacyCase.id;
-  normalized.slug = markdownCase.slug || legacyCase.slug;
-  normalized.title = toLocalized(markdownCase.title, legacyCase.title);
-  normalized.shortDesc = toLocalized(markdownCase.shortDesc, legacyCase.shortDesc);
-  normalized.readTime = toLocalized(markdownCase.readTime, legacyCase.readTime);
-  normalized.year = toLocalized(markdownCase.year, legacyCase.year);
-  normalized.thumbSrc = toLocalized(markdownCase.thumbSrc, legacyCase.thumbSrc);
-  normalized.desc = toLocalized(markdownCase.desc, legacyCase.desc);
-  normalized.descRecruiter = toLocalized(markdownCase.descRecruiter, legacyCase.descRecruiter || legacyCase.desc);
+  normalized.title = toLocalized(markdownCase.title);
+  normalized.shortDesc = toLocalized(markdownCase.shortDesc);
+  normalized.readTime = toLocalized(markdownCase.readTime);
+  normalized.year = toLocalized(markdownCase.year);
+  normalized.thumbSrc = toLocalized(markdownCase.thumbSrc);
+  normalized.desc = toLocalized(markdownCase.desc);
+  normalized.descRecruiter = toLocalized(markdownCase.descRecruiter, markdownCase.desc);
 
   return normalized;
 }
@@ -62,18 +63,10 @@ function loadMarkdownCases() {
 
 export function getPortfolioCases() {
   const markdownCases = loadMarkdownCases();
-  const mergedCases = [...legacyPortfolioCases];
 
-  markdownCases.forEach((markdownCase) => {
-    const legacyIndex = mergedCases.findIndex((item) => item.id === markdownCase.id);
+  if (markdownCases.length === 0) {
+    console.warn('[portfoliable] No markdown cases were loaded from src/content/cases.');
+  }
 
-    if (legacyIndex >= 0) {
-      mergedCases[legacyIndex] = normalizeMarkdownCase(markdownCase, mergedCases[legacyIndex]);
-      return;
-    }
-
-    mergedCases.push(normalizeMarkdownCase(markdownCase, {}));
-  });
-
-  return mergedCases;
+  return markdownCases.map((markdownCase) => normalizeMarkdownCase(markdownCase));
 }

@@ -67,6 +67,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check template sync
+        run: npm run check:templates
+
       - name: Build
         run: npm run build
 

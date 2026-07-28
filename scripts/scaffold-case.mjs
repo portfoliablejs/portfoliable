@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// File: scripts/scaffold-case.mjs
+// Purpose: Generate a starter markdown case for a Portfoliable consumer app.
+// Author: Lio Schimanko
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -6,6 +9,7 @@ import path from 'node:path';
 const DEFAULT_OUTPUT = 'src/content/cases/my-case.md';
 const DEFAULT_NAME = 'My Case';
 
+// Convert user input into a URL-safe slug.
 function toSlug(value) {
   return String(value || '')
     .trim()
@@ -14,6 +18,7 @@ function toSlug(value) {
     .replace(/^-+|-+$/g, '') || 'my-case';
 }
 
+  // Normalize a freeform case name into title case.
 function toTitle(value) {
   const cleaned = String(value || '')
     .trim()
@@ -28,6 +33,7 @@ function toTitle(value) {
     .join(' ');
 }
 
+  // Read CLI flags from the current process argv.
 function parseArgs(argv) {
   const args = argv.slice(2);
   const options = {
@@ -59,6 +65,7 @@ function parseArgs(argv) {
   return options;
 }
 
+// Build the markdown scaffold body used for new cases.
 function buildTemplate({ name, slug }) {
   const title = toTitle(name);
   const cleanSlug = toSlug(slug || name);
@@ -97,6 +104,7 @@ Descreva a solucao em portugues.
 `;
 }
 
+// Create the scaffold case file unless the destination already exists.
 export function runCaseScaffold(options = {}) {
   const cwd = options.cwd || process.cwd();
   const outFile = options.outFile || DEFAULT_OUTPUT;

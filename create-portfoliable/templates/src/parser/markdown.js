@@ -1,3 +1,7 @@
+// File: create-portfoliable/templates/src/parser/markdown.js
+// Purpose: Parse template markdown cases into normalized case data.
+// Author: Lio Schimanko
+// Note: Auto-synced from src/parser/markdown.js. Edit the canonical source only.
 function stripInlineMarkdown(text) {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -9,6 +13,7 @@ function stripInlineMarkdown(text) {
 const REQUIRED_SCALAR_FIELDS = ['id', 'slug'];
 const REQUIRED_LOCALIZED_FIELDS = ['title', 'shortDesc', 'readTime', 'year', 'thumbSrc'];
 
+// Convert the supported markdown subset into HTML for case bodies.
 function markdownToHtml(markdown) {
   const lines = markdown.split(/\r?\n/);
   const html = [];
@@ -64,6 +69,7 @@ function markdownToHtml(markdown) {
   return html.join('\n');
 }
 
+// Parse dotted frontmatter keys into nested objects.
 function parseFrontmatter(frontmatterText) {
   const output = {};
   const lines = frontmatterText.split(/\r?\n/);
@@ -98,6 +104,7 @@ function parseFrontmatter(frontmatterText) {
   return output;
 }
 
+// Split the body into localized EN and PT sections.
 function parseLocalizedBody(bodyText) {
   const sections = {
     en: '',
@@ -138,10 +145,12 @@ function parseLocalizedBody(bodyText) {
   };
 }
 
+// Guard against empty or non-string values.
 function isNonEmptyString(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
+// Validate the parsed case structure and surface human-readable errors.
 function validateCaseObject(caseData, bodyMeta, contextLabel) {
   const errors = [];
 
@@ -172,6 +181,7 @@ function validateCaseObject(caseData, bodyMeta, contextLabel) {
   return errors;
 }
 
+// Parse a single case markdown file and retain diagnostics for validation.
 export function parseCaseMarkdownWithDiagnostics(rawText, options = {}) {
   const contextLabel = options.filePath || 'markdown-case';
   const hasFrontmatter = rawText.startsWith('---');
@@ -210,6 +220,7 @@ export function parseCaseMarkdownWithDiagnostics(rawText, options = {}) {
   };
 }
 
+// Parse a case markdown file and return null when validation fails.
 export function parseCaseMarkdown(rawText) {
   const { caseData, errors } = parseCaseMarkdownWithDiagnostics(rawText);
   if (errors.length > 0) {

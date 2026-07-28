@@ -1,4 +1,6 @@
-// src/App.js
+// File: src/App.js
+// Purpose: Render the Portfoliable application shell and route runtime views.
+// Author: Lio Schimanko
 
 import { getPortfolioCases } from './cases/index.js';
 import { t } from './i18n.js';

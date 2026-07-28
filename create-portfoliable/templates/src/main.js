@@ -1,3 +1,7 @@
+// File: create-portfoliable/templates/src/main.js
+// Purpose: Boot the generated consumer app shell from the starter template.
+// Author: Lio Schimanko
+
 import '@portfoliablejs/portfoliable';
 import { portfolioCases } from './cases/index.js';
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// File: create-portfoliable/bin/create-portfoliable.mjs
+// Purpose: Create a new Portfoliable consumer app from starter templates.
+// Author: Lio Schimanko
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -216,7 +219,6 @@ function run() {
   writeFileFromTemplate(templateRoot, path.join('src', 'parser', 'markdown.js'), targetDir);
   copyTemplateDirectory(templateRoot, path.join('src', 'assets'), targetDir);
   copyTemplateTree(templateRoot, path.join('scripts', 'scaffold-case.mjs'), targetDir);
-  copyTemplateTree(templateRoot, path.join('src', 'content', 'README.md'), targetDir);
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'mobile-product-launch.md'), targetDir);
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'mobile-checkout-flow.md'), targetDir);
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'compact-research-archive.md'), targetDir);

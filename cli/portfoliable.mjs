@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// File: cli/portfoliable.mjs
+// Purpose: Main Portfoliable CLI for development, build, preview, validation, and scaffolding.
+// Author: Lio Schimanko
 
 import { createServer, build as viteBuild, preview as vitePreview } from 'vite';
 import os from 'node:os';
