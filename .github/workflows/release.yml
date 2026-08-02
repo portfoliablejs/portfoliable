@@ -29,9 +29,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           cache-dependency-path: create-portfoliable/package-lock.json
+          package-manager-cache: false
+          registry-url: https://registry.npmjs.org/
 
       - name: Import GPG key for verified commits and tags
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
@@ -101,8 +103,6 @@ jobs:
 
       - name: Publish create-portfoliable to npm
         if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        env:
-          NODE_AUTH_TOKEN: ""
         run: |
           cd create-portfoliable
           npm publish --provenance --access public
