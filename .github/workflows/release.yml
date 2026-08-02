@@ -126,7 +126,7 @@ jobs:
             -d "{\"tag_name\":\"${TAG}\",\"name\":\"${TAG}\",\"generate_release_notes\":true}"
 
   deploy-pages:
-    name: Deploy site to GitHub Pages
+    name: Release
     needs: release
     if: github.event_name != 'workflow_dispatch' || inputs.dry_run != true
     runs-on: ubuntu-latest
@@ -134,9 +134,9 @@ jobs:
       pages: write
       id-token: write
     environment:
-      name: github-pages
+      name: Release
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy Pages artifact
+      - name: Deploy Release artifact
         id: deployment
         uses: actions/deploy-pages@v4

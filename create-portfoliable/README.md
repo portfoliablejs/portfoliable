@@ -176,3 +176,4 @@ create-portfoliable/
 - Canonical source of truth is this folder.
 - Root repository scripts are compatibility wrappers.
 - smoke:packed is the strongest publish-parity gate because it validates packed artifact behavior.
+- The GitHub Pages site is deployed from GitHub Actions on `main` as part of the release workflow.
