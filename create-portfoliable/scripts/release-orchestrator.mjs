@@ -4,7 +4,7 @@
 
 // === IMPORTS ===
 import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync, appendFileSync } from "node:fs";
+import { readFileSync, writeFileSync, appendFileSync, existsSync } from "node:fs";
 
 // === RELEASE CONFIGURATION ===
 // Defines canonical repository URL used for changelog compare and commit links.
@@ -20,7 +20,7 @@ const packages = [
     key: "package",
     displayName: "create-portfoliable",
     packageJsonPath: "create-portfoliable/package.json",
-    changelogPath: "create-portfoliable/CHANGELOG.md",
+    changelogPath: "CHANGELOG.md",
     tagPrefix: "v",
     paths: ["create-portfoliable"],
   },
@@ -222,8 +222,8 @@ function buildReleaseEntry({ nextVersion, previousTag, nextTag, commits }) {
 
 // Prepends new release entry to changelog while preserving existing content below.
 function prependChangelog(filePath, releaseEntry) {
-  // Reads existing changelog text.
-  const existing = readFileSync(filePath, "utf8");
+  // Reads existing changelog text, or initializes a minimal changelog when missing.
+  const existing = existsSync(filePath) ? readFileSync(filePath, "utf8") : "# Changelog\n\n";
   // Prepends release entry while preserving existing history below.
   const next = `${releaseEntry}\n\n${existing.trimStart()}\n`;
   writeFileSync(filePath, next, "utf8");
