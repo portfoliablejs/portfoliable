@@ -1,3 +1,9 @@
+## [0.5.1](https://github.com/portfoliablejs/portfoliable/compare/v0.5.0...v0.5.1) (2026-08-02)
+
+### Bug Fixes
+
+* docs(create-portfoliable): note release deployment source ([ea93662](https://github.com/portfoliablejs/portfoliable/commit/ea93662a45f801f2ca0bdf458d8d1c8a480d7156))
+
 ## [0.5.0](https://github.com/portfoliablejs/portfoliable/compare/v0.4.15...v0.5.0) (2026-08-02)
 
 ### Features
@@ -68,4 +74,5 @@ The repository tag history already contains:
 ## Legacy Note
 
 Earlier pre-centralization changelog entries using mixed package/release formats are considered archived history. The active runtime release line is the v0.x series above.
+
 
