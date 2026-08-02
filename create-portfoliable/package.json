@@ -1,7 +1,7 @@
 {
   "name": "create-portfoliable",
-  "version": "0.1.10",
-  "description": "Initializer for creating Portfoliable consumer portfolio apps",
+  "version": "0.4.15",
+  "description": "Unified Portfoliable package with initializer and runtime CLI",
   "private": false,
   "type": "module",
   "keywords": [
@@ -22,16 +22,52 @@
   },
   "files": [
     "bin",
+    "cli",
+    "scripts",
+    "src",
+    "css",
+    "public",
+    "index.html",
+    "portfoliable.config.js",
+    "vite.config.js",
     "templates",
     "CHANGELOG.md",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
     "README.md",
+    "SECURITY.md",
     "LICENSE"
   ],
   "engines": {
     "node": ">=18"
   },
+  "main": "src/App.js",
   "bin": {
-    "create-portfoliable": "bin/create-portfoliable.mjs"
+    "create-portfoliable": "bin/create-portfoliable.mjs",
+    "portfoliable": "cli/portfoliable.mjs"
+  },
+  "scripts": {
+    "postinstall": "node ./scripts/ensure-valence-index-css.mjs",
+    "ensure:valence": "node ./scripts/ensure-valence-index-css.mjs",
+    "validate:content": "node ./cli/portfoliable.mjs validate",
+    "predev": "npm run ensure:valence && npm run validate:content",
+    "prebuild": "npm run ensure:valence && npm run validate:content",
+    "prepreview": "npm run ensure:valence && npm run validate:content",
+    "portfoliable": "node ./cli/portfoliable.mjs dev",
+    "dev": "npm run portfoliable --",
+    "build": "node ./cli/portfoliable.mjs build",
+    "preview": "node ./cli/portfoliable.mjs preview",
+    "thumbnail:options": "node ./cli/portfoliable.mjs thumbnail-options",
+    "create:case": "node ./cli/portfoliable.mjs create-case",
+    "scaffold:case": "node ./cli/portfoliable.mjs scaffold-case",
+    "verify:integration": "node ./scripts/verify-integration.mjs",
+    "smoke:homeview": "node ./scripts/smoke-homeview.mjs",
+    "smoke:initializer": "node ./scripts/smoke-initializer.mjs",
+    "smoke:packed": "node ./scripts/smoke-packed.mjs"
+  },
+  "dependencies": {
+    "@portfoliablejs/valence": "^0.1.0",
+    "vite": "^8.1.1"
   },
   "license": "MIT",
   "publishConfig": {

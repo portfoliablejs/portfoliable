@@ -2,7 +2,7 @@
 // Purpose: Boot the generated consumer app shell from the starter template.
 // Author: Lio Schimanko
 
-import '@portfoliablejs/portfoliable';
+import 'create-portfoliable';
 import { portfolioCases } from './cases/index.js';
 
 const appContainer = document.getElementById('app');

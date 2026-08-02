@@ -1,49 +1,178 @@
 # create-portfoliable
 
-CLI initializer used by `npm create portfoliable@latest`.
+Unified runtime and initializer package for the Portfoliable project.
 
-Important:
-- Run `npm create portfoliable@latest`, not `npm run create portfoliable@latest`.
+This package provides:
 
-## Usage
+- Initializer command: npm create portfoliable@latest
+- Runtime CLI command: portfoliable
+- Runtime source, build config, validation, and smoke checks
+
+## Quick Start
 
 ```bash
 npm create portfoliable@latest my-portfolio
 cd my-portfolio
+npm run portfoliable
 ```
 
-By default, the initializer installs dependencies and starts the preview server immediately so you can inspect the starter app without running another command.
+Generated project scripts:
 
-Important:
-- This initializer generates a project that depends on `@portfoliablejs/portfoliable` from npm.
-- Ensure `@portfoliablejs/portfoliable` and `@portfoliablejs/valence` are publicly installable on npm.
-- The starter app stores editable markdown cases in `src/content/cases/` and loads them into the gallery automatically.
-- A fresh app includes 4 starter markdown cases and local thumbnail frame assets in `src/assets/devices/`.
-- The starter app keeps its markdown parser local to the generated template so the initializer stays self-contained.
+- npm run portfoliable
+- npm run portfoliable-build
+- npm run portfoliable-preview
+- npm run portfoliable-thumbnail-options
+- npm run portfoliable-create-case
+- npm run portfoliable-scaffold-case
 
-Generated scripts:
-- `npm run portfoliable`
-- `npm run portfoliable-build`
-- `npm run build-portfoliable`
-- `npm run portfoliable-preview`
-- `npm run preview-portfoliable`
-- `npm run portfoliable-scaffold-data`
-- `npm run scaffold-data-portfoliable`
-- `npm run portfoliable-scaffold-case`
-- `npm run scaffold-case-portfoliable`
+## Maintainer Validation
 
-Optional flags:
+From this folder:
 
 ```bash
-npm create portfoliable@latest my-portfolio -- --no-install
-npm create portfoliable@latest my-portfolio -- --force
-npm create portfoliable@latest my-portfolio -- --no-preview
+npm run validate:content
+npm run smoke:initializer
+npm run smoke:packed
+npm run build
 ```
 
-## Generated commands
+## Governance
 
-- `npm run portfoliable`
-- `npm run portfoliable-build`
-- `npm run portfoliable-preview`
-- `npm run portfoliable-scaffold-data`
-- `npm run portfoliable-scaffold-case`
+- Code of Conduct: CODE_OF_CONDUCT.md
+- Contributing: CONTRIBUTING.md
+- Security: SECURITY.md
+
+## Runtime File Tree
+
+```text
+create-portfoliable/
+  .npmignore
+  CHANGELOG.md
+  CODE_OF_CONDUCT.md
+  CONTRIBUTING.md
+  LICENSE
+  README.md
+  SECURITY.md
+  index.html
+  package.json
+  portfoliable.config.js
+  vite.config.js
+  bin/
+    create-portfoliable.mjs
+  cli/
+    portfoliable.mjs
+  scripts/
+    check-updates.mjs
+    ensure-valence-index-css.mjs
+    release-orchestrator.mjs
+    scaffold-case.mjs
+    scaffold-consumer.mjs
+    smoke-homeview.mjs
+    smoke-initializer.mjs
+    smoke-packed.mjs
+    sync-template-shared.mjs
+    validate-content.mjs
+    verify-integration.mjs
+  src/
+    App.js
+    i18n.js
+    main.js
+    style.css
+    cases/
+    content/
+    parser/
+    stories/
+  templates/
+    gitignore
+    index.html
+    scripts/
+      scaffold-case.mjs
+    src/
+      main.js
+      cases/
+      content/
+      parser/
+  public/
+    favicon.svg
+    icons.svg
+  css/
+  dist/
+```
+
+## Runtime File Map
+
+### Top-level files
+
+- .npmignore: npm ignore behavior outside the files allow-list.
+- CHANGELOG.md: canonical runtime release history.
+- CODE_OF_CONDUCT.md: expected contributor behavior.
+- CONTRIBUTING.md: contribution flow, checks, and conventions.
+- LICENSE: project license.
+- README.md: runtime and maintainer documentation.
+- SECURITY.md: vulnerability reporting and disclosure process.
+- index.html: runtime app shell entry for Vite.
+- package.json: package metadata, scripts, binaries, dependencies.
+- portfoliable.config.js: runtime content and homeview config.
+- vite.config.js: dev server and production bundling config.
+
+### bin/
+
+- create-portfoliable.mjs: initializer executable used by npm create; scaffolds consumer projects.
+
+### cli/
+
+- portfoliable.mjs: runtime CLI for dev/build/preview/validate/scaffold/thumbnail commands.
+
+### scripts/
+
+- check-updates.mjs: maintenance check for runtime updates.
+- ensure-valence-index-css.mjs: compatibility and asset-link setup for valence mockups.
+- release-orchestrator.mjs: release planning, version bumping, changelog updates, tag output.
+- scaffold-case.mjs: generates markdown case starter files.
+- scaffold-consumer.mjs: helper routines for consumer scaffolding workflows.
+- smoke-homeview.mjs: verifies homeview and runtime bundle markers.
+- smoke-initializer.mjs: tests scaffold/build flow from local source package.
+- smoke-packed.mjs: tests scaffold/build flow from packed npm artifact for publish parity.
+- sync-template-shared.mjs: sync/check selected shared template/runtime files.
+- validate-content.mjs: validates markdown case frontmatter and structure.
+- verify-integration.mjs: combines validation and build verification for runtime and optional consumer.
+
+### src/
+
+- App.js: main runtime application shell and rendering orchestration.
+- i18n.js: localization resources and language resolution logic.
+- main.js: runtime bootstrapping entrypoint.
+- style.css: runtime base styles.
+- cases/: runtime case-loading and normalization utilities.
+- content/: bundled sample markdown case content.
+- parser/: markdown parsing and normalization logic.
+- stories/: story and visual integration assets used by runtime views.
+
+### templates/
+
+- gitignore: generated project gitignore template.
+- index.html: generated app html shell.
+- scripts/scaffold-case.mjs: generated project local case scaffolder.
+- src/main.js: generated app bootstrap file.
+- src/cases/: generated project case loading helpers.
+- src/content/: generated starter markdown cases.
+- src/parser/: generated project markdown parser copy.
+
+### public/
+
+- favicon.svg: browser tab icon for runtime app.
+- icons.svg: icon sprite/static runtime icon resource.
+
+### css/
+
+- Shared stylesheet space for runtime-level styling modules.
+
+### dist/
+
+- Build output generated by npm run build. Not source of truth.
+
+## Notes
+
+- Canonical source of truth is this folder.
+- Root repository scripts are compatibility wrappers.
+- smoke:packed is the strongest publish-parity gate because it validates packed artifact behavior.

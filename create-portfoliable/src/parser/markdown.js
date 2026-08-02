@@ -10,7 +10,7 @@ function stripInlineMarkdown(text) {
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 }
 
-const REQUIRED_SCALAR_FIELDS = ['id', 'slug'];
+const REQUIRED_SCALAR_FIELDS = ['id', 'slug', 'thumbCategory', 'thumbBrand', 'thumbModel', 'thumbColor'];
 const REQUIRED_LOCALIZED_FIELDS = ['title', 'shortDesc', 'readTime', 'year', 'thumbSrc'];
 
 // Convert the supported markdown subset into HTML for case bodies.
@@ -176,6 +176,10 @@ function validateCaseObject(caseData, bodyMeta, contextLabel) {
 
   if (bodyMeta.hasLangEnMarker !== bodyMeta.hasLangPtMarker) {
     errors.push(`${contextLabel}: language markers are unbalanced. Use both '<!-- lang:en -->' and '<!-- lang:pt -->'.`);
+  }
+
+  if (isNonEmptyString(caseData?.thumbDeviceSrc)) {
+    errors.push(`${contextLabel}: field 'thumbDeviceSrc' is not supported. Use thumbCategory + thumbBrand + thumbModel + thumbColor.`);
   }
 
   return errors;

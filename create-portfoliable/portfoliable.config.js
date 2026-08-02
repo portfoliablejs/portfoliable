@@ -1,23 +1,20 @@
 export default {
   homeView: {
     title: {
-      en: 'Your Portfolio Template',
+      en: 'Edit Title at /portfoliable.config.js',
       pt: 'Seu Template de Portfolio'
     },
     footer: {
-      en: 'Template footer. Replace with your own legal copy.',
+      en: 'Edit footer at /portfoliable.config.js',
       pt: 'Rodape template. Substitua pelo seu texto legal.'
     },
-    itemCount: 4,
+    itemCount: 6,
     engine: 'minimal',
     showBreadcrumb: false,
-    showLanguageMenu: false
+    showLanguageMenu: true
   },
   themeTokens: {
     '--color-bg': '#FFFFFF',
     '--color-black': '#000000'
-  },
-  galleryItemDefaults: {
-    device: 'iphone-17'
   }
 };

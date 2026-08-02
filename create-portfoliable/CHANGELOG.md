@@ -1,63 +1,58 @@
-## [0.1.10](https://github.com/portfoliablejs/portfoliable/compare/create-portfoliable-v0.1.9...create-portfoliable-v0.1.10) (2026-07-26)
-
-### Bug Fixes
-
-* chore: add funding field to package.json ([71129c8](https://github.com/portfoliablejs/portfoliable/commit/71129c8035e49c4c7390474948812a3a4de2130e))
-
-## [0.1.9](https://github.com/portfoliablejs/portfoliable/compare/create-portfoliable-v0.1.7...create-portfoliable-v0.1.9) (2026-07-26)
-
-### Bug Fixes
-
-* fix(release): trusted-publisher auth and signed release artifacts ([e029ec8](https://github.com/portfoliablejs/portfoliable/commit/e029ec86c48b2fd90da48b04b543096ba675cf13))
-* chore(release): @portfoliablejs/portfoliable@2.4.8, create-portfoliable@0.1.8 [skip ci] ([c7b20ef](https://github.com/portfoliablejs/portfoliable/commit/c7b20efbc0044292ec234fe75a70c7d01b116049))
-* chore(release): replace semantic-release with native auto-versioning ([160fa84](https://github.com/portfoliablejs/portfoliable/commit/160fa84661de3d2ad8c0afcd76ac3610588896af))
-* fix(release): set explicit angular preset for create-portfoliable ([4540f76](https://github.com/portfoliablejs/portfoliable/commit/4540f761bb8ae8b8b8edadf4fbab9b47d65e350e))
-* fix: add changelog plugin to create-portfoliable release config ([798b16a](https://github.com/portfoliablejs/portfoliable/commit/798b16a3e9238dd26e67819d22f8407d648db9c2))
-* chore: add semantic-release ([2aa7be5](https://github.com/portfoliablejs/portfoliable/commit/2aa7be5b3160d569f91769842616c34badc78cb6))
-
-## [0.1.8](https://github.com/portfoliablejs/portfoliable/compare/create-portfoliable-v0.1.7...create-portfoliable-v0.1.8) (2026-07-26)
-
-### Bug Fixes
-
-* chore(release): replace semantic-release with native auto-versioning ([160fa84](https://github.com/portfoliablejs/portfoliable/commit/160fa84661de3d2ad8c0afcd76ac3610588896af))
-* fix(release): set explicit angular preset for create-portfoliable ([4540f76](https://github.com/portfoliablejs/portfoliable/commit/4540f761bb8ae8b8b8edadf4fbab9b47d65e350e))
-* fix: add changelog plugin to create-portfoliable release config ([798b16a](https://github.com/portfoliablejs/portfoliable/commit/798b16a3e9238dd26e67819d22f8407d648db9c2))
-* chore: add semantic-release ([2aa7be5](https://github.com/portfoliablejs/portfoliable/commit/2aa7be5b3160d569f91769842616c34badc78cb6))
-
 # Changelog
 
-All notable changes to this initializer are documented in this file.
+All notable changes to create-portfoliable are documented in this file.
 
-## [0.1.7] - 2026-07-24
+Tag line in active use: v0.0.0 through v0.4.15.
 
-### Changed
-- Starter gallery mockups now vary across Thumbnail component device categories (mobile, tablet, desktop, wearable) using bundled local frame assets.
-
-### Fixed
-- Removed regression where all starter cases were forced to a single iPhone 12 frame.
-- Ensured starter frame assets map directly to real Thumbnail component mockup files, avoiding legacy placeholder device combinations.
-
-## [0.1.6] - 2026-07-24
-
-### Added
-- Automatic preview launch after `npm create portfoliable@latest` finishes installing dependencies.
-- A clearer starter command list in the initializer output.
-- A new generated case scaffold command: `npm run portfoliable-scaffold-case`.
-- Multiple markdown case files and valence-backed device frame fallbacks in generated starter projects.
-
-### Fixed
-- Generated projects now ship local `src/assets/devices/**` frame files so thumbnails render without relying on deep `@portfoliablejs/valence/src/...` imports.
-- Markdown case loading now uses markdown files as the single source of truth, with loader-level frame defaults for the 4 starter cases.
-- Starter docs now call out the correct initializer command (`npm create ...`, not `npm run create ...`).
+## [0.4.15](https://github.com/portfoliablejs/portfoliable/compare/v0.4.14...v0.4.15) (2026-08-02)
 
 ### Changed
-- Generated starter projects now include a markdown-first content folder under `src/content/cases/`.
-- Starter docs now point users to the case markdown files and command list.
 
-## [0.1.5] - 2026-07-24
+- Finalized single-package runtime identity under create-portfoliable.
+- Added runtime governance files: CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md.
+- Expanded runtime README with comprehensive file tree and file-purpose map.
+- Added packed-artifact smoke validation as release parity gate.
+- Updated release orchestration to v-prefixed tag lineage.
 
-### Added
-- Initial public initializer package release.
+### Fixed
 
+- Normalized runtime versioning narrative to the v0.x tag history.
 
+## Version Line Reference
 
+The repository tag history already contains:
+
+- v0.0.0
+- v0.0.1
+- v0.0.2
+- v0.1.0
+- v0.1.1
+- v0.1.2
+- v0.1.3
+- v0.2.0
+- v0.2.1
+- v0.3.0
+- v0.3.1
+- v0.3.2
+- v0.3.3
+- v0.3.4
+- v0.4.0
+- v0.4.1
+- v0.4.2
+- v0.4.3
+- v0.4.4
+- v0.4.5
+- v0.4.6
+- v0.4.7
+- v0.4.8
+- v0.4.9
+- v0.4.10
+- v0.4.11
+- v0.4.12
+- v0.4.13
+- v0.4.14
+- v0.4.15
+
+## Legacy Note
+
+Earlier pre-centralization changelog entries using mixed package/release formats are considered archived history. The active runtime release line is the v0.x series above.

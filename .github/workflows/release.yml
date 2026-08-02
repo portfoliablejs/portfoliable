@@ -33,6 +33,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: create-portfoliable/package-lock.json
 
       - name: Import GPG key for verified commits and tags
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
@@ -65,23 +66,20 @@ jobs:
           echo "RELEASE_SIGN=true" >> $GITHUB_ENV
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Check template sync
-        run: npm run check:templates
+        run: npm --prefix ./create-portfoliable ci
 
       - name: Build
-        run: npm run build
+        run: npm --prefix ./create-portfoliable run build
 
-      - name: Initializer smoke
-        run: npm run smoke:initializer
+      - name: Packed artifact smoke
+        run: npm --prefix ./create-portfoliable run smoke:packed
 
       - name: Deploy site to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./dist
+          publish_dir: ./create-portfoliable/dist
           keep_files: true
 
       - name: Configure git
@@ -96,10 +94,10 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
             echo "dry_run=true" >> $GITHUB_OUTPUT
-            node ./scripts/release-orchestrator.mjs --dry-run
+            node ./create-portfoliable/scripts/release-orchestrator.mjs --dry-run
           else
             echo "dry_run=false" >> $GITHUB_OUTPUT
-            node ./scripts/release-orchestrator.mjs
+            node ./create-portfoliable/scripts/release-orchestrator.mjs
           fi
 
       - name: Push release commit and tags
@@ -115,9 +113,9 @@ jobs:
           hash -r
 
       - name: Diagnostics for npm trusted publishing
-        if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
-          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PACKAGE_NAME=$(node -p "require('./create-portfoliable/package.json').name")
           echo "package=$PACKAGE_NAME"
           echo "registry=$(npm config get registry)"
           npm ping || true
@@ -128,49 +126,18 @@ jobs:
             exit 1
           fi
 
-      - name: Publish @portfoliablejs/portfoliable to npm
-        if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        run: npm publish --provenance --access public
-
-      - name: Setup GitHub Packages publishing
-        if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          registry-url: https://npm.pkg.github.com
-          scope: '@portfoliablejs'
-
-      - name: Publish @portfoliablejs/portfoliable to GitHub Packages
-        if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Publish create-portfoliable to npm
-        if: steps.release-plan.outputs.released_initializer == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
           cd create-portfoliable
           npm publish --provenance --access public
 
-      - name: Create GitHub release for @portfoliablejs/portfoliable
-        if: steps.release-plan.outputs.released_root == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG="${{ steps.release-plan.outputs.root_tag }}"
-          curl --silent --show-error --fail \
-            -X POST \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/releases" \
-            -d "{\"tag_name\":\"${TAG}\",\"name\":\"${TAG}\",\"generate_release_notes\":true}"
-
       - name: Create GitHub release for create-portfoliable
-        if: steps.release-plan.outputs.released_initializer == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="${{ steps.release-plan.outputs.initializer_tag }}"
+          TAG="${{ steps.release-plan.outputs.package_tag }}"
           curl --silent --show-error --fail \
             -X POST \
             -H "Authorization: Bearer $GITHUB_TOKEN" \

@@ -1,6 +1,8 @@
 ---
 id: wearable-companion
 slug: wearable-companion
+# Required thumbnail device fields (set all):
+# thumbCategory, thumbBrand, thumbModel, thumbColor
 title.en: Wearable Companion
 title.pt: Companheiro Wearable
 shortDesc.en: A glanceable watch-first experience for motion and micro-interactions.

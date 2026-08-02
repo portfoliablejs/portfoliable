@@ -1,9 +1,11 @@
 ---
 id: template-mobile-redesign
 slug: template-mobile-redesign
-title.en: Template Mobile Redesign
+# Required thumbnail device fields (set all):
+# thumbCategory, thumbBrand, thumbModel, thumbColor
+title.en: Templaign
 title.pt: Template Redesign Mobile
-shortDesc.en: A sample mobile redesign case focused on accessibility and clarity.
+shortDesc.en: A ty.
 shortDesc.pt: Um case de redesign mobile focado em acessibilidade e clareza.
 readTime.en: 4 min
 readTime.pt: 4 min
@@ -11,6 +13,10 @@ year.en: 2025 - Template Project
 year.pt: 2025 - Projeto Template
 thumbSrc.en: https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1200&auto=format&fit=crop
 thumbSrc.pt: https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1200&auto=format&fit=crop
+thumbCategory: mobile
+thumbBrand: apple
+thumbModel: Apple iPhone X
+thumbColor: Black
 ---
 <!-- lang:en -->
 ## Context

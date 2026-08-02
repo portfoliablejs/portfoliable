@@ -7,19 +7,11 @@ const shouldSign = process.env.RELEASE_SIGN === "true";
 
 const packages = [
   {
-    key: "root",
-    displayName: "@portfoliablejs/portfoliable",
-    packageJsonPath: "package.json",
-    changelogPath: "CHANGELOG.md",
-    tagPrefix: "v",
-    paths: [".", ":(exclude)create-portfoliable"],
-  },
-  {
-    key: "initializer",
+    key: "package",
     displayName: "create-portfoliable",
     packageJsonPath: "create-portfoliable/package.json",
     changelogPath: "create-portfoliable/CHANGELOG.md",
-    tagPrefix: "create-portfoliable-v",
+    tagPrefix: "v",
     paths: ["create-portfoliable"],
   },
 ];

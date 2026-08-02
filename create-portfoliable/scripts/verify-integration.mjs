@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const portfoliableRoot = path.resolve(__dirname, '..');
-const portfolioRoot = path.resolve(portfoliableRoot, '..', 'portfolio');
+const portfolioRoot = path.resolve(portfoliableRoot, '..', '..', 'portfolio');
 
 function runStep(label, command, args, cwd) {
   console.log(`\n[verify] ${label}`);

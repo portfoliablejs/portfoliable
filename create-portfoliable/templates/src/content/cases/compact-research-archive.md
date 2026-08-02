@@ -1,6 +1,8 @@
 ---
 id: compact-research-archive
 slug: compact-research-archive
+# Required thumbnail device fields (set all):
+# thumbCategory, thumbBrand, thumbModel, thumbColor
 title.en: Compact Research Archive
 title.pt: Arquivo Compacto de Pesquisa
 shortDesc.en: A dense research collection designed for quick scanning and note-taking.

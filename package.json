@@ -1,9 +1,9 @@
 {
   "name": "@portfoliablejs/portfoliable",
-  "version": "2.4.15",
-  "description": "Template-first portfolio engine powered by valence web components",
+  "version": "0.4.15",
+  "description": "Compatibility wrapper forwarding commands to create-portfoliable.",
   "license": "MIT",
-  "private": false,
+  "private": true,
   "type": "module",
   "homepage": "https://github.com/portfoliablejs/portfoliable",
   "repository": {
@@ -15,51 +15,35 @@
   },
   "files": [
     "cli",
-    "scripts",
-    "src",
-    "css",
-    "public",
-    "index.html",
-    "portfoliable.config.js",
-    "vite.config.js",
+    "create-portfoliable",
     "README.md",
     "LICENSE"
   ],
   "engines": {
     "node": ">=18"
   },
-  "main": "src/App.js",
   "bin": {
     "portfoliable": "cli/portfoliable.mjs"
   },
   "scripts": {
-    "postinstall": "node ./scripts/ensure-valence-index-css.mjs",
-    "ensure:valence": "node ./scripts/ensure-valence-index-css.mjs",
-    "sync:templates": "node ./scripts/sync-template-shared.mjs",
-    "check:templates": "node ./scripts/sync-template-shared.mjs --check",
-    "validate:content": "node ./cli/portfoliable.mjs validate",
-    "preportfoliable": "node ./scripts/check-updates.mjs",
-    "predev": "npm run ensure:valence && npm run check:templates && npm run validate:content",
-    "prebuild": "npm run ensure:valence && npm run check:templates && npm run validate:content",
-    "prepreview": "npm run ensure:valence && npm run check:templates && npm run validate:content",
-    "portfoliable": "node ./cli/portfoliable.mjs dev",
-    "dev": "npm run portfoliable --",
-    "build": "node ./cli/portfoliable.mjs build",
-    "preview": "node ./cli/portfoliable.mjs preview",
-    "scaffold:consumer": "node ./cli/portfoliable.mjs scaffold",
-    "scaffold:case": "node ./cli/portfoliable.mjs scaffold-case",
-    "verify:integration": "node ./scripts/verify-integration.mjs",
-    "smoke:homeview": "node ./scripts/smoke-homeview.mjs",
-    "smoke:initializer": "node ./scripts/smoke-initializer.mjs"
+    "postinstall": "npm --prefix ./create-portfoliable ci",
+    "ensure:valence": "npm --prefix ./create-portfoliable run ensure:valence",
+    "sync:templates": "echo 'sync:templates is retired; create-portfoliable is now canonical.'",
+    "check:templates": "echo 'check:templates is retired; create-portfoliable is now canonical.'",
+    "validate:content": "npm --prefix ./create-portfoliable run validate:content",
+    "portfoliable": "npm --prefix ./create-portfoliable run portfoliable --",
+    "dev": "npm --prefix ./create-portfoliable run dev --",
+    "build": "npm --prefix ./create-portfoliable run build",
+    "preview": "npm --prefix ./create-portfoliable run preview --",
+    "thumbnail:options": "npm --prefix ./create-portfoliable run thumbnail:options --",
+    "create:case": "npm --prefix ./create-portfoliable run create:case --",
+    "scaffold:case": "npm --prefix ./create-portfoliable run scaffold:case --",
+    "verify:integration": "npm --prefix ./create-portfoliable run verify:integration --",
+    "smoke:homeview": "npm --prefix ./create-portfoliable run smoke:homeview",
+    "smoke:initializer": "npm --prefix ./create-portfoliable run smoke:initializer",
+    "smoke:packed": "npm --prefix ./create-portfoliable run smoke:packed"
   },
-  "dependencies": {
-    "@portfoliablejs/valence": "^0.1.0",
-    "vite": "^8.1.1"
-  },
+  "dependencies": {},
   "devDependencies": {},
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
   "funding": "https://github.com/sponsors/schimanko"
 }

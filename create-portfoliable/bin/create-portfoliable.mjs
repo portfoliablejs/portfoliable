@@ -20,7 +20,7 @@ function parseArgs(argv) {
     target: DEFAULT_TARGET,
     force: false,
     install: true,
-    preview: true
+    launch: true
   };
 
   for (let i = 0; i < args.length; i += 1) {
@@ -37,7 +37,12 @@ function parseArgs(argv) {
     }
 
     if (arg === '--no-preview') {
-      options.preview = false;
+      options.launch = false;
+      continue;
+    }
+
+    if (arg === '--no-dev') {
+      options.launch = false;
       continue;
     }
 
@@ -55,27 +60,38 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log('Usage: npm create portfoliable@latest [project-name] [-- --force] [-- --no-install] [-- --no-preview]');
+  console.log('Usage: npm create portfoliable@latest [project-name] [-- --force] [-- --no-install] [-- --no-preview] [-- --no-dev]');
   console.log('');
   console.log('Options:');
   console.log('  --force       Create in a non-empty directory');
   console.log('  --no-install  Skip npm install');
-  console.log('  --no-preview  Skip auto-starting the preview server');
+  console.log('  --no-preview  Skip auto-starting live preview (compat alias for --no-dev)');
+  console.log('  --no-dev      Skip auto-starting live preview');
 }
 
 function printCommandsBox() {
-  const width = 72;
+  const width = 86;
   const line = (text = '') => `│ ${text.padEnd(width - 4)} │`;
 
   console.log('╭' + '─'.repeat(width - 2) + '╮');
   console.log(line('Available commands'));
   console.log(line());
-  console.log(line('npm run portfoliable'));
-  console.log(line('npm run portfoliable-build | npm run build-portfoliable'));
-  console.log(line('npm run portfoliable-preview | npm run preview-portfoliable'));
-  console.log(line('npm run portfoliable-scaffold-data | npm run scaffold-data-portfoliable'));
-  console.log(line('npm run portfoliable-scaffold-case | npm run scaffold-case-portfoliable'));
-  console.log(line('npx @portfoliablejs/portfoliable scaffold-case --name "My New Case"'));
+  console.log(line('[Start]'));
+  console.log(line('  npm run portfoliable'));
+  console.log(line());
+  console.log(line('[Build and Preview]'));
+  console.log(line('  npm run portfoliable-build'));
+  console.log(line('  npm run portfoliable-preview'));
+  console.log(line());
+  console.log(line('[Thumbnail Catalog]'));
+  console.log(line('  npm run portfoliable-thumbnail-options'));
+  console.log(line('  npm run portfoliable-thumbnail-options -- --full'));
+  console.log(line('  npm run portfoliable-thumbnail-options -- --json'));
+  console.log(line());
+  console.log(line('[Create Content]'));
+  console.log(line('  npm run portfoliable-create-case'));
+  console.log(line('  npm run portfoliable-scaffold-case'));
+  console.log(line('  npx portfoliable create-case --name "My New Case"'));
   console.log('╰' + '─'.repeat(width - 2) + '╯');
 }
 
@@ -171,6 +187,7 @@ function run() {
   const projectName = path.basename(options.target);
   const packageName = sanitizePackageName(projectName);
   const targetDir = path.resolve(cwd, options.target);
+  const runtimeDependencyVersion = process.env.PORTFOLIABLE_RUNTIME_DEP || '^0.4.15';
 
   if (!options.force && !isDirectoryEmpty(targetDir)) {
     console.error(color('31', `Refusing to create in non-empty directory: ${targetDir}`));
@@ -193,16 +210,13 @@ function run() {
         portfoliable: 'portfoliable dev',
         'portfoliable-build': 'portfoliable build',
         'portfoliable-preview': 'portfoliable preview',
-        'portfoliable-scaffold-data': 'portfoliable scaffold --out ./src/portfolio-cases.template.js',
-        'portfoliable-scaffold-case': 'node ./scripts/scaffold-case.mjs',
-        'build-portfoliable': 'npm run portfoliable-build',
-        'preview-portfoliable': 'npm run portfoliable-preview',
-        'scaffold-data-portfoliable': 'npm run portfoliable-scaffold-data',
-        'scaffold-case-portfoliable': 'npm run portfoliable-scaffold-case'
+        'portfoliable-thumbnail-options': 'portfoliable thumbnail-options',
+        'portfoliable-create-case': 'portfoliable create-case',
+        'portfoliable-scaffold-case': 'node ./scripts/scaffold-case.mjs'
       },
       dependencies: {
         '@portfoliablejs/valence': '^0.1.0',
-        '@portfoliablejs/portfoliable': '^2.3.0'
+        'create-portfoliable': runtimeDependencyVersion
       }
     },
     null,
@@ -214,23 +228,26 @@ function run() {
   writeGitignoreTemplate(templateRoot, targetDir);
   writeFileFromTemplate(templateRoot, 'index.html', targetDir);
   writeFileFromTemplate(templateRoot, path.join('src', 'main.js'), targetDir);
-  writeFileFromTemplate(templateRoot, path.join('src', 'data.js'), targetDir);
   writeFileFromTemplate(templateRoot, path.join('src', 'cases', 'index.js'), targetDir);
   writeFileFromTemplate(templateRoot, path.join('src', 'parser', 'markdown.js'), targetDir);
-  copyTemplateDirectory(templateRoot, path.join('src', 'assets'), targetDir);
+  const templateAssetsDir = path.join(templateRoot, 'src', 'assets');
+  if (fs.existsSync(templateAssetsDir) && fs.statSync(templateAssetsDir).isDirectory()) {
+    copyTemplateDirectory(templateRoot, path.join('src', 'assets'), targetDir);
+  }
   copyTemplateTree(templateRoot, path.join('scripts', 'scaffold-case.mjs'), targetDir);
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'mobile-product-launch.md'), targetDir);
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'mobile-checkout-flow.md'), targetDir);
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'compact-research-archive.md'), targetDir);
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'wearable-companion.md'), targetDir);
 
-  const readme = `# ${projectName}\n\nCreated with create-portfoliable.\n\n## Where to edit cases\n\n- Add or update markdown cases in \`src/content/cases/\`\n- Each \`.md\` file becomes a gallery item after preview/build reloads\n- Starter thumbnails use local frame assets copied to \`src/assets/devices/\`\n\n## Commands\n\n- npm run portfoliable\n- npm run portfoliable-build (or npm run build-portfoliable)\n- npm run portfoliable-preview (or npm run preview-portfoliable)\n- npm run portfoliable-scaffold-data (or npm run scaffold-data-portfoliable)\n- npm run portfoliable-scaffold-case (or npm run scaffold-case-portfoliable)\n`;
+  const readme = `# ${projectName}\n\nCreated with create-portfoliable.\n\n## Where to edit cases\n\n- Add or update markdown cases in \`src/content/cases/\`\n- Each \`.md\` file becomes a gallery item and updates in the browser during \`npm run portfoliable\`\n- Device frames are resolved from the installed Valence catalog\n\n## Commands\n\n### Start\n\n- npm run portfoliable\n\n### Build and Preview\n\n- npm run portfoliable-build\n- npm run portfoliable-preview\n\n### Thumbnail Catalog\n\n- npm run portfoliable-thumbnail-options\n- npm run portfoliable-thumbnail-options -- --full\n- npm run portfoliable-thumbnail-options -- --json\n\n### Create Content\n\n- npm run portfoliable-create-case\n- npm run portfoliable-scaffold-case\n- npx portfoliable create-case --name \"My New Case\"\n`;
   fs.writeFileSync(path.join(targetDir, 'README.md'), readme, 'utf8');
 
   console.log(color('36', `Created ${projectName} at ${targetDir}`));
 
   if (!options.install) {
     console.log(color('33', 'Skipped npm install (--no-install).'));
+    printCommandsBox();
     console.log(`Next steps:\n  cd ${options.target}\n  npm install\n  npm run portfoliable`);
     return;
   }
@@ -250,15 +267,26 @@ function run() {
 
   printCommandsBox();
 
-  if (options.preview) {
-    console.log(color('36', 'Launching preview server...'));
-    const previewResult = spawnSync('npm', ['run', 'portfoliable-preview'], {
+  if (options.launch) {
+    console.log(color('36', 'Building starter app...'));
+    const buildResult = spawnSync('npm', ['run', 'portfoliable-build'], {
       cwd: targetDir,
       stdio: 'inherit'
     });
 
-    if (previewResult.status !== 0) {
-      process.exit(previewResult.status || 1);
+    if (buildResult.status !== 0) {
+      console.error(color('31', 'Build failed. Run npm run portfoliable-build manually to inspect issues.'));
+      process.exit(buildResult.status || 1);
+    }
+
+    console.log(color('36', 'Launching live preview (auto-opens in browser)...'));
+    const devResult = spawnSync('npm', ['run', 'portfoliable', '--', '--open'], {
+      cwd: targetDir,
+      stdio: 'inherit'
+    });
+
+    if (devResult.status !== 0) {
+      process.exit(devResult.status || 1);
     }
     return;
   }

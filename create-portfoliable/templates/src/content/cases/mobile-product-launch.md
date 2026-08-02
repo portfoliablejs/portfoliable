@@ -1,6 +1,8 @@
 ---
 id: mobile-product-launch
 slug: mobile-product-launch
+# Required thumbnail device fields (set all):
+# thumbCategory, thumbBrand, thumbModel, thumbColor
 title.en: Mobile Product Launch
 title.pt: Lancamento Mobile
 shortDesc.en: A launch story framed as a crisp phone-first product narrative.

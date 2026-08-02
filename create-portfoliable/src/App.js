@@ -217,7 +217,6 @@ class AppShell extends HTMLElement {
             thumbBrand: caseData.thumbBrand || 'apple',
             thumbModel: caseData.thumbModel || 'Apple iPhone 12',
             thumbColor: caseData.thumbColor || 'Black',
-            thumbDeviceSrc: caseData.thumbDeviceSrc || '',
             aspectRatio: caseData.aspectRatio || ''
         };
     }
@@ -239,6 +238,10 @@ class AppShell extends HTMLElement {
         const secondary1Label = t('btn_repo');
         const secondary2Label = t('btn_demo');
         const thumbSrc = this.getLang(activeCase.thumbSrc);
+        const thumbCategory = activeCase.thumbCategory || 'mobile';
+        const thumbBrand = activeCase.thumbBrand || 'apple';
+        const thumbModel = activeCase.thumbModel || 'Apple iPhone 12';
+        const thumbColor = activeCase.thumbColor || 'Black';
 
         shell.innerHTML = `
           <ds-article
@@ -261,10 +264,10 @@ class AppShell extends HTMLElement {
           >
             <ds-thumbnail
               slot="thumbnail"
-              category="mobile"
-              brand="apple"
-              model="Apple iPhone 12"
-              color="Black"
+                            category="${thumbCategory}"
+                            brand="${thumbBrand}"
+                            model="${thumbModel}"
+                            color="${thumbColor}"
               screen-image="${thumbSrc || ''}"
               max-height="320px"
             ></ds-thumbnail>

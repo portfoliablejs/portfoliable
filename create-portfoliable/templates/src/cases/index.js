@@ -3,24 +3,6 @@
 // Author: Lio Schimanko
 
 import { parseCaseMarkdownWithDiagnostics } from '../parser/markdown.js';
-import iPhone12BlackFrame from '../assets/devices/iphone-12-black.avif';
-import iPadPro11SilverLandscapeFrame from '../assets/devices/ipad-pro-11-silver-landscape.avif';
-import macBookPro13SpaceGreyFrame from '../assets/devices/macbook-pro-13-space-grey.avif';
-import appleWatch44SilverAluminumFrame from '../assets/devices/apple-watch-44mm-silver-aluminum.avif';
-
-const STARTER_DEVICE_FRAMES = {
-  'mobile-product-launch': iPhone12BlackFrame,
-  'mobile-checkout-flow': iPadPro11SilverLandscapeFrame,
-  'compact-research-archive': macBookPro13SpaceGreyFrame,
-  'wearable-companion': appleWatch44SilverAluminumFrame
-};
-
-const DEVICE_FRAMES_BY_MODEL = {
-  'apple iphone 12': iPhone12BlackFrame,
-  'apple ipad pro 11': iPadPro11SilverLandscapeFrame,
-  'apple macbook pro 13': macBookPro13SpaceGreyFrame,
-  'apple watch 44mm': appleWatch44SilverAluminumFrame
-};
 
 function toLocalized(value, fallback) {
   if (value && typeof value === 'object' && value.en !== undefined && value.pt !== undefined) {
@@ -39,11 +21,6 @@ function toLocalized(value, fallback) {
 }
 
 function normalizeMarkdownCase(markdownCase) {
-  const modelKey = typeof markdownCase.thumbModel === 'string'
-    ? markdownCase.thumbModel.trim().toLowerCase()
-    : '';
-  const deviceFrameFallback = STARTER_DEVICE_FRAMES[markdownCase.id] || DEVICE_FRAMES_BY_MODEL[modelKey] || '';
-
   return {
     ...markdownCase,
     id: markdownCase.id,
@@ -54,8 +31,7 @@ function normalizeMarkdownCase(markdownCase) {
     year: toLocalized(markdownCase.year),
     thumbSrc: toLocalized(markdownCase.thumbSrc),
     desc: toLocalized(markdownCase.desc),
-    descRecruiter: toLocalized(markdownCase.descRecruiter, markdownCase.desc),
-    thumbDeviceSrc: markdownCase.thumbDeviceSrc || deviceFrameFallback
+    descRecruiter: toLocalized(markdownCase.descRecruiter, markdownCase.desc)
   };
 }
 

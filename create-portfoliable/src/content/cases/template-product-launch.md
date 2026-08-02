@@ -1,6 +1,8 @@
 ---
 id: template-product-launch
 slug: template-product-launch
+# Required thumbnail device fields (set all):
+# thumbCategory, thumbBrand, thumbModel, thumbColor
 title.en: Template Product Launch
 title.pt: Template Lancamento de Produto
 shortDesc.en: A sample launch strategy case built for documentation and onboarding.
@@ -11,6 +13,10 @@ year.en: 2026 - Template Project
 year.pt: 2026 - Projeto Template
 thumbSrc.en: https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop
 thumbSrc.pt: https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop
+thumbCategory: mobile
+thumbBrand: samsung
+thumbModel: Samsung Galaxy Note 5
+thumbColor: Default
 ---
 <!-- lang:en -->
 ## Context

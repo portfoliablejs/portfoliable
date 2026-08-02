@@ -1,6 +1,8 @@
 ---
 id: mobile-checkout-flow
 slug: mobile-checkout-flow
+# Required thumbnail device fields (set all):
+# thumbCategory, thumbBrand, thumbModel, thumbColor
 title.en: Mobile Checkout Flow
 title.pt: Fluxo de Checkout Mobile
 shortDesc.en: A tighter conversion story tuned for a high-frequency shopping path.

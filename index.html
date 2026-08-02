@@ -2,17 +2,52 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>portfoliable</title>
+    <title>create-portfoliable</title>
+    <style>
+      :root {
+        --bg: #0f1218;
+        --surface: #171c25;
+        --text: #e9edf5;
+        --muted: #a6b0c4;
+        --accent: #5eb1ff;
+      }
+      body {
+        margin: 0;
+        padding: 32px;
+        background: linear-gradient(180deg, #0f1218 0%, #101722 100%);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif;
+      }
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+        background: var(--surface);
+        border: 1px solid #273043;
+        border-radius: 12px;
+        padding: 28px;
+      }
+      h1 { margin-top: 0; }
+      p { color: var(--muted); line-height: 1.6; }
+      a { color: var(--accent); }
+      ul { line-height: 1.8; }
+      code { color: #d5e8ff; }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <main>
+      <h1>create-portfoliable</h1>
+      <p>
+        Unified runtime and initializer package for the Portfoliable project.
+      </p>
+      <ul>
+        <li>Canonical package folder: <code>create-portfoliable/</code></li>
+        <li>Root scripts: compatibility wrappers forwarding to canonical runtime</li>
+        <li>Docs scaffold: <code>docs/</code></li>
+      </ul>
+      <p>
+        Read more in <a href="./create-portfoliable/README.md">create-portfoliable/README.md</a>.
+      </p>
+    </main>
   </body>
 </html>
-
-<!-- thumbnail script 
-<script>
-  window.__THUMBNAIL_MANIFEST__ = /* paste thumbnail-manifest.json content */;
-</script>-->  
