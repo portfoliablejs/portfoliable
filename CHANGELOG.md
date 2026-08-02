@@ -1,3 +1,10 @@
+## [0.5.3](https://github.com/portfoliablejs/portfoliable/compare/v0.5.2...v0.5.3) (2026-08-02)
+
+### Bug Fixes
+
+* fix(release): use root changelog path in orchestrator ([c437465](https://github.com/portfoliablejs/portfoliable/commit/c437465e0b486a8c003f2dce85d0a4b439c5f74c))
+* docs: overhaul markdown and code comments across repo ([bf6c6e4](https://github.com/portfoliablejs/portfoliable/commit/bf6c6e4b91aee257b5f95f94deec3f469f48260c))
+
 # Changelog
 
 This changelog tracks runtime package and initializer changes for `@portfoliablejs/create-portfoliable`.
@@ -27,3 +34,4 @@ This changelog tracks runtime package and initializer changes for `@portfoliable
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
