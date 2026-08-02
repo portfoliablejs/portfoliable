@@ -1,3 +1,15 @@
+## [0.5.0](https://github.com/portfoliablejs/portfoliable/compare/v0.4.15...v0.5.0) (2026-08-02)
+
+### Features
+
+* feat: finalize runtime centralization and v0.4.15 docs ([b264eca](https://github.com/portfoliablejs/portfoliable/commit/b264eca1fffad51674d6b8c363f48138fad3b204))
+
+### Bug Fixes
+
+* fix(create-portfoliable): handle symlink EEXIST race in valence mockups link ([68e8e11](https://github.com/portfoliablejs/portfoliable/commit/68e8e115c52443ddd9983661123c748a16047021))
+* fix: make valence mockup symlink idempotent in CI ([50dc33b](https://github.com/portfoliablejs/portfoliable/commit/50dc33b3efb63834aef84935abbab66001fa3dd3))
+* fix: publish runtime under scoped npm package ([f054e05](https://github.com/portfoliablejs/portfoliable/commit/f054e0581c213eca769cadeea0795d73af10e36c))
+
 # Changelog
 
 All notable changes to create-portfoliable are documented in this file.
@@ -56,3 +68,4 @@ The repository tag history already contains:
 ## Legacy Note
 
 Earlier pre-centralization changelog entries using mixed package/release formats are considered archived history. The active runtime release line is the v0.x series above.
+
