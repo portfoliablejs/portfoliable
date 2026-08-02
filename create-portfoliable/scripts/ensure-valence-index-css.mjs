@@ -47,25 +47,25 @@ function ensureMockupsSymlink(valenceRoot) {
   fs.mkdirSync(path.dirname(targetMockups), { recursive: true });
 
   if (fs.existsSync(targetMockups)) {
-    try {
-      const stat = fs.lstatSync(targetMockups);
-      if (stat.isSymbolicLink()) {
-        const linked = fs.readlinkSync(targetMockups);
-        const resolvedLink = path.resolve(path.dirname(targetMockups), linked);
-        const resolvedSource = path.resolve(sourceMockups);
-        if (resolvedLink === resolvedSource) {
-          return { created: false, reason: 'already-linked' };
-        }
+    const stat = fs.lstatSync(targetMockups);
 
-        fs.unlinkSync(targetMockups);
-        fs.symlinkSync(sourceMockups, targetMockups, 'junction');
-        return { created: true, reason: 'relinked' };
+    if (stat.isSymbolicLink()) {
+      const linked = fs.readlinkSync(targetMockups);
+      const resolvedLink = path.resolve(path.dirname(targetMockups), linked);
+      const resolvedSource = path.resolve(sourceMockups);
+      if (resolvedLink === resolvedSource) {
+        return { created: false, reason: 'already-linked' };
       }
-    } catch {
-      // Keep conservative behavior below if current entry cannot be inspected.
+
+      fs.unlinkSync(targetMockups);
+      fs.symlinkSync(sourceMockups, targetMockups, 'junction');
+      return { created: true, reason: 'relinked' };
     }
 
-    return { created: false, reason: 'target-exists' };
+    // If a real file or directory is present, replace it so repeated runs stay idempotent.
+    fs.rmSync(targetMockups, { recursive: true, force: true });
+    fs.symlinkSync(sourceMockups, targetMockups, 'junction');
+    return { created: true, reason: 'replaced' };
   }
 
   fs.symlinkSync(sourceMockups, targetMockups, 'junction');
@@ -87,8 +87,6 @@ export function ensureValenceCompatibility() {
   const mockupLinkStatus = ensureMockupsSymlink(valenceRoot);
   if (mockupLinkStatus.created) {
     console.log('Patched valence compatibility: linked src/stories/assets/mockups to valence catalog.');
-  } else if (mockupLinkStatus.reason === 'target-exists') {
-    console.warn('Valence mockup sync skipped: src/stories/assets/mockups already exists.');
   } else if (mockupLinkStatus.reason === 'missing-source') {
     console.warn('Valence mockup sync skipped: no mockup source found in @portfoliablejs/valence.');
   }
