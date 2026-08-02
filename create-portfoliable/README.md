@@ -177,3 +177,4 @@ create-portfoliable/
 - Root repository scripts are compatibility wrappers.
 - smoke:packed is the strongest publish-parity gate because it validates packed artifact behavior.
 - The GitHub Pages site is deployed from GitHub Actions on `main` as part of the release workflow.
+- The npm-published package is `@portfoliablejs/create-portfoliable`; the root `@portfoliablejs/portfoliable` package remains a private compatibility wrapper.
