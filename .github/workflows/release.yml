@@ -11,16 +11,14 @@ on:
         type: boolean
         default: false
 
-permissions:
-  contents: write
-  packages: write
-  id-token: write
-
 jobs:
   release:
     name: Release
     if: github.actor == 'schimanko'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -69,19 +67,20 @@ jobs:
       - name: Install dependencies
         run: npm --prefix ./create-portfoliable ci
 
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Build
         run: npm --prefix ./create-portfoliable run build
 
       - name: Packed artifact smoke
         run: npm --prefix ./create-portfoliable run smoke:packed
 
-      - name: Deploy site to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload GitHub Pages artifact
+        if: github.event_name != 'workflow_dispatch' || inputs.dry_run != true
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./create-portfoliable/dist
-          keep_files: true
+          path: ./create-portfoliable/dist
 
       - name: Configure git
         run: |
@@ -107,36 +106,8 @@ jobs:
           git push origin main
           git push origin --tags
 
-      - name: Upgrade npm for OIDC Trusted Publishing
-        if: steps.release-plan.outputs.dry_run != 'true'
-        run: |
-          npm install -g npm@latest
-          hash -r
-
-      - name: Diagnostics for npm trusted publishing
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
-            echo "NPM_TOKEN secret is not configured; npm publish cannot authenticate."
-            exit 1
-          fi
-          PACKAGE_NAME=$(node -p "require('./create-portfoliable/package.json').name")
-          echo "package=$PACKAGE_NAME"
-          echo "registry=$(npm config get registry)"
-          npm ping || true
-          npm whoami || true
-          REGISTRY="$(npm config get registry)"
-          if [ "$REGISTRY" != "https://registry.npmjs.org/" ] && [ "$REGISTRY" != "https://registry.npmjs.org" ]; then
-            echo "Unexpected npm registry: $REGISTRY"
-            exit 1
-          fi
-
       - name: Publish create-portfoliable to npm
         if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cd create-portfoliable
           npm publish --provenance --access public
@@ -153,3 +124,19 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/releases" \
             -d "{\"tag_name\":\"${TAG}\",\"name\":\"${TAG}\",\"generate_release_notes\":true}"
+
+  deploy-pages:
+    name: Deploy site to GitHub Pages
+    needs: release
+    if: github.event_name != 'workflow_dispatch' || inputs.dry_run != true
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
