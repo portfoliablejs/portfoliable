@@ -100,17 +100,17 @@ jobs:
             node ./create-portfoliable/scripts/release-orchestrator.mjs
           fi
 
-      - name: Push release commit and tags
-        if: steps.release-plan.outputs.released_any == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        run: |
-          git push origin main
-          git push origin --tags
-
       - name: Publish create-portfoliable to npm
         if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
           cd create-portfoliable
           npm publish --provenance --access public
+
+      - name: Push release commit and tags
+        if: steps.release-plan.outputs.released_any == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        run: |
+          git push origin main
+          git push origin --tags
 
       - name: Create GitHub release for create-portfoliable
         if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
