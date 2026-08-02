@@ -44,7 +44,7 @@ function firstNetworkAddress() {
 
 async function fetchLatestVersion() {
   try {
-    const response = await fetch('https://registry.npmjs.org/create-portfoliable/latest');
+    const response = await fetch('https://registry.npmjs.org/@portfoliablejs%2fcreate-portfoliable/latest');
     if (!response.ok) return null;
 
     const data = await response.json();
@@ -318,7 +318,7 @@ function printStartupBox({ localUrl, networkUrl, localVersion, latestVersion }) 
   if (latestVersion && latestVersion !== localVersion && !latestVersion.includes('alpha')) {
     console.log(spacer());
     console.log(line(`${yellow}A new version (${latestVersion}) is available!${reset}`));
-    console.log(line(`Upgrade now: ${green}npm update create-portfoliable${reset}`));
+    console.log(line(`Upgrade now: ${green}npm update @portfoliablejs/create-portfoliable${reset}`));
   }
 
   console.log('╰' + '─'.repeat(width - 2) + '╯');

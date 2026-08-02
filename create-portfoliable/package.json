@@ -1,5 +1,5 @@
 {
-  "name": "create-portfoliable",
+  "name": "@portfoliablejs/create-portfoliable",
   "version": "0.4.15",
   "description": "Unified Portfoliable package with initializer and runtime CLI",
   "private": false,

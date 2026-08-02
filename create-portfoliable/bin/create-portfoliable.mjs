@@ -216,7 +216,7 @@ function run() {
       },
       dependencies: {
         '@portfoliablejs/valence': '^0.1.0',
-        'create-portfoliable': runtimeDependencyVersion
+        '@portfoliablejs/create-portfoliable': runtimeDependencyVersion
       }
     },
     null,

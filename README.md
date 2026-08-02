@@ -37,8 +37,8 @@ Version note:
 - `create-portfoliable@0.1.0` is deprecated. Use latest (`>=0.1.1`).
 
 Runtime prerequisite:
-- The generated app installs `create-portfoliable` from npm.
-- If npm returns `404 Not Found` for `create-portfoliable` (or `@portfoliablejs/valence`), publish those runtime packages first. The initializer itself is published, but consumer installs require the runtime packages to be publicly available too.
+- The generated app installs `@portfoliablejs/create-portfoliable` from npm.
+- If npm returns `404 Not Found` for `@portfoliablejs/create-portfoliable` (or `@portfoliablejs/valence`), publish those runtime packages first. The initializer itself is published, but consumer installs require the runtime packages to be publicly available too.
 
 The generated app includes:
 - `npm run portfoliable`
@@ -50,10 +50,10 @@ The generated app includes:
 The generated scripts call the Portfoliable CLI directly, so you can also run:
 
 ```bash
-npx create-portfoliable dev
-npx create-portfoliable build
-npx create-portfoliable preview
-npx create-portfoliable create-case --name "My New Case"
+npx @portfoliablejs/create-portfoliable dev
+npx @portfoliablejs/create-portfoliable build
+npx @portfoliablejs/create-portfoliable preview
+npx @portfoliablejs/create-portfoliable create-case --name "My New Case"
 ```
 
 Optional flags:
@@ -68,7 +68,7 @@ npm create portfoliable@latest my-portfolio -- --force
 Generate a starter cases file in your current folder:
 
 ```bash
-npx create-portfoliable create-case --name "My New Case"
+npx @portfoliablejs/create-portfoliable create-case --name "My New Case"
 ```
 
 Use `--force` to overwrite an existing file.
@@ -76,7 +76,7 @@ Use `--force` to overwrite an existing file.
 Legacy aliases remain available:
 
 ```bash
-npx create-portfoliable scaffold-case --name "My New Case"
+npx @portfoliablejs/create-portfoliable scaffold-case --name "My New Case"
 npm run scaffold:case -- --name "My New Case"
 ```
 
