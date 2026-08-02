@@ -46,30 +46,78 @@ function ensureMockupsSymlink(valenceRoot) {
   const targetMockups = path.resolve(process.cwd(), 'src', 'stories', 'assets', 'mockups');
   fs.mkdirSync(path.dirname(targetMockups), { recursive: true });
 
+  const resolvedSource = path.resolve(sourceMockups);
+
+  function isLinkedToSource(targetPath) {
+    try {
+      const stat = fs.lstatSync(targetPath);
+      if (!stat.isSymbolicLink()) return false;
+      const linked = fs.readlinkSync(targetPath);
+      const resolvedLink = path.resolve(path.dirname(targetPath), linked);
+      return resolvedLink === resolvedSource;
+    } catch {
+      return false;
+    }
+  }
+
+  function createSymlinkSafely(targetPath) {
+    try {
+      fs.symlinkSync(sourceMockups, targetPath, 'junction');
+      return true;
+    } catch (error) {
+      if (error?.code !== 'EEXIST') {
+        throw error;
+      }
+
+      // Another process may have created the link after our existence check.
+      if (isLinkedToSource(targetPath)) {
+        return false;
+      }
+
+      try {
+        const stat = fs.lstatSync(targetPath);
+        if (stat.isSymbolicLink()) {
+          fs.unlinkSync(targetPath);
+        } else {
+          fs.rmSync(targetPath, { recursive: true, force: true });
+        }
+      } catch {
+        // If target vanished during a concurrent write, retry create below.
+      }
+
+      try {
+        fs.symlinkSync(sourceMockups, targetPath, 'junction');
+        return true;
+      } catch (retryError) {
+        if (retryError?.code === 'EEXIST' && isLinkedToSource(targetPath)) {
+          return false;
+        }
+        throw retryError;
+      }
+    }
+  }
+
   if (fs.existsSync(targetMockups)) {
     const stat = fs.lstatSync(targetMockups);
 
     if (stat.isSymbolicLink()) {
-      const linked = fs.readlinkSync(targetMockups);
-      const resolvedLink = path.resolve(path.dirname(targetMockups), linked);
-      const resolvedSource = path.resolve(sourceMockups);
-      if (resolvedLink === resolvedSource) {
+      if (isLinkedToSource(targetMockups)) {
         return { created: false, reason: 'already-linked' };
       }
 
       fs.unlinkSync(targetMockups);
-      fs.symlinkSync(sourceMockups, targetMockups, 'junction');
-      return { created: true, reason: 'relinked' };
+      const created = createSymlinkSafely(targetMockups);
+      return { created, reason: created ? 'relinked' : 'already-linked' };
     }
 
     // If a real file or directory is present, replace it so repeated runs stay idempotent.
     fs.rmSync(targetMockups, { recursive: true, force: true });
-    fs.symlinkSync(sourceMockups, targetMockups, 'junction');
-    return { created: true, reason: 'replaced' };
+    const created = createSymlinkSafely(targetMockups);
+    return { created, reason: created ? 'replaced' : 'already-linked' };
   }
 
-  fs.symlinkSync(sourceMockups, targetMockups, 'junction');
-  return { created: true, reason: 'linked' };
+  const created = createSymlinkSafely(targetMockups);
+  return { created, reason: created ? 'linked' : 'already-linked' };
 }
 
 export function ensureValenceCompatibility() {
