@@ -1,12 +1,17 @@
-/* src/style.css in the 'portfoliable' project */
+/* File: create-portfoliable/src/style.css */
+/* Purpose: Define global runtime style resets and baseline viewport/body behavior. */
+/* Author: Lio Schimanko */
 
-/* The @import line has been REMOVED from here. */
+/* === NOTES === */
+/* This stylesheet intentionally avoids local @import dependencies. */
 
+/* === GLOBAL RESET === */
 /* Global resets for the portfolio app */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
+/* === ROOT VIEWPORT SURFACE === */
 body {
   margin: 0;
   background-color: var(--color-bg);

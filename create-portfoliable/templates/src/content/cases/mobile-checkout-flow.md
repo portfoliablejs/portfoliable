@@ -4,11 +4,11 @@ slug: mobile-checkout-flow
 # Required thumbnail device fields (set all):
 # thumbCategory, thumbBrand, thumbModel, thumbColor
 title.en: Mobile Checkout Flow
-title.pt: Fluxo de Checkout Mobile
-shortDesc.en: A tighter conversion story tuned for a high-frequency shopping path.
-shortDesc.pt: Uma historia de conversao mais enxuta para um caminho de compra frequente.
-readTime.en: 4 min
-readTime.pt: 4 min
+title.pt: Mobile Checkout Flow
+shortDesc.en: Checkout optimization template for reducing friction in purchase-critical paths.
+shortDesc.pt: Template de otimizacao de checkout para reduzir friccao em fluxo critico de compra.
+readTime.en: 6 min
+readTime.pt: 6 min
 year.en: 2025 - Starter Project
 year.pt: 2025 - Projeto Iniciador
 thumbSrc.en: https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1200&auto=format&fit=crop
@@ -20,20 +20,46 @@ thumbColor: Silver
 ---
 <!-- lang:en -->
 ## Context
-Use this template for a focused purchase or signup journey.
+This starter case models a checkout redesign where conversion and trust are primary outcomes.
 
-## Problem
-The flow had too many small decisions and felt harder to trust than it should have.
+## Baseline Issues
+- Long form sequence and repeated data entry.
+- Ambiguous fee visibility.
+- Weak error feedback for payment failures.
 
-## Solution
-We reduced friction, clarified the primary action, and kept the path to completion short.
+## Strategy
+1. Compress required steps.
+2. Show totals and fees early.
+3. Improve error handling and recovery.
+4. Add instrumentation per checkout stage.
+
+## Delivery
+- Refactored flow into progressive checkpoints.
+- Improved payment state messaging.
+- Added post-purchase confirmation clarity.
+
+## Outcome
+A cleaner checkout path with lower friction and better operational visibility.
 
 <!-- lang:pt -->
 ## Contexto
-Use este template para um fluxo de compra ou cadastro mais focado.
+Este case inicial modela redesign de checkout com foco em conversao e confianca.
 
-## Problema
-O fluxo tinha decisoes demais e parecia menos confiavel do que deveria.
+## Problemas de Base
+- Sequencia longa com dados repetidos.
+- Visibilidade fraca de taxas.
+- Feedback de erro insuficiente em pagamento.
 
-## Solucao
-Reduzimos a friccao, deixamos a acao principal mais clara e encurtamos o caminho ate a conclusao.
+## Estrategia
+1. Comprimir etapas obrigatorias.
+2. Exibir total e taxas no inicio.
+3. Melhorar tratamento de erro e recuperacao.
+4. Instrumentar cada etapa do checkout.
+
+## Entrega
+- Fluxo refatorado em checkpoints progressivos.
+- Melhor mensagens de estado de pagamento.
+- Confirmacao pos-compra mais clara.
+
+## Resultado
+Checkout mais direto, com menos friccao e melhor visibilidade operacional.

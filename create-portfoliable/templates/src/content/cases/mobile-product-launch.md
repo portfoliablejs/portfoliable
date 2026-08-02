@@ -4,11 +4,11 @@ slug: mobile-product-launch
 # Required thumbnail device fields (set all):
 # thumbCategory, thumbBrand, thumbModel, thumbColor
 title.en: Mobile Product Launch
-title.pt: Lancamento Mobile
-shortDesc.en: A launch story framed as a crisp phone-first product narrative.
-shortDesc.pt: Um case de lancamento em narrativa mobile-first.
-readTime.en: 3 min
-readTime.pt: 3 min
+title.pt: Mobile Product Launch
+shortDesc.en: Launch template for mobile-first features with phased rollout and measurement.
+shortDesc.pt: Template de lancamento para funcionalidades mobile-first com rollout em fases e medicao.
+readTime.en: 5 min
+readTime.pt: 5 min
 year.en: 2026 - Starter Project
 year.pt: 2026 - Projeto Iniciador
 thumbSrc.en: https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop
@@ -20,20 +20,44 @@ thumbColor: Black
 ---
 <!-- lang:en -->
 ## Context
-This template shows how to structure a launch story in markdown.
+Template for launch stories where product, design, and engineering coordinate under strict timeline pressure.
 
-## Problem
-The existing story was too broad and did not make the first screen feel decisive.
+## Launch Risks
+- Messaging mismatch across teams.
+- Incomplete readiness criteria.
+- Late analytics instrumentation.
 
-## Solution
-We tightened the narrative, simplified the hierarchy, and led with one primary outcome.
+## Plan
+1. Define release tiers and stop/go criteria.
+2. Align launch narrative with measurable outcomes.
+3. Prepare support operations before public rollout.
+
+## Delivery Highlights
+- Structured rollout calendar with owners.
+- Instrumented KPI checkpoints.
+- Incident response expectations documented before launch.
+
+## Outcome
+Controlled launch with clearer accountability and measurable impact.
 
 <!-- lang:pt -->
 ## Contexto
-Este template mostra como estruturar um case de lancamento em markdown.
+Template para historias de lancamento com coordenacao entre produto, design e engenharia sob prazo rigoroso.
 
-## Problema
-A historia existente era ampla demais e a primeira tela nao parecia decisiva.
+## Riscos de Lancamento
+- Desalinhamento de mensagem entre times.
+- Criterio de prontidao incompleto.
+- Instrumentacao de analytics tardia.
 
-## Solucao
-A narrativa foi enxugada, a hierarquia simplificada e o resultado principal passou a abrir a pagina.
+## Plano
+1. Definir etapas de release e criterio de decisao.
+2. Alinhar narrativa com resultados mensuraveis.
+3. Preparar operacao de suporte antes do rollout publico.
+
+## Destaques de Entrega
+- Calendario de rollout com responsaveis.
+- Checkpoints de KPI instrumentados.
+- Expectativas de resposta a incidente documentadas antes do lancamento.
+
+## Resultado
+Lancamento controlado, com accountability claro e impacto mensuravel.

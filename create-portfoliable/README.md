@@ -1,14 +1,211 @@
-# create-portfoliable
+# create-portfoliable User Manual
 
-Unified runtime and initializer package for the Portfoliable project.
+This guide is the end-user instruction manual for projects created with:
 
-This package provides:
+```bash
+npm create portfoliable@latest
+```
 
-- Initializer command: npm create portfoliable@latest
-- Runtime CLI command: portfoliable
-- Runtime source, build config, validation, and smoke checks
+Use this document after scaffolding to run, customize, validate, and ship your portfolio application.
 
-## Quick Start
+## 1. What This Tool Creates
+
+The initializer generates a Vite-based portfolio app with:
+
+- app shell and UI wiring
+- case markdown loading and parsing pipeline
+- content validation commands
+- build and preview scripts
+- case scaffolding utilities
+
+## 2. Prerequisites
+
+Before creating a project:
+
+1. install Node.js 18 or newer
+2. verify npm is available
+3. use a writable local directory
+4. ensure internet access for package download
+
+Check your environment:
+
+```bash
+node -v
+npm -v
+```
+
+## 3. Create a New Portfolio Project
+
+Scaffold a new app:
+
+```bash
+npm create portfoliable@latest my-portfolio
+```
+
+Move into the project:
+
+```bash
+cd my-portfolio
+```
+
+Start development mode:
+
+```bash
+npm run portfoliable
+```
+
+## 4. Initializer Flags
+
+Pass flags after `--`:
+
+```bash
+npm create portfoliable@latest my-portfolio -- --no-install
+npm create portfoliable@latest my-portfolio -- --force
+```
+
+Flag reference:
+
+- `--no-install`: scaffold files without installing dependencies
+- `--force`: allow overwrite when target exists
+
+## 5. Generated Commands
+
+Your generated project includes these scripts:
+
+- `npm run portfoliable` - run local development server
+- `npm run portfoliable-build` - create production build
+- `npm run portfoliable-preview` - preview production output
+- `npm run portfoliable-thumbnail-options` - inspect available thumbnail device options
+- `npm run portfoliable-create-case` - create new starter case file
+- `npm run portfoliable-scaffold-case` - legacy alias for case creation
+
+## 6. Daily Development Workflow
+
+Recommended sequence:
+
+1. run dev server
+2. edit case markdown content and assets
+3. validate content contract
+4. build and preview before publishing
+
+Typical command flow:
+
+```bash
+npm run portfoliable
+npm run portfoliable-build
+npm run portfoliable-preview
+```
+
+## 7. Content Structure and Contract
+
+Case files are stored as markdown under the generated content directory.
+
+Each case requires frontmatter with localized fields:
+
+- `id`
+- `slug`
+- `title.en` and `title.pt`
+- `shortDesc.en` and `shortDesc.pt`
+- `readTime.en` and `readTime.pt`
+- `year.en` and `year.pt`
+- `thumbSrc.en` and `thumbSrc.pt`
+
+Optional but commonly used fields include:
+
+- `desc.en` and `desc.pt`
+- `descRecruiter`
+- `repositoryUrl`
+- `liveUrl`
+- `videoSrc`
+- `vttSrc`
+- `audioSrc`
+- `audioSrcRecruiter`
+
+For framed thumbnails, configure:
+
+- `thumbCategory`
+- `thumbBrand`
+- `thumbModel`
+- `thumbColor`
+
+Body content must include language sections expected by the parser.
+
+## 8. Create a New Case
+
+Generate a starter case:
+
+```bash
+npm run portfoliable-create-case -- --name "Checkout Revamp"
+```
+
+Legacy alias:
+
+```bash
+npm run portfoliable-scaffold-case -- --name "Checkout Revamp"
+```
+
+## 9. Thumbnail Device Options
+
+Inspect supported values:
+
+```bash
+npm run portfoliable-thumbnail-options
+npm run portfoliable-thumbnail-options -- --full
+npm run portfoliable-thumbnail-options -- --json
+```
+
+Use exact category/brand/model/color values from command output to avoid mismatches.
+
+## 10. Validation and Build Gates
+
+Run before commit or deployment:
+
+```bash
+npm run validate:content
+npm run portfoliable-build
+npm run portfoliable-preview
+```
+
+If validation fails, correct frontmatter keys and language sections first.
+
+## 11. Troubleshooting
+
+### `npm create` cannot fetch package
+
+- verify npm registry connectivity
+- retry after checking package availability
+
+### Content validation errors
+
+- add missing required frontmatter keys
+- ensure both language sections are present and correctly marked
+
+### Thumbnail not rendering as expected
+
+- rerun thumbnail options command
+- verify values are exact matches from catalog output
+
+### Build succeeds but preview is incorrect
+
+Reset local dependencies and rebuild:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+npm run portfoliable-build
+npm run portfoliable-preview
+```
+
+## 12. Upgrade Guidance for Existing Projects
+
+When updating dependencies in an existing generated project:
+
+1. update package versions
+2. run validation
+3. build and preview
+4. verify parser output and media rendering behavior
+
+## 13. Minimal Quick Start
 
 ```bash
 npm create portfoliable@latest my-portfolio
@@ -16,165 +213,4 @@ cd my-portfolio
 npm run portfoliable
 ```
 
-Generated project scripts:
-
-- npm run portfoliable
-- npm run portfoliable-build
-- npm run portfoliable-preview
-- npm run portfoliable-thumbnail-options
-- npm run portfoliable-create-case
-- npm run portfoliable-scaffold-case
-
-## Maintainer Validation
-
-From this folder:
-
-```bash
-npm run validate:content
-npm run smoke:initializer
-npm run smoke:packed
-npm run build
-```
-
-## Governance
-
-- Code of Conduct: CODE_OF_CONDUCT.md
-- Contributing: CONTRIBUTING.md
-- Security: SECURITY.md
-
-## Runtime File Tree
-
-```text
-create-portfoliable/
-  .npmignore
-  CHANGELOG.md
-  CODE_OF_CONDUCT.md
-  CONTRIBUTING.md
-  LICENSE
-  README.md
-  SECURITY.md
-  index.html
-  package.json
-  portfoliable.config.js
-  vite.config.js
-  bin/
-    create-portfoliable.mjs
-  cli/
-    portfoliable.mjs
-  scripts/
-    check-updates.mjs
-    ensure-valence-index-css.mjs
-    release-orchestrator.mjs
-    scaffold-case.mjs
-    scaffold-consumer.mjs
-    smoke-homeview.mjs
-    smoke-initializer.mjs
-    smoke-packed.mjs
-    sync-template-shared.mjs
-    validate-content.mjs
-    verify-integration.mjs
-  src/
-    App.js
-    i18n.js
-    main.js
-    style.css
-    cases/
-    content/
-    parser/
-    stories/
-  templates/
-    gitignore
-    index.html
-    scripts/
-      scaffold-case.mjs
-    src/
-      main.js
-      cases/
-      content/
-      parser/
-  public/
-    favicon.svg
-    icons.svg
-  css/
-  dist/
-```
-
-## Runtime File Map
-
-### Top-level files
-
-- .npmignore: npm ignore behavior outside the files allow-list.
-- CHANGELOG.md: canonical runtime release history.
-- CODE_OF_CONDUCT.md: expected contributor behavior.
-- CONTRIBUTING.md: contribution flow, checks, and conventions.
-- LICENSE: project license.
-- README.md: runtime and maintainer documentation.
-- SECURITY.md: vulnerability reporting and disclosure process.
-- index.html: runtime app shell entry for Vite.
-- package.json: package metadata, scripts, binaries, dependencies.
-- portfoliable.config.js: runtime content and homeview config.
-- vite.config.js: dev server and production bundling config.
-
-### bin/
-
-- create-portfoliable.mjs: initializer executable used by npm create; scaffolds consumer projects.
-
-### cli/
-
-- portfoliable.mjs: runtime CLI for dev/build/preview/validate/scaffold/thumbnail commands.
-
-### scripts/
-
-- check-updates.mjs: maintenance check for runtime updates.
-- ensure-valence-index-css.mjs: compatibility and asset-link setup for valence mockups.
-- release-orchestrator.mjs: release planning, version bumping, changelog updates, tag output.
-- scaffold-case.mjs: generates markdown case starter files.
-- scaffold-consumer.mjs: helper routines for consumer scaffolding workflows.
-- smoke-homeview.mjs: verifies homeview and runtime bundle markers.
-- smoke-initializer.mjs: tests scaffold/build flow from local source package.
-- smoke-packed.mjs: tests scaffold/build flow from packed npm artifact for publish parity.
-- sync-template-shared.mjs: sync/check selected shared template/runtime files.
-- validate-content.mjs: validates markdown case frontmatter and structure.
-- verify-integration.mjs: combines validation and build verification for runtime and optional consumer.
-
-### src/
-
-- App.js: main runtime application shell and rendering orchestration.
-- i18n.js: localization resources and language resolution logic.
-- main.js: runtime bootstrapping entrypoint.
-- style.css: runtime base styles.
-- cases/: runtime case-loading and normalization utilities.
-- content/: bundled sample markdown case content.
-- parser/: markdown parsing and normalization logic.
-- stories/: story and visual integration assets used by runtime views.
-
-### templates/
-
-- gitignore: generated project gitignore template.
-- index.html: generated app html shell.
-- scripts/scaffold-case.mjs: generated project local case scaffolder.
-- src/main.js: generated app bootstrap file.
-- src/cases/: generated project case loading helpers.
-- src/content/: generated starter markdown cases.
-- src/parser/: generated project markdown parser copy.
-
-### public/
-
-- favicon.svg: browser tab icon for runtime app.
-- icons.svg: icon sprite/static runtime icon resource.
-
-### css/
-
-- Shared stylesheet space for runtime-level styling modules.
-
-### dist/
-
-- Build output generated by npm run build. Not source of truth.
-
-## Notes
-
-- Canonical source of truth is this folder.
-- Root repository scripts are compatibility wrappers.
-- smoke:packed is the strongest publish-parity gate because it validates packed artifact behavior.
-- The GitHub Pages site is deployed from GitHub Actions on `main` as part of the release workflow.
-- The npm-published package is `@portfoliablejs/create-portfoliable`; the root `@portfoliablejs/portfoliable` package remains a private compatibility wrapper.
+After that, edit your case markdown files and keep validation/build checks in your routine.

@@ -1,18 +1,32 @@
+// File: create-portfoliable/scripts/smoke-initializer.mjs
+// Purpose: Smoke-test local initializer output by generating a project and validating built artifacts.
+// Author: Lio Schimanko
+
+// === IMPORTS ===
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
+// === PATH CONSTANTS ===
+// Resolves package root used to execute initializer and downstream build commands.
 const projectRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+// Defines isolated temporary workspace root used by the initializer smoke test.
 const tempRoot = path.join(os.tmpdir(), 'portfoliable-initializer-smoke');
+// Defines output directory where the generated sample app is created.
 const generatedAppDir = path.join(tempRoot, 'my-portfolio');
 
+// === ERROR HANDLING ===
+// Exits immediately with a prefixed smoke-test failure message.
 function fail(message) {
   console.error(`[smoke:init] ${message}`);
   process.exit(1);
 }
 
+// === COMMAND EXECUTION ===
+// Runs an external command and stops the smoke test if the command exits non-zero.
 function runOrFail(command, args, cwd, env = undefined) {
+  // Executes child commands with inherited IO for transparent diagnostics.
   const result = spawnSync(command, args, {
     cwd,
     stdio: 'inherit',
@@ -25,12 +39,16 @@ function runOrFail(command, args, cwd, env = undefined) {
   }
 }
 
+// === ASSERTION HELPER ===
+// Verifies bundle output contains expected markers proving starter template content is present.
 function ensureContains(text, needle, description) {
   if (!text.includes(needle)) {
     fail(`Missing expected marker (${description}): ${needle}`);
   }
 }
 
+// === SMOKE ORCHESTRATION ===
+// Generates an app from the local initializer, builds it, and validates emitted artifacts/content.
 function main() {
   console.log('[smoke:init] Preparing temp workspace...');
   fs.rmSync(tempRoot, { recursive: true, force: true });
@@ -47,21 +65,25 @@ function main() {
   console.log('[smoke:init] Building generated app...');
   runOrFail('npm', ['run', 'portfoliable-build'], generatedAppDir);
 
+  // Resolves generated build assets directory.
   const distAssetsDir = path.join(generatedAppDir, 'dist', 'assets');
   if (!fs.existsSync(distAssetsDir)) {
     fail('dist/assets not found in generated app build output.');
   }
 
+  // Reads generated asset filenames.
   const assets = fs.readdirSync(distAssetsDir);
   if (!assets.some((file) => file.endsWith('.avif'))) {
     fail('Expected at least one AVIF asset in generated app build output.');
   }
 
+  // Resolves generated main bundle filename.
   const mainBundle = assets.find((file) => file.startsWith('index-') && file.endsWith('.js'));
   if (!mainBundle) {
     fail('Could not find generated app main bundle (index-*.js).');
   }
 
+  // Loads generated main bundle text for starter content assertions.
   const bundleText = fs.readFileSync(path.join(distAssetsDir, mainBundle), 'utf8');
   ensureContains(bundleText, 'Mobile Product Launch', 'starter case title');
   ensureContains(bundleText, 'Mobile Checkout Flow', 'starter case title');

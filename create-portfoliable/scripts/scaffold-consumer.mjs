@@ -3,11 +3,15 @@
 // Purpose: Generate a starter consumer cases file for Portfoliable projects.
 // Author: Lio Schimanko
 
+// === IMPORTS ===
 import fs from 'node:fs';
 import path from 'node:path';
 
+// === DEFAULTS ===
+// Defines default output filename for scaffolded consumer cases module.
 const DEFAULT_OUTPUT = 'portfolio-cases.template.js';
 
+// Defines full starter template content for scaffolded consumer cases module.
 const TEMPLATE_CONTENT = `export const portfolioCases = [
   {
     id: 'my-first-case',
@@ -47,9 +51,13 @@ const TEMPLATE_CONTENT = `export const portfolioCases = [
 
 // Write the scaffold file, refusing to overwrite unless explicitly requested.
 export function runScaffold(options = {}) {
+  // Resolves working directory for output path resolution.
   const cwd = options.cwd || process.cwd();
+  // Resolves output filename from options or default fallback.
   const outFile = options.outFile || DEFAULT_OUTPUT;
+  // Coerces overwrite flag to explicit boolean.
   const force = Boolean(options.force);
+  // Resolves absolute output file path.
   const outputPath = path.resolve(cwd, outFile);
 
   if (fs.existsSync(outputPath) && !force) {
@@ -64,10 +72,16 @@ export function runScaffold(options = {}) {
   return 0;
 }
 
+// === SCRIPT ENTRYPOINT ===
+// Executes scaffold flow when script is invoked directly.
 if (import.meta.url === `file://${process.argv[1]}`) {
+  // Resolves index of --out option token in argv.
   const outIndex = process.argv.findIndex((arg) => arg === '--out');
+  // Resolves force flag from argv.
   const force = process.argv.includes('--force');
+  // Resolves outFile argument value with default fallback.
   const outFile = outIndex >= 0 ? process.argv[outIndex + 1] : DEFAULT_OUTPUT;
+  // Executes scaffold and captures resulting exit code.
   const exitCode = runScaffold({ outFile, force });
   process.exit(exitCode);
 }

@@ -3,13 +3,19 @@
 // Purpose: Keep selected initializer template files synchronized with canonical root sources.
 // Author: Lio Schimanko
 
+// === IMPORTS ===
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// === PATH CONSTANTS ===
+// Resolves this script directory path.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Resolves package root used to resolve mapped source/target files.
 const repoRoot = path.resolve(__dirname, '..');
 
+// === TEMPLATE HEADER ===
+// Defines template parser header injected into synchronized parser target file.
 const TEMPLATE_PARSER_HEADER = [
   '// File: create-portfoliable/templates/src/parser/markdown.js',
   '// Purpose: Parse template markdown cases into normalized case data.',
@@ -18,12 +24,17 @@ const TEMPLATE_PARSER_HEADER = [
   ''
 ].join('\n');
 
+// === SYNC MAPPINGS ===
+// Lists source/target mapping definitions and optional transform functions.
 const mappings = [
   {
     source: 'src/parser/markdown.js',
     target: 'create-portfoliable/templates/src/parser/markdown.js',
+    // Removes source header and injects template-specific header contract.
     transform: (sourceText) => {
+      // Splits source into lines for header detection.
       const lines = sourceText.split('\n');
+      // Tracks start index for parser body after optional 3-line header.
       let bodyStart = 0;
 
       if (
@@ -34,38 +45,52 @@ const mappings = [
         bodyStart = lines[3] === '' ? 4 : 3;
       }
 
+      // Extracts parser body and strips leading blank lines.
       const body = lines.slice(bodyStart).join('\n').replace(/^\n+/, '');
       return `${TEMPLATE_PARSER_HEADER}${body}`;
     }
   }
 ];
 
+// Resolves repository-relative path to absolute path.
 function resolveRepoPath(relPath) {
   return path.resolve(repoRoot, relPath);
 }
 
+// Reads UTF-8 file content.
 function readUtf8(filePath) {
   return fs.readFileSync(filePath, 'utf8');
 }
 
+// Writes UTF-8 file content, creating parent directories when needed.
 function writeUtf8(filePath, content) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
+// Normalizes EOL format to LF for reliable cross-platform comparisons.
 function normalizeEol(text) {
   return text.replace(/\r\n/g, '\n');
 }
 
+// Executes one mapping sync action in check or write mode.
 function syncOne(mapping, mode) {
+  // Resolves mapped source path.
   const sourcePath = resolveRepoPath(mapping.source);
+  // Resolves mapped target path.
   const targetPath = resolveRepoPath(mapping.target);
+  // Reads source file text.
   const sourceText = readUtf8(sourcePath);
+  // Applies optional transform to source text.
   const expectedText = mapping.transform ? mapping.transform(sourceText) : sourceText;
+  // Normalizes expected text for comparison.
   const expectedNormalized = normalizeEol(expectedText);
 
+  // Reads current target file text when present.
   const currentText = fs.existsSync(targetPath) ? readUtf8(targetPath) : '';
+  // Normalizes current target text for comparison.
   const currentNormalized = normalizeEol(currentText);
+  // Determines whether target file already matches expected content.
   const isSynced = expectedNormalized === currentNormalized;
 
   if (mode === 'check') {
@@ -88,11 +113,17 @@ function syncOne(mapping, mode) {
   return true;
 }
 
+// === SCRIPT ENTRYPOINT ===
+// Runs all mappings in check or write mode and exits non-zero on drift.
 function main() {
+  // Parses CLI args used to switch between check and write mode.
   const args = new Set(process.argv.slice(2));
+  // Resolves operating mode from CLI flags.
   const mode = args.has('--check') ? 'check' : 'write';
 
+  // Runs sync/check for each configured mapping.
   const results = mappings.map((mapping) => syncOne(mapping, mode));
+  // Aggregates overall success result.
   const ok = results.every(Boolean);
 
   if (!ok) {
@@ -101,4 +132,5 @@ function main() {
   }
 }
 
+// Executes sync script main function.
 main();

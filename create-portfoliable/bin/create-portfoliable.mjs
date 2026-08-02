@@ -3,19 +3,28 @@
 // Purpose: Create a new Portfoliable consumer app from starter templates.
 // Author: Lio Schimanko
 
+// === IMPORTS ===
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+// === DEFAULTS ===
+// Defines default target folder when no project name is provided.
 const DEFAULT_TARGET = 'my-portfolio';
 
+// === CLI DISPLAY HELPERS ===
+// Wraps a message with ANSI color code and reset sequence.
 function color(code, message) {
   return `\x1b[${code}m${message}\x1b[0m`;
 }
 
+// === ARGUMENT PARSING ===
+// Parses initializer arguments and returns normalized options.
 function parseArgs(argv) {
+  // Extracts runtime args excluding node executable and script path.
   const args = argv.slice(2);
+  // Initializes parser defaults.
   const options = {
     target: DEFAULT_TARGET,
     force: false,
@@ -23,7 +32,9 @@ function parseArgs(argv) {
     launch: true
   };
 
+  // Iterates all user-provided CLI flags and positional values.
   for (let i = 0; i < args.length; i += 1) {
+    // Reads the current token under evaluation.
     const arg = args[i];
 
     if (arg === '--force') {
@@ -59,6 +70,7 @@ function parseArgs(argv) {
   return options;
 }
 
+// Prints help/usage text for initializer flags.
 function printHelp() {
   console.log('Usage: npm create portfoliable@latest [project-name] [-- --force] [-- --no-install] [-- --no-preview] [-- --no-dev]');
   console.log('');
@@ -69,8 +81,11 @@ function printHelp() {
   console.log('  --no-dev      Skip auto-starting live preview');
 }
 
+// Prints command reference box shown after scaffolding.
 function printCommandsBox() {
+  // Defines fixed width for terminal output box formatting.
   const width = 86;
+  // Creates one boxed line with padded content.
   const line = (text = '') => `│ ${text.padEnd(width - 4)} │`;
 
   console.log('╭' + '─'.repeat(width - 2) + '╮');
@@ -95,6 +110,8 @@ function printCommandsBox() {
   console.log('╰' + '─'.repeat(width - 2) + '╯');
 }
 
+// === NAME AND PATH HELPERS ===
+// Converts a freeform project name into npm-safe package name format.
 function sanitizePackageName(input) {
   return input
     .trim()
@@ -104,18 +121,25 @@ function sanitizePackageName(input) {
     .replace(/^-+|-+$/g, '') || 'my-portfolio';
 }
 
+// Returns true when a directory does not exist or contains no meaningful files.
 function isDirectoryEmpty(dirPath) {
   if (!fs.existsSync(dirPath)) return true;
+  // Ignores macOS metadata file when checking emptiness.
   const files = fs.readdirSync(dirPath).filter((entry) => entry !== '.DS_Store');
   return files.length === 0;
 }
 
+// Copies one template file, applying optional text transforms before writing.
 function writeFileFromTemplate(templateRoot, relativePath, targetRoot, transforms = []) {
+  // Resolves template source file path.
   const sourcePath = path.join(templateRoot, relativePath);
+  // Resolves destination file path in target project.
   const destinationPath = path.join(targetRoot, relativePath);
   fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
 
+  // Reads source file content for transform pipeline.
   let content = fs.readFileSync(sourcePath, 'utf8');
+  // Applies each provided content transform sequentially.
   for (const transform of transforms) {
     content = transform(content);
   }
@@ -123,13 +147,18 @@ function writeFileFromTemplate(templateRoot, relativePath, targetRoot, transform
   fs.writeFileSync(destinationPath, content, 'utf8');
 }
 
+// Writes .gitignore from template fallback names to final destination.
 function writeGitignoreTemplate(templateRoot, targetRoot) {
+  // Defines acceptable template filenames used for gitignore source.
   const candidates = ['.gitignore', 'gitignore'];
 
+  // Selects first existing candidate and writes it as .gitignore.
   for (const candidate of candidates) {
+    // Resolves candidate template path.
     const sourcePath = path.join(templateRoot, candidate);
     if (!fs.existsSync(sourcePath)) continue;
 
+    // Resolves destination .gitignore path.
     const destinationPath = path.join(targetRoot, '.gitignore');
     fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
     fs.writeFileSync(destinationPath, fs.readFileSync(sourcePath, 'utf8'), 'utf8');
@@ -139,8 +168,11 @@ function writeGitignoreTemplate(templateRoot, targetRoot) {
   throw new Error('Missing gitignore template file in create-portfoliable package.');
 }
 
+// Copies a required template file path as-is.
 function copyTemplateTree(templateRoot, relativePath, targetRoot) {
+  // Resolves source template path.
   const sourcePath = path.join(templateRoot, relativePath);
+  // Resolves destination path in output project.
   const destinationPath = path.join(targetRoot, relativePath);
 
   if (!fs.existsSync(sourcePath)) {
@@ -151,8 +183,11 @@ function copyTemplateTree(templateRoot, relativePath, targetRoot) {
   fs.writeFileSync(destinationPath, fs.readFileSync(sourcePath, 'utf8'), 'utf8');
 }
 
+// Recursively copies a template directory tree into target project.
 function copyTemplateDirectory(templateRoot, relativeDirPath, targetRoot) {
+  // Resolves source directory path.
   const sourceDir = path.join(templateRoot, relativeDirPath);
+  // Resolves destination directory path.
   const destinationDir = path.join(targetRoot, relativeDirPath);
 
   if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
@@ -161,8 +196,11 @@ function copyTemplateDirectory(templateRoot, relativeDirPath, targetRoot) {
 
   fs.mkdirSync(destinationDir, { recursive: true });
 
+  // Iterates source directory entries for recursive copy.
   for (const entry of fs.readdirSync(sourceDir, { withFileTypes: true })) {
+    // Resolves source entry path.
     const sourcePath = path.join(sourceDir, entry.name);
+    // Resolves destination entry path.
     const destinationPath = path.join(destinationDir, entry.name);
 
     if (entry.isDirectory()) {
@@ -175,7 +213,10 @@ function copyTemplateDirectory(templateRoot, relativeDirPath, targetRoot) {
   }
 }
 
+// === INITIALIZER ORCHESTRATION ===
+// Executes full scaffold flow: parse options, create files, install deps, and optional launch.
 function run() {
+  // Parses command-line options.
   const options = parseArgs(process.argv);
 
   if (options.help) {
@@ -183,10 +224,15 @@ function run() {
     process.exit(0);
   }
 
+  // Resolves current working directory.
   const cwd = process.cwd();
+  // Derives human-facing project name from target path.
   const projectName = path.basename(options.target);
+  // Derives npm-safe package name.
   const packageName = sanitizePackageName(projectName);
+  // Resolves absolute target output directory.
   const targetDir = path.resolve(cwd, options.target);
+  // Resolves runtime dependency override for local/integration scenarios.
   const runtimeDependencyVersion = process.env.PORTFOLIABLE_RUNTIME_DEP || '^0.4.15';
 
   if (!options.force && !isDirectoryEmpty(targetDir)) {
@@ -195,11 +241,15 @@ function run() {
     process.exit(1);
   }
 
+  // Ensures target directory exists before writing scaffold files.
   fs.mkdirSync(targetDir, { recursive: true });
 
+  // Resolves current script path for template root discovery.
   const currentFile = fileURLToPath(import.meta.url);
+  // Resolves template root directory bundled with create-portfoliable.
   const templateRoot = path.resolve(path.dirname(currentFile), '..', 'templates');
 
+  // Builds generated package.json content for consumer app.
   const packageJsonTemplate = JSON.stringify(
     {
       name: packageName,
@@ -223,6 +273,7 @@ function run() {
     2
   );
 
+  // Writes generated package.json to target project.
   fs.writeFileSync(path.join(targetDir, 'package.json'), `${packageJsonTemplate}\n`, 'utf8');
 
   writeGitignoreTemplate(templateRoot, targetDir);
@@ -230,7 +281,9 @@ function run() {
   writeFileFromTemplate(templateRoot, path.join('src', 'main.js'), targetDir);
   writeFileFromTemplate(templateRoot, path.join('src', 'cases', 'index.js'), targetDir);
   writeFileFromTemplate(templateRoot, path.join('src', 'parser', 'markdown.js'), targetDir);
+  // Resolves optional template assets directory.
   const templateAssetsDir = path.join(templateRoot, 'src', 'assets');
+  // Copies assets directory when present.
   if (fs.existsSync(templateAssetsDir) && fs.statSync(templateAssetsDir).isDirectory()) {
     copyTemplateDirectory(templateRoot, path.join('src', 'assets'), targetDir);
   }
@@ -240,6 +293,7 @@ function run() {
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'compact-research-archive.md'), targetDir);
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'wearable-companion.md'), targetDir);
 
+  // Generates starter README content in the scaffolded project.
   const readme = `# ${projectName}\n\nCreated with create-portfoliable.\n\n## Where to edit cases\n\n- Add or update markdown cases in \`src/content/cases/\`\n- Each \`.md\` file becomes a gallery item and updates in the browser during \`npm run portfoliable\`\n- Device frames are resolved from the installed Valence catalog\n\n## Commands\n\n### Start\n\n- npm run portfoliable\n\n### Build and Preview\n\n- npm run portfoliable-build\n- npm run portfoliable-preview\n\n### Thumbnail Catalog\n\n- npm run portfoliable-thumbnail-options\n- npm run portfoliable-thumbnail-options -- --full\n- npm run portfoliable-thumbnail-options -- --json\n\n### Create Content\n\n- npm run portfoliable-create-case\n- npm run portfoliable-scaffold-case\n- npx portfoliable create-case --name \"My New Case\"\n`;
   fs.writeFileSync(path.join(targetDir, 'README.md'), readme, 'utf8');
 
@@ -253,6 +307,7 @@ function run() {
   }
 
   console.log(color('36', 'Installing dependencies...'));
+  // Runs npm install in newly scaffolded project.
   const installResult = spawnSync('npm', ['install'], {
     cwd: targetDir,
     stdio: 'inherit'
@@ -269,6 +324,7 @@ function run() {
 
   if (options.launch) {
     console.log(color('36', 'Building starter app...'));
+    // Executes initial production build to validate scaffold output.
     const buildResult = spawnSync('npm', ['run', 'portfoliable-build'], {
       cwd: targetDir,
       stdio: 'inherit'
@@ -280,6 +336,7 @@ function run() {
     }
 
     console.log(color('36', 'Launching live preview (auto-opens in browser)...'));
+  // Starts development server with auto-open for immediate verification.
     const devResult = spawnSync('npm', ['run', 'portfoliable', '--', '--open'], {
       cwd: targetDir,
       stdio: 'inherit'
@@ -294,4 +351,5 @@ function run() {
   console.log(`Next steps:\n  cd ${options.target}\n  npm run portfoliable`);
 }
 
+// Executes initializer orchestration.
 run();

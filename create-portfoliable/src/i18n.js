@@ -2,16 +2,25 @@
 // Purpose: Provide runtime language selection and translation helpers.
 // Author: Lio Schimanko
 
+// === LANGUAGE RESOLUTION ===
+// Reads URL query parameters so language can be overridden per-session.
 const urlParams = new URLSearchParams(window.location.search);
+// Extracts explicit language override from the URL when present.
 const urlLang = urlParams.get('lang');
+// Sets the active language from URL override or hostname convention fallback.
 window.currentLang = urlLang ? urlLang : (window.location.hostname.startsWith('pt.') ? 'pt' : 'en');
 
+// Applies a valid HTML lang attribute for accessibility and browser behavior.
 document.documentElement.lang = window.currentLang === 'pt' ? 'pt-BR' : 'en-US';
 
+// === GLOBAL TRANSLATION HELPER ===
+// Exposes a tiny runtime helper for quick inline EN/PT string selection.
 window._t = function(en, pt) {
     return window.currentLang === 'pt' ? pt : en;
 };
 
+// === TRANSLATION DICTIONARY ===
+// Stores all localized UI strings used by the runtime shell and components.
 const translations = {
     "en": {
         "h1_title": "Your Portfolio Template",
@@ -187,24 +196,35 @@ const translations = {
     }
 };
 
+// === MODULE TRANSLATION API ===
+// Resolves a translation key for the active language with key fallback.
 export function t(key) {
     return translations[window.currentLang][key] || key;
 };
 
+// Applies all i18n bindings and locale-sensitive UI attributes to the current document.
 export function applyTranslations() {
+    // Updates every data-i18n element with the active localized string.
     document.querySelectorAll('[data-i18n]').forEach(el => {
+        // Reads translation key from element attribute.
         const key = el.getAttribute('data-i18n');
+        // Replaces element HTML only when translation data exists for the key.
         if (translations[window.currentLang] && translations[window.currentLang][key]) {
             el.innerHTML = translations[window.currentLang][key];
         }
     });
 
+    // Detects platform to display keyboard modifier symbols that match user OS.
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    // Chooses symbol label for modifier hints shown in UI copy.
     const modSymbol = isMac ? '⌥ ' : 'Alt ';
+    // Applies chosen modifier symbol to all shortcut hint placeholders.
     document.querySelectorAll('.os-mod').forEach(el => el.textContent = modSymbol);
 
+    // Resolves language-switch CTA element if present in the rendered document.
     const langBtn = document.getElementById('btn-lang');
     if (langBtn) {
+        // Detects local-hosted runtime to keep language switch links inside current origin.
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         if (window.currentLang === 'pt') {
             langBtn.href = isLocal ? "?lang=en" : "https://schimanko.dev/";
@@ -216,6 +236,7 @@ export function applyTranslations() {
     }
 
     // Assigning selected states correctly inside the translation pass
+    // Keeps language selection rows synchronized with the current language state.
     document.querySelectorAll('.lang-row').forEach(row => {
         if (row.getAttribute('data-lang') === window.currentLang) {
             row.classList.add('selected');
@@ -227,4 +248,5 @@ export function applyTranslations() {
     });
 }
 
+// Applies translations once initial DOM content is ready.
 document.addEventListener('DOMContentLoaded', applyTranslations);

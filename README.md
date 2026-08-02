@@ -1,172 +1,144 @@
-# Portfoliable
+# Portfoliable Monorepo
 
-Portfoliable is a template-first portfolio engine powered by valence web components.
+This repository contains the source for the Portfoliable toolchain.
 
-Important boundary:
-- Root-level npm commands in this folder are compatibility wrappers that forward to create-portfoliable.
-- This repository ships template/sample content only.
-- Real production content should live in your consumer application repository (for example, portfolio).
+## Repository Purpose
 
-## Commands
+The repository is organized around two operational layers:
 
-- `npm run dev`
-- `npm run build`
-- `npm run preview`
-- `npm run thumbnail:options`
-- `npm run validate:content`
-- `npm run create:case`
-- `npm run scaffold:case`
-- `npm run verify:integration`
-- `npm run smoke:homeview`
-- `npm run smoke:packed`
+1. Root wrapper package `@portfoliablejs/portfoliable`.
+2. Canonical runtime and initializer package `@portfoliablejs/create-portfoliable`.
 
-## Create a new portfolio app
+The root package forwards commands into `create-portfoliable` and exists primarily for compatibility and orchestration.
 
-Use the initializer package to scaffold a consumer app in an empty folder:
+## Audience
 
-Important:
-- Run `npm create portfoliable@latest ...`, not `npm run create portfoliable@latest ...`.
+This document is maintainer-focused.
 
-```bash
-npm create portfoliable@latest my-portfolio
-cd my-portfolio
-npm run portfoliable
-```
+If you are an end user creating a portfolio project, use the dedicated manual at `create-portfoliable/README.md`.
 
-Version note:
-- `create-portfoliable@0.1.0` is deprecated. Use latest (`>=0.1.1`).
+## Architecture Overview
 
-Runtime prerequisite:
-- The generated app installs `@portfoliablejs/create-portfoliable` from npm.
-- If npm returns `404 Not Found` for `@portfoliablejs/create-portfoliable` (or `@portfoliablejs/valence`), publish those runtime packages first. The initializer itself is published, but consumer installs require the runtime packages to be publicly available too.
+### Packages
 
-The generated app includes:
-- `npm run portfoliable`
-- `npm run portfoliable-build`
-- `npm run portfoliable-preview`
-- `npm run portfoliable-create-case`
-- `npm run portfoliable-scaffold-case`
+- `@portfoliablejs/portfoliable` (root)
+	- CLI compatibility wrapper.
+	- Command forwarding to `create-portfoliable`.
+	- Repository-level script entrypoints.
+- `@portfoliablejs/create-portfoliable`
+	- Initializer exposed by `npm create portfoliable@latest`.
+	- Runtime CLI used by generated consumer apps.
+	- Canonical implementation for dev, build, preview, content validation, and scaffolding.
 
-The generated scripts call the Portfoliable CLI directly, so you can also run:
+### Key Repository Paths
+
+- `cli/` - root package command forwarding.
+- `create-portfoliable/bin/` - initializer executable.
+- `create-portfoliable/cli/` - runtime CLI command dispatcher.
+- `create-portfoliable/scripts/` - validation, smoke, integration, and release helper scripts.
+- `create-portfoliable/src/` - runtime app shell, parser, and case loading logic.
+- `docs/release/` - release governance, automation details, and incident runbooks.
+
+## Prerequisites
+
+- Node.js `>=18`.
+- npm available in shell.
+- Git with tag and full-history support for release work.
+
+Check local environment:
 
 ```bash
-npx @portfoliablejs/create-portfoliable dev
-npx @portfoliablejs/create-portfoliable build
-npx @portfoliablejs/create-portfoliable preview
-npx @portfoliablejs/create-portfoliable create-case --name "My New Case"
+node -v
+npm -v
+git --version
 ```
 
-Optional flags:
+## Local Setup
+
+Install repository dependencies from the root:
 
 ```bash
-npm create portfoliable@latest my-portfolio -- --no-install
-npm create portfoliable@latest my-portfolio -- --force
+npm install
 ```
 
-## Create starter content
+The root `postinstall` installs dependencies in `create-portfoliable`.
 
-Generate a starter cases file in your current folder:
+## Daily Maintainer Commands
 
-```bash
-npx @portfoliablejs/create-portfoliable create-case --name "My New Case"
-```
-
-Use `--force` to overwrite an existing file.
-
-Legacy aliases remain available:
-
-```bash
-npx @portfoliablejs/create-portfoliable scaffold-case --name "My New Case"
-npm run scaffold:case -- --name "My New Case"
-```
-
-## Content model
-
-Case markdown files in this repo are examples under `create-portfoliable/src/content/cases/` and are the runtime content source used by the centralized package.
-
-### Thumbnail device fields in markdown
-
-You can control the device frame directly from case frontmatter:
-
-- `thumbCategory`
-- `thumbBrand`
-- `thumbModel`
-- `thumbColor`
-
-Example:
-
-```md
-thumbCategory: desktop
-thumbBrand: apple
-thumbModel: Apple Macbook Pro 13
-thumbColor: Space Grey
-```
-
-These four fields are mandatory in case frontmatter.
-
-### Available device types, brands, models, and colors
-
-Use the CLI to print the full catalog from your installed Valence version:
-
-```bash
-npm run thumbnail:options
-npm run thumbnail:options -- --full
-npm run thumbnail:options -- --json
-```
-
-Quick list from the current catalog:
-
-- Categories: `mobile`, `tablet`, `desktop`, `wearable`, `television`
-- Category/brand pairs:
-	- `mobile`: `apple`, `google`, `htcone`, `huawei`, `microsoft`, `motorola`, `samsung`, `xiaomi`
-	- `tablet`: `apple`, `dell`, `google`, `microsoft`
-	- `desktop`: `apple`, `dell`
-	- `wearable`: `apple`, `motorola`, `sony`
-	- `television`: `samsung`, `sony`
-
-Color options depend on the selected model. Run `thumbnail:options` to get the exact color names available for each model.
-
-Validation runs before `dev`, `build`, and `preview`.
-If validation fails, fix fields in frontmatter or language sections first.
-
-## Integration verification
-
-Run full local integration checks for template plus consumer:
-
-```bash
-npm run verify:integration
-```
-
-This command validates markdown content, builds portfoliable, then builds the sibling portfolio consumer when available.
-Use `--skip-consumer` to check only portfoliable:
-
-```bash
-npm run verify:integration -- --skip-consumer
-```
-
-## HomeView smoke check
-
-Run a lightweight smoke gate for HomeView and gallery wiring:
-
-```bash
-npm run smoke:homeview
-```
-
-This command rebuilds portfoliable and verifies:
-- `ds-home-view` is present in the main bundle
-- template gallery case titles are present
-- thumbnail frame fallback asset is generated
-
-## Release readiness
-
-Recommended release checks before tagging:
+Run from repository root unless noted:
 
 ```bash
 npm run validate:content
-npm run smoke:homeview
+npm run build
+npm run preview
+```
+
+Smoke and integration gates:
+
+```bash
+npm run smoke:initializer
 npm run smoke:packed
+npm run smoke:homeview
 npm run verify:integration
 ```
 
-For local parity against in-progress valence changes, this repo may point to a local dependency during development.
-Before publishing, ensure dependency references match your intended release source.
+## Script Forwarding Model
+
+The root package forwards to `create-portfoliable` via `npm --prefix ./create-portfoliable ...`.
+
+Examples:
+
+- `npm run build` (root) forwards to `create-portfoliable` build.
+- `npm run validate:content` (root) forwards to runtime validation.
+- `npm run portfoliable` (root) forwards to runtime dev command.
+
+This allows consumers and maintainers to use consistent command names while preserving one canonical implementation.
+
+## Release and Governance
+
+- Release workflow implementation: `.github/workflows/release.yml`.
+- Release planner and mutation logic: `create-portfoliable/scripts/release-orchestrator.mjs`.
+- Policy source of truth: `docs/release/RELEASE_POLICY.md`.
+- Incident procedure: `docs/release/INCIDENT_RUNBOOK.md`.
+
+## Validation Expectations Before Merge
+
+For runtime, parser, template, or release-impacting changes, run:
+
+```bash
+npm run validate:content
+npm run smoke:initializer
+npm run smoke:packed
+npm run smoke:homeview
+npm run build
+```
+
+Run integration verification when available:
+
+```bash
+npm run verify:integration
+```
+
+## Repository Constraints
+
+- Keep this repository template-oriented and runtime/tooling-oriented.
+- Do not commit personal production portfolio data.
+- Keep content contract validation in the workflow for markdown case files.
+- Update documentation in the same pull request as behavior changes.
+
+## End-User Manual
+
+End users should use `create-portfoliable/README.md` for full setup and usage instructions after running:
+
+```bash
+npm create portfoliable@latest
+```
+
+## Related Documents
+
+- `CONTRIBUTING.md`
+- `SECURITY.md`
+- `CODE_OF_CONDUCT.md`
+- `docs/README.md`
+
+`CHANGELOG.md` and `LICENSE` are intentionally maintained as canonical history and legal references.

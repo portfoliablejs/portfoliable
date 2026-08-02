@@ -3,12 +3,16 @@
 // Purpose: Validate template case markdown before dev, build, or preview.
 // Author: Lio Schimanko
 
+// === IMPORTS ===
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseCaseMarkdownWithDiagnostics } from '../src/parser/markdown.js';
 
+// === PATH CONSTANTS ===
+// Resolves this script directory for project-relative path operations.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Resolves canonical markdown cases directory validated by this script.
 const casesDir = path.resolve(__dirname, '../src/content/cases');
 
 // Collect every markdown case file from the cases directory.
@@ -22,10 +26,12 @@ function listMarkdownFiles(dirPath) {
     .map((name) => path.join(dirPath, name));
 }
 
+// Reads UTF-8 file content from disk.
 function readUtf8(filePath) {
   return fs.readFileSync(filePath, 'utf8');
 }
 
+// Converts absolute file path to repository-relative path for diagnostics.
 function toRelPath(filePath) {
   return path.relative(path.resolve(__dirname, '..'), filePath);
 }
@@ -43,6 +49,7 @@ function isLocalizedObject(value) {
 // Accept only URLs or project-local asset paths for link-like fields.
 function isValidUrlOrAssetPath(value) {
   if (!isNonEmptyString(value)) return false;
+  // Normalizes value before URL/path pattern checks.
   const normalized = value.trim();
   return (
     normalized.startsWith('http://')
@@ -56,6 +63,7 @@ function isValidUrlOrAssetPath(value) {
 
 // Surface non-fatal content quality warnings for case metadata.
 function collectCaseLevelWarnings(caseData, contextLabel) {
+  // Collects warning-level findings that should not fail builds.
   const warnings = [];
 
   if (isNonEmptyString(caseData?.repositoryUrl) && !isValidUrlOrAssetPath(caseData.repositoryUrl)) {
@@ -95,11 +103,15 @@ function collectCaseLevelWarnings(caseData, contextLabel) {
 
 // Detect duplicate ids and slugs across all parsed case files.
 function collectCrossFileErrors(parsedEntries) {
+  // Collects cross-file fatal validation errors.
   const errors = [];
+  // Maps case ID values to first defining file.
   const idToFile = new Map();
+  // Maps case slug values to first defining file.
   const slugToFile = new Map();
 
   parsedEntries.forEach(({ filePath, caseData }) => {
+    // Reads case id for duplicate-id detection.
     const id = caseData?.id;
     if (isNonEmptyString(id)) {
       if (idToFile.has(id)) {
@@ -109,6 +121,7 @@ function collectCrossFileErrors(parsedEntries) {
       }
     }
 
+    // Reads case slug for duplicate-slug detection.
     const slug = caseData?.slug;
     if (isNonEmptyString(slug)) {
       if (slugToFile.has(slug)) {
@@ -124,6 +137,7 @@ function collectCrossFileErrors(parsedEntries) {
 
 // Run the complete content validation pass and report errors or warnings.
 export function runValidation() {
+  // Loads markdown files to validate.
   const files = listMarkdownFiles(casesDir);
 
   if (files.length === 0) {
@@ -131,13 +145,19 @@ export function runValidation() {
     return 0;
   }
 
+  // Collects parser/contract errors across all files.
   const allErrors = [];
+  // Collects warning-level quality checks across all files.
   const allWarnings = [];
+  // Stores successfully parsed case entries for cross-file checks.
   const parsedEntries = [];
 
   files.forEach((filePath) => {
+    // Loads raw markdown file content.
     const rawText = readUtf8(filePath);
+    // Computes relative path used in diagnostic output.
     const relPath = toRelPath(filePath);
+    // Parses case markdown and returns structured errors/case data.
     const { caseData, errors } = parseCaseMarkdownWithDiagnostics(rawText, { filePath: relPath });
     allErrors.push(...errors);
 
@@ -168,7 +188,9 @@ export function runValidation() {
   return 1;
 }
 
+// Runs validation when script is invoked directly from command line.
 if (import.meta.url === `file://${process.argv[1]}`) {
+  // Captures exit code from validation run.
   const exitCode = runValidation();
   process.exit(exitCode);
 }
