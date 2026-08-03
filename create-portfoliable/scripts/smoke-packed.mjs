@@ -111,7 +111,7 @@ function main() {
     console.log('[smoke:packed] Generating app from packed artifact...');
     runOrFail(
       'npm',
-      ['exec', '--yes', `--package=${runtimeDep}`, 'create-portfoliable', generatedAppDir, '--', '--no-preview'],
+      ['exec', '--yes', `--package=${runtimeDep}`, 'create', generatedAppDir, '--', '--no-preview'],
       tempRoot,
       { PORTFOLIABLE_RUNTIME_DEP: runtimeDep }
     );

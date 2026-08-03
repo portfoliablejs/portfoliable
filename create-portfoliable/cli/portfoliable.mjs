@@ -60,11 +60,11 @@ function firstNetworkAddress() {
   return null;
 }
 
-// Fetches latest published create-portfoliable version from npm registry.
+// Fetches latest published @portfoliable/create version from npm registry.
 async function fetchLatestVersion() {
   try {
     // Calls npm metadata endpoint for latest dist-tag payload.
-    const response = await fetch('https://registry.npmjs.org/@portfoliablejs%2fcreate-portfoliable/latest');
+    const response = await fetch('https://registry.npmjs.org/@portfoliable%2fcreate/latest');
     if (!response.ok) return null;
 
     // Parses registry response payload.
@@ -402,7 +402,7 @@ function printStartupBox({ localUrl, networkUrl, localVersion, latestVersion }) 
   if (latestVersion && latestVersion !== localVersion && !latestVersion.includes('alpha')) {
     console.log(spacer());
     console.log(line(`${yellow}A new version (${latestVersion}) is available!${reset}`));
-    console.log(line(`Upgrade now: ${green}npm update @portfoliablejs/create-portfoliable${reset}`));
+    console.log(line(`Upgrade now: ${green}npm update @portfoliable/create${reset}`));
   }
 
   console.log('╰' + '─'.repeat(width - 2) + '╯');

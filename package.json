@@ -1,7 +1,7 @@
 {
-  "name": "@portfoliablejs/portfoliable",
+  "name": "portfoliable-repo",
   "version": "0.4.15",
-  "description": "Compatibility wrapper forwarding commands to create-portfoliable.",
+  "description": "Repository root for create-portfoliable maintainer workflows.",
   "license": "MIT",
   "private": true,
   "type": "module",

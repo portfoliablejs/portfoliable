@@ -1,6 +1,6 @@
 {
-  "name": "@portfoliablejs/create-portfoliable",
-  "version": "0.5.3",
+  "name": "@portfoliable/create",
+  "version": "0.5.4",
   "description": "Unified Portfoliable package with initializer and runtime CLI",
   "private": false,
   "type": "module",
@@ -43,6 +43,7 @@
   },
   "main": "src/App.js",
   "bin": {
+    "create": "bin/create-portfoliable.mjs",
     "create-portfoliable": "bin/create-portfoliable.mjs",
     "portfoliable": "cli/portfoliable.mjs"
   },

@@ -6,8 +6,8 @@ This document defines the expected workflow for safe, reviewable, release-compat
 
 Applies to all code and documentation contributions across:
 
-- root wrapper package (`@portfoliablejs/portfoliable`)
-- runtime and initializer package (`@portfoliablejs/create-portfoliable`)
+- repository root maintainer wiring
+- runtime and initializer package (`@portfoliable/create`)
 - release automation and operations documentation
 
 ## Contribution Principles

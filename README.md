@@ -2,14 +2,19 @@
 
 This repository contains the source for the Portfoliable toolchain.
 
+## npm Package
+
+- Package: [@portfoliable/create](https://www.npmjs.com/package/@portfoliable/create)
+- Latest: [npm version](https://img.shields.io/npm/v/%40portfoliable%2Fcreate)
+- Create command: `npm create @portfoliable`
+
 ## Repository Purpose
 
-The repository is organized around two operational layers:
+The repository is organized around one canonical npm package:
 
-1. Root wrapper package `@portfoliablejs/portfoliable`.
-2. Canonical runtime and initializer package `@portfoliablejs/create-portfoliable`.
+1. `@portfoliable/create`.
 
-The root package forwards commands into `create-portfoliable` and exists primarily for compatibility and orchestration.
+The repository root still provides maintainer script entrypoints, but the published product contract is the `@portfoliable/create` package.
 
 ## Audience
 
@@ -21,18 +26,15 @@ If you are an end user creating a portfolio project, use the dedicated manual at
 
 ### Packages
 
-- `@portfoliablejs/portfoliable` (root)
-	- CLI compatibility wrapper.
-	- Command forwarding to `create-portfoliable`.
-	- Repository-level script entrypoints.
-- `@portfoliablejs/create-portfoliable`
-	- Initializer exposed by `npm create portfoliable@latest`.
+
+- `@portfoliable/create`
+	- Initializer exposed by `npm create @portfoliable`.
 	- Runtime CLI used by generated consumer apps.
 	- Canonical implementation for dev, build, preview, content validation, and scaffolding.
 
 ### Key Repository Paths
 
-- `cli/` - root package command forwarding.
+- `cli/` - repository-level command forwarding.
 - `create-portfoliable/bin/` - initializer executable.
 - `create-portfoliable/cli/` - runtime CLI command dispatcher.
 - `create-portfoliable/scripts/` - validation, smoke, integration, and release helper scripts.
@@ -84,7 +86,7 @@ npm run verify:integration
 
 ## Script Forwarding Model
 
-The root package forwards to `create-portfoliable` via `npm --prefix ./create-portfoliable ...`.
+The repository root forwards to `create-portfoliable` via `npm --prefix ./create-portfoliable ...`.
 
 Examples:
 
@@ -92,7 +94,7 @@ Examples:
 - `npm run validate:content` (root) forwards to runtime validation.
 - `npm run portfoliable` (root) forwards to runtime dev command.
 
-This allows consumers and maintainers to use consistent command names while preserving one canonical implementation.
+This allows maintainers to keep one canonical implementation while still using repository-root shortcuts during development.
 
 ## Release and Governance
 
@@ -131,7 +133,7 @@ npm run verify:integration
 End users should use `create-portfoliable/README.md` for full setup and usage instructions after running:
 
 ```bash
-npm create portfoliable@latest
+npm create @portfoliable
 ```
 
 ## Related Documents

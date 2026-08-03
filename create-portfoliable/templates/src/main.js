@@ -3,7 +3,7 @@
 // Author: Lio Schimanko
 
 // === IMPORTS ===
-import '@portfoliablejs/create-portfoliable';
+import '@portfoliable/create';
 import { portfolioCases } from './cases/index.js';
 
 // === APP MOUNT ===

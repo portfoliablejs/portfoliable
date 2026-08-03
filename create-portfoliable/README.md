@@ -1,9 +1,9 @@
-# create-portfoliable User Manual
+# @portfoliable/create User Manual
 
 This guide is the end-user instruction manual for projects created with:
 
 ```bash
-npm create portfoliable@latest
+npm create @portfoliable
 ```
 
 Use this document after scaffolding to run, customize, validate, and ship your portfolio application.
@@ -39,7 +39,7 @@ npm -v
 Scaffold a new app:
 
 ```bash
-npm create portfoliable@latest my-portfolio
+npm create @portfoliable my-portfolio
 ```
 
 Move into the project:
@@ -59,8 +59,8 @@ npm run portfoliable
 Pass flags after `--`:
 
 ```bash
-npm create portfoliable@latest my-portfolio -- --no-install
-npm create portfoliable@latest my-portfolio -- --force
+npm create @portfoliable my-portfolio -- --no-install
+npm create @portfoliable my-portfolio -- --force
 ```
 
 Flag reference:
@@ -208,7 +208,7 @@ When updating dependencies in an existing generated project:
 ## 13. Minimal Quick Start
 
 ```bash
-npm create portfoliable@latest my-portfolio
+npm create @portfoliable my-portfolio
 cd my-portfolio
 npm run portfoliable
 ```

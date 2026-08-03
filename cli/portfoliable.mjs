@@ -4,7 +4,7 @@
 // Author: Lio Schimanko
 
 // === IMPORTS ===
-// Thin compatibility wrapper: forward root CLI calls to canonical create-portfoliable CLI.
+// Thin repository entrypoint: forward root CLI calls to canonical create-portfoliable CLI.
 
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';

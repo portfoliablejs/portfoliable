@@ -7,7 +7,7 @@
 
 # Changelog
 
-This changelog tracks runtime package and initializer changes for `@portfoliablejs/create-portfoliable`.
+This changelog tracks runtime package and initializer changes for `@portfoliable/create`.
 
 ## Format
 

@@ -25,7 +25,7 @@ npm install
 ## Where to Implement Changes
 
 - runtime and initializer behavior: `create-portfoliable/`
-- root compatibility forwarding only: `cli/` and root script wiring
+- root maintainer forwarding only: `cli/` and root script wiring
 - release planning and mutation logic: `create-portfoliable/scripts/release-orchestrator.mjs`
 - CI behavior: `.github/workflows/release.yml`
 
@@ -79,7 +79,7 @@ Most common causes:
 
 Verify npm trusted publisher mapping before deep debugging:
 
-- package: `@portfoliablejs/create-portfoliable`
+- package: `@portfoliable/create`
 - owner: `portfoliablejs`
 - repository: `portfoliable`
 - workflow file: `release.yml`

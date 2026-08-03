@@ -72,7 +72,7 @@ function parseArgs(argv) {
 
 // Prints help/usage text for initializer flags.
 function printHelp() {
-  console.log('Usage: npm create portfoliable@latest [project-name] [-- --force] [-- --no-install] [-- --no-preview] [-- --no-dev]');
+  console.log('Usage: npm create @portfoliable [project-name] [-- --force] [-- --no-install] [-- --no-preview] [-- --no-dev]');
   console.log('');
   console.log('Options:');
   console.log('  --force       Create in a non-empty directory');
@@ -266,7 +266,7 @@ function run() {
       },
       dependencies: {
         '@portfoliablejs/valence': '^0.1.0',
-        '@portfoliablejs/create-portfoliable': runtimeDependencyVersion
+        '@portfoliable/create': runtimeDependencyVersion
       }
     },
     null,
@@ -294,7 +294,7 @@ function run() {
   copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'wearable-companion.md'), targetDir);
 
   // Generates starter README content in the scaffolded project.
-  const readme = `# ${projectName}\n\nCreated with create-portfoliable.\n\n## Where to edit cases\n\n- Add or update markdown cases in \`src/content/cases/\`\n- Each \`.md\` file becomes a gallery item and updates in the browser during \`npm run portfoliable\`\n- Device frames are resolved from the installed Valence catalog\n\n## Commands\n\n### Start\n\n- npm run portfoliable\n\n### Build and Preview\n\n- npm run portfoliable-build\n- npm run portfoliable-preview\n\n### Thumbnail Catalog\n\n- npm run portfoliable-thumbnail-options\n- npm run portfoliable-thumbnail-options -- --full\n- npm run portfoliable-thumbnail-options -- --json\n\n### Create Content\n\n- npm run portfoliable-create-case\n- npm run portfoliable-scaffold-case\n- npx portfoliable create-case --name \"My New Case\"\n`;
+  const readme = `# ${projectName}\n\nCreated with @portfoliable/create.\n\n## Where to edit cases\n\n- Add or update markdown cases in \`src/content/cases/\`\n- Each \`.md\` file becomes a gallery item and updates in the browser during \`npm run portfoliable\`\n- Device frames are resolved from the installed Valence catalog\n\n## Commands\n\n### Start\n\n- npm run portfoliable\n\n### Build and Preview\n\n- npm run portfoliable-build\n- npm run portfoliable-preview\n\n### Thumbnail Catalog\n\n- npm run portfoliable-thumbnail-options\n- npm run portfoliable-thumbnail-options -- --full\n- npm run portfoliable-thumbnail-options -- --json\n\n### Create Content\n\n- npm run portfoliable-create-case\n- npm run portfoliable-scaffold-case\n- npx portfoliable create-case --name \"My New Case\"\n`;
   fs.writeFileSync(path.join(targetDir, 'README.md'), readme, 'utf8');
 
   console.log(color('36', `Created ${projectName} at ${targetDir}`));
