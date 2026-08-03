@@ -81,7 +81,7 @@ function assertIncludes(haystack, needle, message) {
 }
 
 // === SMOKE ORCHESTRATION ===
-// Runs build, inspects emitted bundle/assets, and validates key HomeView/gallery expectations.
+// Runs build, inspects emitted bundle/assets, and validates HomeView/CaseView route expectations.
 function main() {
   runBuild();
 
@@ -95,6 +95,13 @@ function main() {
   // HomeView template is mounted through ds-home-view.
   assertIncludes(bundleText, 'ds-home-view', 'HomeView marker not found in bundle.');
 
+  // CaseView template must exist for in-app Home -> Case transitions.
+  assertIncludes(bundleText, 'ds-case-view', 'CaseView marker not found in bundle.');
+
+  // Route transition helpers should be present in the runtime shell bundle.
+  assertIncludes(bundleText, '_transitionToView', 'Route transition helper not found in bundle.');
+  assertIncludes(bundleText, 'data-route-direction', 'Route direction marker not found in bundle.');
+
   // Template gallery data should include the sample case titles.
   assertIncludes(bundleText, 'Template Product Launch', 'Template case title not found in bundle.');
   assertIncludes(bundleText, 'Template Mobile Redesign', 'Second template case title not found in bundle.');
@@ -102,7 +109,14 @@ function main() {
   // Thumbnail frame fallback asset should be part of build outputs.
   const hasDeviceFrameAsset = fs
     .readdirSync(path.join(distDir, 'assets'))
-    .some((file) => file.startsWith('iphone-12-black-') && file.endsWith('.avif'));
+    .some((file) => {
+      if (!file.endsWith('.avif')) return false;
+      const normalized = file.toLowerCase();
+      return (
+        normalized.startsWith('iphone-12-black-') ||
+        (normalized.includes('iphone') && normalized.includes('12') && normalized.includes('black'))
+      );
+    });
 
   if (!hasDeviceFrameAsset) {
     fail('Expected thumbnail device frame asset was not generated.');

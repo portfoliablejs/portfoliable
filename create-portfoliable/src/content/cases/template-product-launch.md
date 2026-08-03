@@ -17,6 +17,10 @@ thumbCategory: mobile
 thumbBrand: samsung
 thumbModel: Samsung Galaxy Note 5
 thumbColor: Default
+showSummary: false
+showReader: true
+showToc: true
+showNavigator: true
 ---
 <!-- lang:en -->
 ## Context

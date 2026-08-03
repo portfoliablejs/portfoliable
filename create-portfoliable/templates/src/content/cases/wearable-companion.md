@@ -17,6 +17,10 @@ thumbCategory: wearable
 thumbBrand: apple
 thumbModel: Apple Watch 44mm
 thumbColor: Silver Aluminum
+showSummary: false
+showReader: true
+showToc: true
+showNavigator: true
 ---
 <!-- lang:en -->
 ## Context

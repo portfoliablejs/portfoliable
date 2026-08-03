@@ -96,6 +96,22 @@ npm run portfoliable-build
 npm run portfoliable-preview
 ```
 
+## 6.1 View Transitions (Home to Case)
+
+Generated apps use a single-page flow:
+
+- Home route renders `ds-home-view` with gallery thumbnails.
+- Clicking a thumbnail transitions in-place to `ds-case-view`.
+- Case route keeps breadcrumb navigation (`Back`, `Home`, active case title) and uses `ds-article` for long-form content.
+
+Transition behavior:
+
+- default motion is subtle slide + fade + scale for an Apple-like minimal feel
+- `Reduce Motion` accessibility mode disables transition motion automatically
+- browser `prefers-reduced-motion` is also respected
+
+This means users never leave the app shell while navigating between overview and case detail views.
+
 ## 7. Content Structure and Contract
 
 Case files are stored as markdown under the generated content directory.
@@ -129,6 +145,76 @@ For framed thumbnails, configure:
 - `thumbColor`
 
 Body content must include language sections expected by the parser.
+
+### 7.1 Summary and Reader Rules (Auto Toggle)
+
+The parser now derives UI toggles for:
+
+- summary panel (`showSummary`)
+- reader body (`showReader`)
+- table of contents (`showToc`)
+- case controller/navigator (`showNavigator`)
+
+Use these rules.
+
+1. Language blocks are still required:
+
+```md
+<!-- lang:en -->
+...english content...
+
+<!-- lang:pt -->
+...portuguese content...
+```
+
+2. Optional summary block markers (inside each language section):
+
+```md
+<!-- summary:start -->
+## Executive Summary
+- Keep bullets, headings, and paragraphs here.
+- Nested markdown children are preserved.
+<!-- summary:end -->
+```
+
+Everything inside summary markers is rendered to the summary slot.
+Everything outside summary markers is rendered to the reader body.
+
+3. Folder placement controls defaults:
+
+- `src/content/cases/*.md`: mixed mode (auto-detect summary + reader)
+- `src/content/cases/summary/*.md`: summary-only default (`showReader=false`)
+- `src/content/cases/reader/*.md`: reader-only default (`showSummary=false`)
+
+4. Optional frontmatter overrides (highest priority):
+
+- `showSummary: true|false`
+- `showReader: true|false`
+- `showPlayer: true|false`
+- `showToc: true|false`
+- `showNavigator: true|false`
+
+Accepted aliases (same behavior):
+
+- `summary`, `show-summary`
+- `reader`, `show-reader`
+- `player`, `show-player`
+- `toc`, `show-toc`
+- `navigator`, `show-navigator`
+
+5. TOC and controller behavior:
+
+- TOC defaults to on when reader content contains headings (`##` or `###`)
+- Navigator/controller defaults to on when reader is enabled
+- If `showReader=false`, TOC and navigator are forced off
+- TOC active state (open menu item + closed minimap line) follows case-reader container scroll
+- TOC and navigator/controller remain fixed while the reader content scrolls
+- TOC and navigator/controller are non-scrollable control surfaces (page scroll is not captured inside them)
+
+6. Marker validity:
+
+- Always pair both summary markers in each localized section
+- Unbalanced markers are treated as content validation warnings
 
 ## 8. Create a New Case
 

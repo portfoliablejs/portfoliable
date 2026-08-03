@@ -18,6 +18,10 @@ const REQUIRED_SCALAR_FIELDS = ['id', 'slug', 'thumbCategory', 'thumbBrand', 'th
 // Lists required localized fields that must include both EN and PT values.
 const REQUIRED_LOCALIZED_FIELDS = ['title', 'shortDesc', 'readTime', 'year', 'thumbSrc'];
 
+// Matches summary block delimiters inside localized markdown sections.
+const SUMMARY_START_MARKER = '<!-- summary:start -->';
+const SUMMARY_END_MARKER = '<!-- summary:end -->';
+
 // Convert the supported markdown subset into HTML for case bodies.
 // Converts the supported markdown subset into HTML for case body rendering.
 function markdownToHtml(markdown) {
@@ -161,12 +165,60 @@ function parseLocalizedBody(bodyText) {
     sections.pt = bodyText;
   }
 
+  const splitSummaryAndReader = (markdown) => {
+    const raw = markdown.trim();
+    const lower = raw.toLowerCase();
+    const startIndex = lower.indexOf(SUMMARY_START_MARKER);
+
+    if (startIndex < 0) {
+      return {
+        readerRaw: raw,
+        summaryRaw: '',
+        hasSummaryMarkers: false,
+        hasBalancedSummaryMarkers: true
+      };
+    }
+
+    const endIndex = lower.indexOf(SUMMARY_END_MARKER, startIndex + SUMMARY_START_MARKER.length);
+    if (endIndex < 0) {
+      const summaryRaw = raw.slice(startIndex + SUMMARY_START_MARKER.length).trim();
+      const readerRaw = raw.slice(0, startIndex).trim();
+      return {
+        readerRaw,
+        summaryRaw,
+        hasSummaryMarkers: true,
+        hasBalancedSummaryMarkers: false
+      };
+    }
+
+    const before = raw.slice(0, startIndex).trim();
+    const summaryRaw = raw.slice(startIndex + SUMMARY_START_MARKER.length, endIndex).trim();
+    const after = raw.slice(endIndex + SUMMARY_END_MARKER.length).trim();
+    const readerRaw = [before, after].filter(Boolean).join('\n\n').trim();
+
+    return {
+      readerRaw,
+      summaryRaw,
+      hasSummaryMarkers: true,
+      hasBalancedSummaryMarkers: true
+    };
+  };
+
+  const enSplit = splitSummaryAndReader(sections.en);
+  const ptSplit = splitSummaryAndReader(sections.pt);
+
+  const hasHeadings = (markdown) => /(^|\n)#{2,3}\s+\S+/m.test(markdown || '');
+
   return {
     html: {
-      // Renders English markdown segment into HTML.
-      en: markdownToHtml(sections.en.trim()),
-      // Renders Portuguese markdown segment into HTML.
-      pt: markdownToHtml(sections.pt.trim())
+      desc: {
+        en: markdownToHtml(enSplit.readerRaw),
+        pt: markdownToHtml(ptSplit.readerRaw)
+      },
+      summary: {
+        en: markdownToHtml(enSplit.summaryRaw),
+        pt: markdownToHtml(ptSplit.summaryRaw)
+      }
     },
     meta: {
       // Records whether EN marker exists in source body.
@@ -176,7 +228,21 @@ function parseLocalizedBody(bodyText) {
       // Stores raw EN body content for diagnostics.
       rawEn: sections.en.trim(),
       // Stores raw PT body content for diagnostics.
-      rawPt: sections.pt.trim()
+      rawPt: sections.pt.trim(),
+      // Stores split reader content per locale.
+      readerRawEn: enSplit.readerRaw,
+      readerRawPt: ptSplit.readerRaw,
+      // Stores split summary content per locale.
+      summaryRawEn: enSplit.summaryRaw,
+      summaryRawPt: ptSplit.summaryRaw,
+      // Tracks whether summary markers are present and balanced across locales.
+      hasSummaryMarkersEn: enSplit.hasSummaryMarkers,
+      hasSummaryMarkersPt: ptSplit.hasSummaryMarkers,
+      hasBalancedSummaryMarkersEn: enSplit.hasBalancedSummaryMarkers,
+      hasBalancedSummaryMarkersPt: ptSplit.hasBalancedSummaryMarkers,
+      // Tracks heading presence used by TOC heuristics.
+      hasReaderHeadingsEn: hasHeadings(enSplit.readerRaw),
+      hasReaderHeadingsPt: hasHeadings(ptSplit.readerRaw)
     }
   };
 }
@@ -185,6 +251,91 @@ function parseLocalizedBody(bodyText) {
 // Returns true only for non-empty trimmed strings.
 function isNonEmptyString(value) {
   return typeof value === 'string' && value.trim().length > 0;
+}
+
+// Parses a boolean-ish frontmatter scalar to true/false when possible.
+function parseBooleanFlag(value) {
+  if (typeof value === 'boolean') return value;
+  if (typeof value !== 'string') return null;
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'true') return true;
+  if (normalized === 'false') return false;
+  return null;
+}
+
+// Resolves the first valid boolean flag from a list of metadata keys.
+function resolveBooleanFlag(metadata, keys) {
+  for (const key of keys) {
+    const parsed = parseBooleanFlag(metadata?.[key]);
+    if (parsed !== null) return parsed;
+  }
+  return null;
+}
+
+// Resolves case placement mode from markdown file path.
+function resolveCasePlacement(filePath) {
+  const normalizedPath = String(filePath || '').replace(/\\/g, '/');
+  if (normalizedPath.includes('/content/cases/summary/')) return 'summary-only';
+  if (normalizedPath.includes('/content/cases/reader/')) return 'reader-only';
+  return 'mixed';
+}
+
+// Derives runtime visibility toggles for summary, reader, TOC, and navigator.
+function deriveDisplayToggles(metadata, bodyMeta, contextLabel) {
+  const placement = resolveCasePlacement(contextLabel);
+
+  const hasSummaryContent = isNonEmptyString(bodyMeta.summaryRawEn) || isNonEmptyString(bodyMeta.summaryRawPt);
+  const hasReaderContent = isNonEmptyString(bodyMeta.readerRawEn) || isNonEmptyString(bodyMeta.readerRawPt);
+  const hasReaderHeadings = Boolean(bodyMeta.hasReaderHeadingsEn || bodyMeta.hasReaderHeadingsPt);
+
+  const explicitShowSummary = resolveBooleanFlag(metadata, ['showSummary', 'show-summary', 'summary']);
+  const explicitShowReader = resolveBooleanFlag(metadata, ['showReader', 'show-reader', 'reader']);
+  const explicitShowToc = resolveBooleanFlag(metadata, ['showToc', 'show-toc', 'toc']);
+  const explicitShowNavigator = resolveBooleanFlag(metadata, ['showNavigator', 'show-navigator', 'navigator']);
+  const explicitShowPlayer = resolveBooleanFlag(metadata, ['showPlayer', 'show-player', 'player']);
+
+  let showSummary = hasSummaryContent;
+  let showReader = hasReaderContent;
+
+  if (placement === 'summary-only') {
+    showSummary = hasSummaryContent;
+    showReader = false;
+  }
+
+  if (placement === 'reader-only') {
+    showSummary = false;
+    showReader = hasReaderContent;
+  }
+
+  if (explicitShowSummary !== null) showSummary = explicitShowSummary;
+  if (explicitShowReader !== null) showReader = explicitShowReader;
+
+  if (!showReader) {
+    return {
+      showSummary,
+      showReader,
+      showPlayer: false,
+      showToc: false,
+      showNavigator: false
+    };
+  }
+
+  let showPlayer = true;
+  let showToc = hasReaderHeadings;
+  let showNavigator = true;
+
+  if (explicitShowPlayer !== null) showPlayer = explicitShowPlayer;
+  if (explicitShowToc !== null) showToc = explicitShowToc;
+  if (explicitShowNavigator !== null) showNavigator = explicitShowNavigator;
+
+  return {
+    showSummary,
+    showReader,
+    showPlayer,
+    showToc,
+    showNavigator
+  };
 }
 
 // Validate the parsed case structure and surface human-readable errors.
@@ -214,14 +365,20 @@ function validateCaseObject(caseData, bodyMeta, contextLabel) {
     }
   });
 
-  // Enforces non-empty localized article body content.
-  if (!isNonEmptyString(caseData?.desc?.en) || !isNonEmptyString(caseData?.desc?.pt)) {
-    errors.push(`${contextLabel}: body content must produce non-empty EN and PT article sections.`);
+  // Enforces non-empty localized reader/summary content contract.
+  const hasAnyReadableEn = isNonEmptyString(caseData?.desc?.en) || isNonEmptyString(caseData?.summary?.en);
+  const hasAnyReadablePt = isNonEmptyString(caseData?.desc?.pt) || isNonEmptyString(caseData?.summary?.pt);
+  if (!hasAnyReadableEn || !hasAnyReadablePt) {
+    errors.push(`${contextLabel}: body content must produce non-empty EN and PT reader or summary sections.`);
   }
 
   // Enforces language marker balance when explicit markers are used.
   if (bodyMeta.hasLangEnMarker !== bodyMeta.hasLangPtMarker) {
     errors.push(`${contextLabel}: language markers are unbalanced. Use both '<!-- lang:en -->' and '<!-- lang:pt -->'.`);
+  }
+
+  if (!bodyMeta.hasBalancedSummaryMarkersEn || !bodyMeta.hasBalancedSummaryMarkersPt) {
+    errors.push(`${contextLabel}: summary markers are unbalanced. Use both '${SUMMARY_START_MARKER}' and '${SUMMARY_END_MARKER}' in each localized section.`);
   }
 
   // Rejects deprecated device source field in favor of catalog metadata fields.
@@ -268,8 +425,10 @@ export function parseCaseMarkdownWithDiagnostics(rawText, options = {}) {
   // Builds runtime case payload with parser-provided body fields.
   const caseData = {
     ...metadata,
-    desc: body.html,
-    descRecruiter: metadata.descRecruiter || body.html
+    desc: body.html.desc,
+    summary: body.html.summary,
+    descRecruiter: metadata.descRecruiter || body.html.desc,
+    display: deriveDisplayToggles(metadata, body.meta, contextLabel)
   };
 
   // Runs contract validation against parsed payload.

@@ -17,6 +17,10 @@ thumbCategory: desktop
 thumbBrand: apple
 thumbModel: Apple Macbook Pro 13
 thumbColor: Space Grey
+showSummary: false
+showReader: true
+showToc: true
+showNavigator: true
 ---
 <!-- lang:en -->
 ## Context

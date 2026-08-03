@@ -17,6 +17,10 @@ thumbCategory: tablet
 thumbBrand: apple
 thumbModel: Apple iPad Pro 11
 thumbColor: Silver
+showSummary: false
+showReader: true
+showToc: true
+showNavigator: true
 ---
 <!-- lang:en -->
 ## Context

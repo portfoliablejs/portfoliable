@@ -17,6 +17,10 @@ thumbCategory: mobile
 thumbBrand: apple
 thumbModel: Apple iPhone 12
 thumbColor: Black
+showSummary: false
+showReader: true
+showToc: true
+showNavigator: true
 ---
 <!-- lang:en -->
 ## Context

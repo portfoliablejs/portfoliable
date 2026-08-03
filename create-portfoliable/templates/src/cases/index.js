@@ -35,7 +35,15 @@ function normalizeMarkdownCase(markdownCase) {
     year: toLocalized(markdownCase.year),
     thumbSrc: toLocalized(markdownCase.thumbSrc),
     desc: toLocalized(markdownCase.desc),
-    descRecruiter: toLocalized(markdownCase.descRecruiter, markdownCase.desc)
+    summary: toLocalized(markdownCase.summary),
+    descRecruiter: toLocalized(markdownCase.descRecruiter, markdownCase.desc),
+    display: {
+      showSummary: Boolean(markdownCase?.display?.showSummary),
+      showReader: markdownCase?.display?.showReader !== false,
+      showPlayer: markdownCase?.display?.showPlayer !== false,
+      showToc: Boolean(markdownCase?.display?.showToc),
+      showNavigator: markdownCase?.display?.showNavigator !== false
+    }
   };
 }
 
@@ -49,11 +57,22 @@ function loadMarkdownCases() {
     query: '?raw'
   });
 
+  const nestedModules = import.meta.glob('../content/cases/**/*.md', {
+    eager: true,
+    import: 'default',
+    query: '?raw'
+  });
+
+  const allModules = {
+    ...nestedModules,
+    ...modules
+  };
+
   // Collects parser diagnostics encountered across all markdown files.
   const diagnostics = [];
 
   // Parses all imported markdown files and returns valid caseData entries.
-  const parsedCases = Object.entries(modules)
+  const parsedCases = Object.entries(allModules)
     .map(([filePath, rawText]) => {
       // Parses one markdown module and returns case payload plus diagnostics.
       const result = parseCaseMarkdownWithDiagnostics(rawText, { filePath });
