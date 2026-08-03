@@ -76,20 +76,11 @@ jobs:
             exit 1
           fi
 
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-
       - name: Build
         run: npm --prefix ./create-portfoliable run build
 
       - name: Packed artifact smoke
         run: npm --prefix ./create-portfoliable run smoke:packed
-
-      - name: Upload GitHub Pages artifact
-        if: github.event_name != 'workflow_dispatch' || inputs.dry_run != true
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./create-portfoliable/dist
 
       - name: Configure git
         run: |
@@ -134,18 +125,3 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/releases" \
             -d "{\"tag_name\":\"${TAG}\",\"name\":\"${TAG}\",\"generate_release_notes\":true}"
 
-  deploy-pages:
-    name: Deploy Release Pages
-    needs: release
-    if: github.event_name != 'workflow_dispatch' || inputs.dry_run != true
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: Release
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy Release artifact
-        id: deployment
-        uses: actions/deploy-pages@v4
