@@ -1,3 +1,9 @@
+## [0.7.0](https://github.com/portfoliablejs/portfoliable/compare/v0.6.0...v0.7.0) (2026-08-03)
+
+### Features
+
+* feat(case-view): stabilize toc and navigator interactions ([8dac465](https://github.com/portfoliablejs/portfoliable/commit/8dac4659f183d42a0c86c5d6fd500962ce6522ce))
+
 ## [0.6.0](https://github.com/portfoliablejs/portfoliable/compare/v0.5.5...v0.6.0) (2026-08-03)
 
 ### Bug Fixes
@@ -51,5 +57,6 @@ This changelog tracks runtime package and initializer changes for `@portfoliable
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
