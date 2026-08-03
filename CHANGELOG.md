@@ -33,6 +33,11 @@ This changelog tracks runtime package and initializer changes for `@portfoliable
 - Standardized documentation language around content contract and thumbnail catalog.
 - Clarified separation between end-user consumer workflow and maintainer workflow.
 
+### Fixed
+
+- Initializer now derives generated `@portfoliable/create` dependency from package metadata instead of a stale hardcoded semver.
+- Smoke coverage now verifies no-override scaffolding dependency version to prevent future release drift regressions.
+
 ### Security
 
 - Reinforced trusted publishing assumptions and secure disclosure references.

@@ -66,6 +66,23 @@ function ensureContains(text, needle, description) {
   }
 }
 
+// Reads create runtime dependency from generated app package.json.
+function readGeneratedRuntimeDependency(appDir) {
+  // Resolves generated package manifest path.
+  const packageJsonPath = path.join(appDir, 'package.json');
+  // Parses generated package manifest to inspect runtime dependency version.
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  return packageJson?.dependencies?.['@portfoliable/create'];
+}
+
+// Reads local package version used as expected default dependency baseline.
+function readLocalPackageVersion() {
+  // Resolves local package manifest.
+  const packageJsonPath = path.join(projectRoot, 'package.json');
+  // Parses package version string from local manifest.
+  return JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).version;
+}
+
 // === PACK RESOLUTION ===
 // Builds an npm tarball and resolves the exact file path returned by npm pack.
 function resolveTarballPath() {
@@ -106,8 +123,27 @@ function main() {
   const tarballPath = resolveTarballPath();
   // Builds file: dependency string consumed by npm exec package override.
   const runtimeDep = `file:${tarballPath}`;
+  // Builds expected default runtime dependency for no-override scaffolding.
+  const expectedDefaultRuntimeDep = `^${readLocalPackageVersion()}`;
+  // Resolves dedicated output path for default-no-override validation.
+  const generatedDefaultAppDir = path.join(tempRoot, 'my-portfolio-default');
 
   try {
+    console.log('[smoke:packed] Verifying generated default runtime dependency (no override)...');
+    runOrFail(
+      'npm',
+      ['exec', '--yes', `--package=${runtimeDep}`, 'create', generatedDefaultAppDir, '--', '--no-install', '--no-preview'],
+      tempRoot
+    );
+
+    // Ensures packed initializer default dependency tracks packaged version.
+    const generatedDefaultDep = readGeneratedRuntimeDependency(generatedDefaultAppDir);
+    if (generatedDefaultDep !== expectedDefaultRuntimeDep) {
+      fail(
+        `Unexpected default runtime dependency: expected ${expectedDefaultRuntimeDep}, got ${String(generatedDefaultDep)}`
+      );
+    }
+
     console.log('[smoke:packed] Generating app from packed artifact...');
     runOrFail(
       'npm',

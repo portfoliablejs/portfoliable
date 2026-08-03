@@ -47,12 +47,50 @@ function ensureContains(text, needle, description) {
   }
 }
 
+// Reads the create runtime dependency value from a generated app package.json.
+function readGeneratedRuntimeDependency(appDir) {
+  // Resolves generated package manifest path.
+  const packageJsonPath = path.join(appDir, 'package.json');
+  // Parses generated package manifest to inspect runtime dependency pin.
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  return packageJson?.dependencies?.['@portfoliable/create'];
+}
+
+// Reads the local package version used as default runtime dependency baseline.
+function readLocalPackageVersion() {
+  // Resolves local create-portfoliable package manifest.
+  const packageJsonPath = path.join(projectRoot, 'package.json');
+  // Parses local package manifest and returns semantic version.
+  return JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).version;
+}
+
 // === SMOKE ORCHESTRATION ===
 // Generates an app from the local initializer, builds it, and validates emitted artifacts/content.
 function main() {
   console.log('[smoke:init] Preparing temp workspace...');
   fs.rmSync(tempRoot, { recursive: true, force: true });
   fs.mkdirSync(tempRoot, { recursive: true });
+
+  // Builds expected default runtime dependency from local package version.
+  const expectedDefaultRuntimeDep = `^${readLocalPackageVersion()}`;
+
+  console.log('[smoke:init] Verifying generated default runtime dependency (no override)...');
+  runOrFail(
+    'node',
+    ['./bin/create-portfoliable.mjs', generatedAppDir, '--no-install', '--no-preview'],
+    projectRoot
+  );
+
+  // Ensures scaffolded dependency follows package version when no override is provided.
+  const generatedDefaultDep = readGeneratedRuntimeDependency(generatedAppDir);
+  if (generatedDefaultDep !== expectedDefaultRuntimeDep) {
+    fail(
+      `Unexpected default runtime dependency: expected ${expectedDefaultRuntimeDep}, got ${String(generatedDefaultDep)}`
+    );
+  }
+
+  // Cleans generated app before running existing integration/build path.
+  fs.rmSync(generatedAppDir, { recursive: true, force: true });
 
   console.log('[smoke:init] Generating app from local initializer...');
   runOrFail(

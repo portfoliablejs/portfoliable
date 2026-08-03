@@ -19,6 +19,35 @@ function color(code, message) {
   return `\x1b[${code}m${message}\x1b[0m`;
 }
 
+// Resolves runtime dependency version for generated app package.json.
+function resolveRuntimeDependencyVersion(currentFilePath) {
+  // Allows explicit overrides for local integration and smoke tests.
+  const override = process.env.PORTFOLIABLE_RUNTIME_DEP;
+  if (override) {
+    return override;
+  }
+
+  try {
+    // Resolves published package manifest adjacent to this bin entrypoint.
+    const packageJsonPath = path.resolve(path.dirname(currentFilePath), '..', 'package.json');
+    // Reads package version to keep scaffolded dependency aligned with published artifact.
+    const packageVersion = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))?.version;
+    if (typeof packageVersion === 'string' && /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.test(packageVersion)) {
+      return `^${packageVersion}`;
+    }
+  } catch {
+    // Falls back below with warning to avoid hardcoded stale versions.
+  }
+
+  console.warn(
+    color(
+      '33',
+      'Warning: could not resolve package version for @portfoliable/create default dependency. Falling back to latest.'
+    )
+  );
+  return 'latest';
+}
+
 // === ARGUMENT PARSING ===
 // Parses initializer arguments and returns normalized options.
 function parseArgs(argv) {
@@ -226,14 +255,16 @@ function run() {
 
   // Resolves current working directory.
   const cwd = process.cwd();
+  // Resolves current script path for template root discovery.
+  const currentFile = fileURLToPath(import.meta.url);
   // Derives human-facing project name from target path.
   const projectName = path.basename(options.target);
   // Derives npm-safe package name.
   const packageName = sanitizePackageName(projectName);
   // Resolves absolute target output directory.
   const targetDir = path.resolve(cwd, options.target);
-  // Resolves runtime dependency override for local/integration scenarios.
-  const runtimeDependencyVersion = process.env.PORTFOLIABLE_RUNTIME_DEP || '^0.4.15';
+  // Resolves runtime dependency version for generated app dependencies.
+  const runtimeDependencyVersion = resolveRuntimeDependencyVersion(currentFile);
 
   if (!options.force && !isDirectoryEmpty(targetDir)) {
     console.error(color('31', `Refusing to create in non-empty directory: ${targetDir}`));
@@ -244,8 +275,6 @@ function run() {
   // Ensures target directory exists before writing scaffold files.
   fs.mkdirSync(targetDir, { recursive: true });
 
-  // Resolves current script path for template root discovery.
-  const currentFile = fileURLToPath(import.meta.url);
   // Resolves template root directory bundled with create-portfoliable.
   const templateRoot = path.resolve(path.dirname(currentFile), '..', 'templates');
 
