@@ -1,3 +1,9 @@
+## [0.6.0](https://github.com/portfoliablejs/portfoliable/compare/v0.5.5...v0.6.0) (2026-08-03)
+
+### Bug Fixes
+
+* fix(create): derive runtime dependency from package version ([ababb56](https://github.com/portfoliablejs/portfoliable/commit/ababb564a25386e926b8f7bf4669fa13c30bfa7e))
+
 ## [0.5.5](https://github.com/portfoliablejs/portfoliable/compare/v0.5.3...v0.5.5) (2026-08-03)
 
 ### Bug Fixes
