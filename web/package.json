@@ -1,0 +1,22 @@
+{
+  "name": "@portfoliable/web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Marketing site and end-user docs for Portfoliable.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vitepress dev .",
+    "build": "vitepress build .",
+    "preview": "vitepress preview . --host",
+    "smoke": "node ./scripts/smoke-web.mjs"
+  },
+  "dependencies": {
+    "@portfoliablejs/valence": "^0.4.6"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3"
+  }
+}

@@ -41,7 +41,11 @@
     "verify:integration": "npm --prefix ./create-portfoliable run verify:integration --",
     "smoke:homeview": "npm --prefix ./create-portfoliable run smoke:homeview",
     "smoke:initializer": "npm --prefix ./create-portfoliable run smoke:initializer",
-    "smoke:packed": "npm --prefix ./create-portfoliable run smoke:packed"
+    "smoke:packed": "npm --prefix ./create-portfoliable run smoke:packed",
+    "web:dev": "npm --prefix ./web run dev",
+    "web:build": "npm --prefix ./web run build",
+    "web:preview": "npm --prefix ./web run preview",
+    "web:smoke": "npm --prefix ./web run smoke"
   },
   "dependencies": {},
   "devDependencies": {},

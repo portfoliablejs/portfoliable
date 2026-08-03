@@ -33,3 +33,7 @@ copilot-instructions.md
 
 # Internal release playbooks
 .internal/
+
+# VitePress workspace artifacts
+web/.vitepress/cache/
+web/.vitepress/dist/

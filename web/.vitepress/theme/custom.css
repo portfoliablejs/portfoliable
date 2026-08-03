@@ -1,0 +1,111 @@
+:root {
+  --vp-font-family-base: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+  --vp-font-family-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  --vp-c-brand-1: #0f6c5c;
+  --vp-c-brand-2: #0c5d4f;
+  --vp-c-brand-3: #094f43;
+  --vp-c-brand-soft: rgba(15, 108, 92, 0.18);
+  --vp-home-hero-name-color: #133a65;
+  --vp-home-hero-image-background-image: radial-gradient(circle at 30% 20%, rgba(255, 190, 92, 0.35), transparent 42%), radial-gradient(circle at 70% 20%, rgba(30, 118, 255, 0.25), transparent 46%), linear-gradient(140deg, #fdf9ef 0%, #ecf6ff 60%, #e9fff4 100%);
+}
+
+.VPNavBar {
+  backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--vp-c-bg) 86%, #ffffff 14%);
+}
+
+.main-hero {
+  border: 1px solid rgba(14, 88, 94, 0.18);
+  border-radius: 24px;
+  padding: clamp(1.1rem, 2vw, 2rem);
+  background: linear-gradient(150deg, #fcf4df, #e8f4ff 65%, #e8fbed);
+  box-shadow: 0 20px 48px rgba(20, 55, 90, 0.12);
+}
+
+.main-hero .hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.84rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1f4f74;
+  font-weight: 700;
+}
+
+.main-hero h1 {
+  margin: 0.55rem 0 0;
+  font-size: clamp(2rem, 5.6vw, 4.1rem);
+  line-height: 1.02;
+  max-width: 16ch;
+}
+
+.main-hero p {
+  font-size: clamp(1rem, 1.6vw, 1.22rem);
+  max-width: 62ch;
+  color: #15344d;
+}
+
+.hero-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.feature-grid {
+  margin-top: 1.8rem;
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.feature-card {
+  border-radius: 18px;
+  border: 1px solid rgba(9, 79, 67, 0.2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(236, 247, 255, 0.86));
+  padding: 1rem;
+}
+
+.feature-card h3 {
+  margin: 0;
+  font-size: 1.04rem;
+}
+
+.feature-card p {
+  margin-bottom: 0;
+  color: #32546f;
+}
+
+.docs-callout {
+  margin: 1.4rem 0;
+  border: 1px dashed #207462;
+  border-radius: 16px;
+  padding: 1rem;
+  background: linear-gradient(160deg, rgba(233, 255, 246, 0.84), rgba(245, 250, 255, 0.9));
+}
+
+.button-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+
+.button-row a {
+  text-decoration: none;
+}
+
+.button-row ds-button {
+  --ds-button-radius: 12px;
+}
+
+@media (max-width: 700px) {
+  .main-hero {
+    padding: 1rem;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}
