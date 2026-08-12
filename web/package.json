@@ -15,7 +15,7 @@
     "smoke": "node ./scripts/smoke-web.mjs"
   },
   "dependencies": {
-    "@portfoliable/valence": "^0.4.6"
+    "@portfoliable/valence": "^1.0.1"
   },
   "devDependencies": {
     "vitepress": "^1.6.3"
