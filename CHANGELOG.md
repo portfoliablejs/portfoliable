@@ -1,3 +1,9 @@
+## [1.0.3](https://github.com/portfoliablejs/portfoliable/compare/v1.0.2...v1.0.3) (2026-08-12)
+
+### Bug Fixes
+
+* chore(create): rename package to create-portfoliable and trim web trigger ([575322d](https://github.com/portfoliablejs/portfoliable/commit/575322d85c3fcc0ce02dfcdedcfd88652f3f7751))
+
 ## [1.0.2](https://github.com/portfoliablejs/portfoliable/compare/v1.0.1...v1.0.2) (2026-08-12)
 
 ### Bug Fixes
@@ -72,6 +78,7 @@ This changelog tracks runtime package and initializer changes for `@portfoliable
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
