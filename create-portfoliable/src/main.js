@@ -4,7 +4,6 @@
 
 // MARK: RUNTIME ENTRY IMPORTS
 import '../templates/configs/i18n/i18n.config.js';
-import '@portfoliablejs/valence/styles.css';
 import './App.js';
 import './style.css';
 
