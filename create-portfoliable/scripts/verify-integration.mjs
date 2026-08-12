@@ -2,13 +2,13 @@
 // Purpose: Verify local runtime and optional consumer integration build workflows.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-// === PATH CONSTANTS ===
+// MARK: PATH CONSTANTS
 // Resolves the current script filename for deterministic root-path calculation.
 const __filename = fileURLToPath(import.meta.url);
 // Resolves the directory containing this script.
@@ -18,7 +18,7 @@ const portfoliableRoot = path.resolve(__dirname, '..');
 // Resolves a local sibling consumer repository path used for optional integration checks.
 const portfolioRoot = path.resolve(portfoliableRoot, '..', '..', 'portfolio');
 
-// === COMMAND EXECUTOR ===
+// MARK: COMMAND EXECUTOR
 // Executes one labeled integration step and throws on non-zero status.
 function runStep(label, command, args, cwd) {
   console.log(`\n[verify] ${label}`);
@@ -34,7 +34,7 @@ function runStep(label, command, args, cwd) {
   }
 }
 
-// === ENVIRONMENT DETECTION ===
+// MARK: ENVIRONMENT DETECTION
 // Detects whether a local portfolio consumer repository is available for cross-repo checks.
 function hasPortfolioConsumer() {
   // Points to package manifest used as existence marker for the consumer repo.
@@ -42,7 +42,7 @@ function hasPortfolioConsumer() {
   return fs.existsSync(packageJsonPath);
 }
 
-// === VERIFICATION ORCHESTRATION ===
+// MARK: VERIFICATION ORCHESTRATION
 // Runs validation/build checks for runtime package and optionally for local consumer project.
 function main() {
   // Parses optional CLI flags used to control consumer verification behavior.
@@ -62,7 +62,7 @@ function main() {
   console.log('\n[verify] Integration verification passed.');
 }
 
-// === SCRIPT ENTRYPOINT ===
+// MARK: SCRIPT ENTRYPOINT
 // Executes integration verification and converts thrown errors to exit code 1.
 try {
   main();

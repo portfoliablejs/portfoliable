@@ -3,17 +3,31 @@
 // Purpose: Main Portfoliable CLI for development, build, preview, validation, and scaffolding.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import { createServer, build as viteBuild, preview as vitePreview } from 'vite';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
-import { runValidation } from '../scripts/validate-content.mjs';
-import { runCaseScaffold } from '../scripts/scaffold-case.mjs';
+import { spawn } from 'node:child_process';
+import { runValidation } from '../templates/scripts/validate-content.mjs';
+import { runCaseScaffold } from '../templates/scripts/scaffold-case.mjs';
+import { runDeleteCase } from '../templates/scripts/delete-case.mjs';
 import { ensureValenceCompatibility } from '../scripts/ensure-valence-index-css.mjs';
+import { runLocaleSync, watchLocaleSync } from '../templates/scripts/sync-locales.mjs';
+import { runAddLanguage } from '../templates/scripts/add-language.mjs';
+import { runDeleteLanguage } from '../templates/scripts/delete-language.mjs';
+import {
+  ui,
+  printRailSegment,
+  printRailAttachedBox,
+  printRailSpacer,
+  promptYesNoDots,
+  isInteractiveTerminal,
+  readProjectUiPreferences
+} from '../scripts/terminal-ui.mjs';
 
-// === TERMINAL STYLES ===
+// MARK: TERMINAL STYLES
 // ANSI color code used for success-status text.
 const green = '\x1b[32m';
 // ANSI color code used for warnings and update notices.
@@ -29,7 +43,7 @@ const red = '\x1b[31m';
 // ANSI code that resets terminal formatting.
 const reset = '\x1b[0m';
 
-// === VERSION AND NETWORK HELPERS ===
+// MARK: VERSION AND NETWORK HELPERS
 // Resolves the current package version from package.json.
 function resolvePackageVersion() {
   // Resolves this file path for package.json lookup.
@@ -75,21 +89,28 @@ async function fetchLatestVersion() {
   }
 }
 
-// === CLI ARGUMENT PARSING ===
+// MARK: CLI ARGUMENT PARSING
 // Parses command and flags from argv into normalized runtime options.
 function parseCliArgs(argv) {
   // Initializes parser defaults for command and supported flags.
   const parsed = {
     command: 'dev',
     flags: {
-      host: true,
+      host: '0.0.0.0',
       port: null,
       out: null,
       force: false,
       name: null,
-      open: false,
+      id: null,
+      code: null,
+      htmlLang: null,
+      direction: null,
+      open: true,
       json: false,
-      full: false
+      full: false,
+      watch: false,
+      deleteForce: false,
+      showCommands: null
     }
   };
 
@@ -101,7 +122,10 @@ function parseCliArgs(argv) {
     'build',
     'preview',
     'validate',
-    'scaffold-case',
+    'sync-locales',
+    'add-language',
+    'delete-language',
+    'delete-case',
     'create-case',
     'thumbnail-options'
   ]);
@@ -123,7 +147,7 @@ function parseCliArgs(argv) {
         parsed.flags.host = next;
         i += 1;
       } else {
-        parsed.flags.host = true;
+        parsed.flags.host = '0.0.0.0';
       }
       continue;
     }
@@ -154,6 +178,7 @@ function parseCliArgs(argv) {
 
     if (arg === '--force') {
       parsed.flags.force = true;
+      parsed.flags.deleteForce = true;
       continue;
     }
 
@@ -167,8 +192,69 @@ function parseCliArgs(argv) {
       continue;
     }
 
+    if (arg === '--id') {
+      const next = argv[i + 1];
+      if (next) {
+        parsed.flags.id = next;
+        i += 1;
+      }
+      continue;
+    }
+
+    if (arg === '--code') {
+      const next = argv[i + 1];
+      if (next) {
+        parsed.flags.code = next;
+        i += 1;
+      }
+      continue;
+    }
+
+    if (arg === '--html-lang' || arg === '--htmlLang') {
+      const next = argv[i + 1];
+      if (next) {
+        parsed.flags.htmlLang = next;
+        i += 1;
+      }
+      continue;
+    }
+
+    if (arg === '--direction') {
+      const next = argv[i + 1];
+      if (next) {
+        parsed.flags.direction = next;
+        i += 1;
+      }
+      continue;
+    }
+
+    if (arg === '--rtl') {
+      parsed.flags.direction = 'rtl';
+      continue;
+    }
+
+    if (arg === '--ltr') {
+      parsed.flags.direction = 'ltr';
+      continue;
+    }
+
     if (arg === '--open') {
       parsed.flags.open = true;
+      continue;
+    }
+
+    if (arg === '--no-open') {
+      parsed.flags.open = false;
+      continue;
+    }
+
+    if (arg === '--commands') {
+      parsed.flags.showCommands = true;
+      continue;
+    }
+
+    if (arg === '--no-commands') {
+      parsed.flags.showCommands = false;
       continue;
     }
 
@@ -179,6 +265,11 @@ function parseCliArgs(argv) {
 
     if (arg === '--full') {
       parsed.flags.full = true;
+      continue;
+    }
+
+    if (arg === '--watch') {
+      parsed.flags.watch = true;
       continue;
     }
 
@@ -194,7 +285,7 @@ function parseCliArgs(argv) {
   return parsed;
 }
 
-// === FILESYSTEM HELPERS ===
+// MARK: FILESYSTEM HELPERS
 // Recursively walks a directory and returns absolute file paths.
 function walkFilesRecursive(rootDir) {
   // Accumulates discovered files.
@@ -232,7 +323,7 @@ function deriveColorName(fileNameNoExt, modelName) {
   if (!normalizedModel) return fileNameNoExt;
 
   // Builds model-prefix stripping regex for color extraction.
-  const modelPattern = new RegExp(`^${escapeRegex(normalizedModel)}[\\s_\-—–]*`, 'i');
+  const modelPattern = new RegExp(`^${escapeRegex(normalizedModel)}[\s_\-—–]*`, 'i');
   // Removes model prefix and trims resulting color suffix.
   const stripped = fileNameNoExt.replace(modelPattern, '').trim();
   return stripped || 'Default';
@@ -303,58 +394,41 @@ function printThumbnailCatalog(catalog, flags, mockupsRoot) {
   const modelCount = categoryNames.reduce((acc, category) => {
     return acc + Object.values(catalog[category]).reduce((modelAcc, modelsByBrand) => modelAcc + Object.keys(modelsByBrand).length, 0);
   }, 0);
+  // Counts total variant rows for summary metadata.
+  const variantCount = categoryNames.reduce((acc, category) => {
+    return acc + Object.values(catalog[category]).reduce((brandAcc, modelsByBrand) => {
+      return brandAcc + Object.values(modelsByBrand).reduce((modelAcc, colors) => modelAcc + colors.size, 0);
+    }, 0);
+  }, 0);
 
-  if (flags.json) {
-    // Builds fully sorted serializable catalog object.
-    const serialized = {};
-    categoryNames.forEach((category) => {
-      serialized[category] = {};
-      Object.keys(catalog[category]).sort((a, b) => a.localeCompare(b)).forEach((brand) => {
-        serialized[category][brand] = {};
-        Object.keys(catalog[category][brand]).sort((a, b) => a.localeCompare(b)).forEach((model) => {
-          serialized[category][brand][model] = [...catalog[category][brand][model]].sort((a, b) => a.localeCompare(b));
+  const outputPath = writeThumbnailOptionsCatalog(catalog, mockupsRoot);
+  console.log(`${green}Wrote thumbnail options catalog${reset}: ${outputPath}`);
+  console.log(`${dim}Categories: ${categoryNames.length} | Brands: ${brandCount} | Models: ${modelCount} | Variants: ${variantCount}${reset}`);
+}
+
+// Writes a generated thumbnail options file inside the template source tree.
+function writeThumbnailOptionsCatalog(catalog, mockupsRoot) {
+  const outputPath = path.resolve(process.cwd(), 'templates', 'src', 'content', 'thumbnail-options.generated.json');
+  const items = [];
+
+  Object.keys(catalog).sort((a, b) => a.localeCompare(b)).forEach((category) => {
+    Object.keys(catalog[category]).sort((a, b) => a.localeCompare(b)).forEach((brand) => {
+      Object.keys(catalog[category][brand]).sort((a, b) => a.localeCompare(b)).forEach((model) => {
+        [...catalog[category][brand][model]].sort((a, b) => a.localeCompare(b)).forEach((color) => {
+          items.push({
+            thumbCategory: category,
+            thumbBrand: brand,
+            thumbModel: model,
+            thumbColor: color
+          });
         });
       });
     });
-
-    console.log(JSON.stringify({
-      source: mockupsRoot,
-      categories: serialized
-    }, null, 2));
-    return;
-  }
-
-  console.log(`${bold}${cyan}Thumbnail Options Catalog${reset}`);
-  console.log(`${dim}Source: ${mockupsRoot}${reset}`);
-  console.log(`${dim}Categories: ${categoryNames.length} | Brands: ${brandCount} | Models: ${modelCount}${reset}`);
-
-  // Defines max number of printed colors unless full output is requested.
-  const colorLimit = flags.full ? Number.POSITIVE_INFINITY : 12;
-
-  // Prints tree-style category->brand->model->colors catalog output.
-  categoryNames.forEach((category) => {
-    // Resolves sorted brand names for this category.
-    const brands = Object.keys(catalog[category]).sort((a, b) => a.localeCompare(b));
-    console.log(`\n${bold}${category}${reset}`);
-
-    brands.forEach((brand) => {
-      // Resolves sorted model names for this brand.
-      const models = Object.keys(catalog[category][brand]).sort((a, b) => a.localeCompare(b));
-      console.log(`  ${brand}`);
-
-      models.forEach((model) => {
-        // Resolves sorted list of available model colors.
-        const colors = [...catalog[category][brand][model]].sort((a, b) => a.localeCompare(b));
-        // Limits visible colors for concise default output.
-        const visibleColors = colors.slice(0, colorLimit);
-        // Computes hidden color count when not using --full.
-        const hiddenCount = Math.max(0, colors.length - visibleColors.length);
-        // Appends hint suffix when additional colors are omitted.
-        const moreSuffix = hiddenCount > 0 ? ` (+${hiddenCount} more, run with --full)` : '';
-        console.log(`    - ${model}: ${visibleColors.join(', ')}${moreSuffix}`);
-      });
-    });
   });
+
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, `${JSON.stringify({ source: mockupsRoot, generatedAt: new Date().toISOString(), items }, null, 2)}\n`, 'utf8');
+  return outputPath;
 }
 
 // Executes thumbnail-options command flow.
@@ -383,39 +457,115 @@ function runThumbnailOptions(flags) {
 
 // Prints startup summary box for dev server sessions.
 function printStartupBox({ localUrl, networkUrl, localVersion, latestVersion }) {
-  // Sets fixed box width for visual consistency.
-  const width = 72;
-  // Returns one formatted bordered line.
-  const line = (text = '') => `│ ${text.padEnd(width - 4)} │`;
-  // Returns an empty spacer line.
-  const spacer = () => line();
-
-  console.log('╭' + '─'.repeat(width - 2) + '╮');
-  console.log(line(`${green}${bold}Portfoliable ready!${reset}`));
-  console.log(line(`${dim}Dev server is live and ready for editing.${reset}`));
-  console.log(spacer());
-  console.log(line(`${bold}Local:${reset} ${localUrl}`));
-  console.log(line(`${bold}On your network:${reset} ${networkUrl}`));
-  console.log(spacer());
-  console.log(line(`${bold}Next:${reset} open the local URL in your browser.`));
+  const lines = [
+    `${green}${bold}Portfoliable ready!${reset}`,
+    `${dim}Dev server is live and ready for editing.${reset}`,
+    '',
+    `${bold}Local:${reset} ${localUrl}`,
+    `${bold}On your network:${reset} ${networkUrl}`,
+    '',
+    `${bold}Next:${reset} open the local URL in your browser.`
+  ];
 
   if (latestVersion && latestVersion !== localVersion && !latestVersion.includes('alpha')) {
-    console.log(spacer());
-    console.log(line(`${yellow}A new version (${latestVersion}) is available!${reset}`));
-    console.log(line(`Upgrade now: ${green}npm update @portfoliable/create${reset}`));
+    lines.push('');
+    lines.push(`${yellow}A new version (${latestVersion}) is available!${reset}`);
+    lines.push(`Upgrade now: ${green}npm update @portfoliable/create${reset}`);
+    lines.push('Read changelog:');
+    lines.push(`${dim}https://github.com/portfoliablejs/portfoliable/blob/main/CHANGELOG.md${reset}`);
   }
 
-  console.log('╰' + '─'.repeat(width - 2) + '╯');
-  console.log(`${dim}│  Press Ctrl+C to stop the server${reset}\n`);
+  printRailAttachedBox({ width: 96, lines });
+  console.log(`${dim}│${reset}`);
+  console.log(`${dim}│${reset} ${dim}Press Ctrl+C to stop the server${reset}\n`);
+}
+
+// Prints a categorized command guide for runtime features.
+function printCommandGuide({ fancyDots }) {
+  const marker = fancyDots ? `${ui.blue}●${ui.reset}` : '-';
+  const lines = [
+    `${ui.bold}Portfoliable command guide${ui.reset}`,
+    `${ui.dim}Everything is grouped so you can move faster.${ui.reset}`,
+    '',
+    `${marker} ${ui.bold}Case management${ui.reset}`,
+    '  npm run portfoliable-create-case -- --name "Checkout Revamp"',
+    '  npm run portfoliable-delete-case -- --id checkout-revamp',
+    '',
+    `${marker} ${ui.bold}Language management${ui.reset}`,
+    '  npx portfoliable add-language --code es --name "Spanish" --html-lang es',
+    '  npx portfoliable delete-language --code es --force',
+    '  npm run portfoliable-sync-locales',
+    '',
+    `${marker} ${ui.bold}Thumbnail options${ui.reset}`,
+    '  npm run portfoliable-thumbnail-options',
+    '  writes templates/src/content/thumbnail-options.generated.json',
+    '  each item includes thumbCategory, thumbBrand, thumbModel, thumbColor',
+    '',
+    `${marker} ${ui.bold}Quality checks${ui.reset}`,
+    '  npx portfoliable validate',
+    '',
+    `${marker} ${ui.bold}Build and preview${ui.reset}`,
+    '  npm run portfoliable-build',
+    '  npm run portfoliable-preview'
+  ];
+
+  printRailAttachedBox({ width: 96, lines });
+}
+
+// MARK: LOCAL PROTECTION API HELPERS
+function resolvePhpDocRoot(cwd) {
+  const candidates = [
+    path.resolve(cwd, 'public'),
+    path.resolve(cwd, 'templates', 'public')
+  ];
+
+  return candidates.find((candidate) => {
+    const endpointPath = path.resolve(candidate, 'api', 'unlock-case.php');
+    return fs.existsSync(endpointPath);
+  }) || null;
+}
+
+function startLocalPhpApiServer(cwd) {
+  const phpDocRoot = resolvePhpDocRoot(cwd);
+  if (!phpDocRoot) {
+    return { processRef: null, proxyTarget: '' };
+  }
+
+  const phpPort = Number(process.env.PORTFOLIABLE_PHP_API_PORT || 8787);
+  const processRef = spawn('php', ['-S', `127.0.0.1:${phpPort}`, '-t', phpDocRoot], {
+    stdio: 'ignore'
+  });
+
+  if (processRef?.on) {
+    processRef.on('error', (error) => {
+      console.warn(`${yellow}[protection]${reset} Could not start PHP API server (${error.message}).`);
+      console.warn(`${yellow}[protection]${reset} Protected-case unlock will fail until /api/unlock-case.php is reachable.`);
+    });
+  }
+
+  return {
+    processRef,
+    proxyTarget: `http://127.0.0.1:${phpPort}`
+  };
 }
 
 // Starts Vite dev server and prints startup context.
-async function runDevServer(flags) {
+async function runDevServer(flags, options = {}) {
+  const onShutdown = typeof options.onShutdown === 'function' ? options.onShutdown : () => {};
+  const fancyDots = options.fancyDots !== false;
   // Resolves requested port or uses default dev port.
   const port = Number.isFinite(flags.port) ? flags.port : 5173;
 
+  const phpRuntime = startLocalPhpApiServer(process.cwd());
+  if (phpRuntime.proxyTarget) {
+    process.env.PORTFOLIABLE_PHP_API_PROXY = phpRuntime.proxyTarget;
+  }
+
   // Creates Vite development server instance.
   const server = await createServer({
+    optimizeDeps: {
+      exclude: ['@portfoliable/create']
+    },
     server: {
       host: flags.host,
       port,
@@ -441,10 +591,46 @@ async function runDevServer(flags) {
   // Fetches latest published package version.
   const latestVersion = await fetchLatestVersion();
 
+  if (fancyDots) {
+    printRailSegment({ dot: true, label: `${cyan}${bold}Starting...${reset}` });
+    printRailSpacer();
+  }
+
   printStartupBox({ localUrl, networkUrl, localVersion, latestVersion });
+
+  if (isInteractiveTerminal() && flags.open !== false) {
+    let showCommands = false;
+    if (flags.showCommands === true) {
+      showCommands = true;
+    } else if (flags.showCommands === false) {
+      showCommands = false;
+    } else {
+      printRailSegment({ dot: true, label: `${cyan}${bold}Quick setup${reset}` });
+      showCommands = await promptYesNoDots({
+        question: 'Do you want to see all available commands now?',
+        yesLabel: 'Yes, show command categories',
+        noLabel: 'No, keep startup minimal',
+        defaultValue: true,
+        width: 96,
+        attachedToRail: true
+      });
+    }
+
+    if (showCommands) {
+      printRailSegment({ dot: true, label: `${green}${bold}Opening command guide${reset}` });
+      printRailSpacer();
+      printCommandGuide({ fancyDots });
+      printRailSpacer();
+      printRailSegment({ dot: true, label: `${green}${bold}Guide ready${reset}` });
+    }
+  }
 
   // Handles Ctrl+C for graceful server shutdown.
   process.on('SIGINT', async () => {
+    if (phpRuntime.processRef) {
+      phpRuntime.processRef.kill('SIGTERM');
+    }
+    onShutdown();
     await server.close();
     process.exit(0);
   });
@@ -452,13 +638,17 @@ async function runDevServer(flags) {
 
 // Runs Vite production build and logs concise status output.
 async function runBuild() {
+  printRailSegment();
+  printRailSegment({ dot: true, label: `${cyan}${bold}Starting build...${reset}` });
   console.log(`${cyan}${bold}Building Portfoliable...${reset}`);
   await viteBuild();
   console.log(`${green}Build complete.${reset}`);
+  printRailSegment({ dot: true, label: `${green}${bold}Build complete.${reset}` });
 }
 
 // Starts Vite preview server for production build verification.
-async function runPreview(flags) {
+async function runPreview(flags, options = {}) {
+  const fancyDots = options.fancyDots !== false;
   // Resolves requested preview port or uses default.
   const previewPort = Number.isFinite(flags.port) ? flags.port : 4173;
   // Starts preview server bound to requested host/port.
@@ -472,18 +662,23 @@ async function runPreview(flags) {
   // Builds network preview URL for external devices.
   const networkUrl = networkAddress ? `${protocol}://${networkAddress}:${previewPort}/` : 'Not available';
 
-  // Sets fixed box width for preview startup output.
-  const width = 72;
-  // Builds bordered line helper for preview startup box.
-  const line = (text = '') => `│ ${text.padEnd(width - 4)} │`;
-  console.log('╭' + '─'.repeat(width - 2) + '╮');
-  console.log(line(`${cyan}${bold}Portfoliable preview ready${reset}`));
-  console.log(line(`${dim}Serving the production build locally.${reset}`));
-  console.log(line());
-  console.log(line(`${bold}Local:${reset} ${localUrl}`));
-  console.log(line(`${bold}On your network:${reset} ${networkUrl}`));
-  console.log('╰' + '─'.repeat(width - 2) + '╯');
-  console.log(`${dim}│  Press Ctrl+C to stop the server${reset}\n`);
+  if (fancyDots) {
+    printRailSegment();
+    printRailSegment({ dot: true, label: `${cyan}${bold}Starting preview...${reset}` });
+  }
+
+  printRailAttachedBox({
+    width: 72,
+    lines: [
+      `${cyan}${bold}Portfoliable preview ready${reset}`,
+      `${dim}Serving the production build locally.${reset}`,
+      '',
+      `${bold}Local:${reset} ${localUrl}`,
+      `${bold}On your network:${reset} ${networkUrl}`
+    ]
+  });
+  console.log(`${dim}│${reset}`);
+  console.log(`${dim}│${reset} ${dim}Press Ctrl+C to stop the server${reset}\n`);
 
   // Handles Ctrl+C for graceful preview server shutdown.
   process.on('SIGINT', async () => {
@@ -492,15 +687,21 @@ async function runPreview(flags) {
   });
 }
 
-// === COMMAND DISPATCH ===
+// MARK: COMMAND DISPATCH
 // Routes parsed command to matching execution path.
 async function main() {
   // Parses command and flags from process arguments.
   const { command, flags } = parseCliArgs(process.argv);
+  const projectPreferences = readProjectUiPreferences(process.cwd());
+  const fancyDots = projectPreferences?.fancyDots ?? true;
 
   if (command === 'dev') {
     ensureValenceCompatibility();
-    await runDevServer(flags);
+    const stopLocaleWatcher = watchLocaleSync({ cwd: process.cwd(), logger: console });
+    await runDevServer(flags, {
+      onShutdown: stopLocaleWatcher,
+      fancyDots
+    });
     return;
   }
 
@@ -512,7 +713,7 @@ async function main() {
 
   if (command === 'preview') {
     ensureValenceCompatibility();
-    await runPreview(flags);
+    await runPreview(flags, { fancyDots });
     return;
   }
 
@@ -523,10 +724,64 @@ async function main() {
     return;
   }
 
-  if (command === 'scaffold-case') {
-    // Runs case scaffolder for scaffold-case alias.
-    const exitCode = runCaseScaffold({ outFile: flags.out || undefined, name: flags.name || undefined, force: flags.force });
-    process.exit(exitCode);
+  if (command === 'sync-locales') {
+    if (flags.watch) {
+      const dispose = watchLocaleSync({ cwd: process.cwd(), logger: console });
+      process.on('SIGINT', () => {
+        dispose();
+        process.exit(0);
+      });
+      process.on('SIGTERM', () => {
+        dispose();
+        process.exit(0);
+      });
+      return;
+    }
+
+    const result = await runLocaleSync({ cwd: process.cwd() });
+    console.log(`${green}[sync-locales]${reset} Synced ${result.updatedFiles} file(s) for locales: ${result.localeCodes.join(', ')}`);
+    return;
+  }
+
+  if (command === 'add-language') {
+    const result = await runAddLanguage({
+      cwd: process.cwd(),
+      code: flags.code || '',
+      name: flags.name || '',
+      htmlLang: flags.htmlLang || '',
+      direction: flags.direction || ''
+    });
+
+    if (result.unchanged) {
+      console.log(`${yellow}[add-language]${reset} Nothing to change. ${result.localeCode} is already configured as ${result.displayName} (htmlLang=${result.htmlLang}).`);
+      console.log(`${green}[add-language]${reset} Locales: ${result.localeCodes.join(', ')}`);
+      return;
+    }
+
+    const operation = result.existed ? 'Updated' : 'Added';
+    console.log(`${green}[add-language]${reset} ${operation} ${result.localeCode} (${result.displayName}) htmlLang=${result.htmlLang}`);
+    console.log(`${green}[add-language]${reset} Locales: ${result.localeCodes.join(', ')}`);
+    console.log(`${green}[add-language]${reset} Synced ${result.syncResult.updatedFiles} file(s).`);
+    return;
+  }
+
+  if (command === 'delete-language') {
+    const result = await runDeleteLanguage({
+      cwd: process.cwd(),
+      code: flags.code || '',
+      force: flags.deleteForce === true
+    });
+
+    if (result.alreadyMissing) {
+      console.log(`${yellow}[delete-language]${reset} Nothing to delete. Locale ${result.removedLocale} is already missing.`);
+      console.log(`${green}[delete-language]${reset} Locales: ${result.localeCodes.join(', ')}`);
+      return;
+    }
+
+    console.log(`${green}[delete-language]${reset} Removed ${result.removedLocale}.`);
+    console.log(`${green}[delete-language]${reset} Default locale: ${result.defaultLocaleBefore} -> ${result.defaultLocaleAfter}`);
+    console.log(`${green}[delete-language]${reset} Locales: ${result.localeCodes.join(', ')}`);
+    console.log(`${green}[delete-language]${reset} Synced ${result.syncResult.updatedFiles} file(s).`);
     return;
   }
 
@@ -534,6 +789,29 @@ async function main() {
     // Runs case scaffolder for create-case alias.
     const exitCode = runCaseScaffold({ outFile: flags.out || undefined, name: flags.name || undefined, force: flags.force });
     process.exit(exitCode);
+    return;
+  }
+
+  if (command === 'delete-case') {
+    const result = runDeleteCase({
+      cwd: process.cwd(),
+      caseId: flags.id || undefined,
+      outFile: flags.out || undefined,
+      force: flags.force
+    });
+
+    if (result.alreadyMissing) {
+      console.log(`${yellow}[delete-case]${reset} Nothing to delete. Case is already missing.`);
+      if (result.suggestedIds?.length > 0) {
+        console.log(`${green}[delete-case]${reset} Similar existing case ids: ${result.suggestedIds.join(', ')}`);
+      }
+      return;
+    }
+
+    console.log(`${green}[delete-case]${reset} Removed ${result.removedPath}.`);
+    if (result.removedDirectory) {
+      console.log(`${green}[delete-case]${reset} Removed case directory ${result.removedDirectoryPath}.`);
+    }
     return;
   }
 
@@ -545,10 +823,11 @@ async function main() {
   }
 
   console.error(`${red}${bold}Unknown command:${reset} ${command}`);
-  console.log('Use one of: dev, build, preview, validate, create-case, scaffold-case, thumbnail-options');
+  console.log('Use one of: dev, build, preview, validate, sync-locales, add-language, delete-language, create-case, delete-case, thumbnail-options');
   process.exit(1);
 }
 
+// MARK: SCRIPT ENTRYPOINT
 // Executes command dispatcher and converts uncaught failures into non-zero exit.
 main().catch((error) => {
   console.error(`${bold}${red}✕ Failed to run Portfoliable:${reset}`, error);

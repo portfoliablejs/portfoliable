@@ -3,7 +3,19 @@
 // Author: Lio Schimanko
 
 // === IMPORTS ===
+import fs from 'node:fs';
+import path from 'node:path';
 import { defineConfig } from 'vite';
+
+// Detects when @portfoliablejs/valence is installed as a local symlink.
+function isLocalLinkedValence() {
+  const valencePath = path.resolve(process.cwd(), 'node_modules', '@portfoliablejs', 'valence');
+  try {
+    return fs.lstatSync(valencePath).isSymbolicLink();
+  } catch {
+    return false;
+  }
+}
 
 // === CHUNK SPLITTING STRATEGY ===
 // Maps dependency module IDs to manual chunk names for stable build output organization.
@@ -48,15 +60,52 @@ function getManualChunk(id) {
 
 // === VITE CONFIG EXPORT ===
 // Exports build settings used across dev/build/preview workflows.
-export default defineConfig({
-  build: {
-    // Mermaid and diagram ecosystems are intentionally code-split and loaded on demand.
-    // Keep warnings useful while avoiding noisy false alarms for optional async chunks.
-    chunkSizeWarningLimit: 3000,
-    rollupOptions: {
-      output: {
-        manualChunks: getManualChunk
+export default defineConfig(({ command }) => {
+  const usingLocalValence = isLocalLinkedValence();
+  const phpApiProxy = String(process.env.PORTFOLIABLE_PHP_API_PROXY || '').trim();
+
+  const serverConfig = (command === 'serve' && usingLocalValence)
+    ? {
+        fs: {
+          allow: [
+            process.cwd(),
+            path.resolve(process.cwd(), '..', '..', 'valence')
+          ]
+        },
+        watch: {
+          ignored: ['!**/node_modules/@portfoliablejs/valence/**']
+        }
+      }
+    : {};
+
+  if (phpApiProxy) {
+    serverConfig.proxy = {
+      '/api/unlock-case.php': {
+        target: phpApiProxy,
+        changeOrigin: true
+      }
+    };
+  }
+
+  return {
+    // In local-link mode, avoid prebundling Valence so edits in the linked package
+    // are reflected immediately during development.
+    optimizeDeps: (command === 'serve' && usingLocalValence)
+      ? { exclude: ['@portfoliablejs/valence'] }
+      : undefined,
+
+    // Allow and watch linked workspace files so HMR sees local Valence changes.
+    server: Object.keys(serverConfig).length > 0 ? serverConfig : undefined,
+
+    build: {
+      // Mermaid and diagram ecosystems are intentionally code-split and loaded on demand.
+      // Keep warnings useful while avoiding noisy false alarms for optional async chunks.
+      chunkSizeWarningLimit: 3000,
+      rollupOptions: {
+        output: {
+          manualChunks: getManualChunk
+        }
       }
     }
-  }
+  };
 });

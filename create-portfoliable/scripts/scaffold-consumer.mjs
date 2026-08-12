@@ -3,11 +3,11 @@
 // Purpose: Generate a starter consumer cases file for Portfoliable projects.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import fs from 'node:fs';
 import path from 'node:path';
 
-// === DEFAULTS ===
+// MARK: DEFAULTS
 // Defines default output filename for scaffolded consumer cases module.
 const DEFAULT_OUTPUT = 'portfolio-cases.template.js';
 
@@ -15,7 +15,7 @@ const DEFAULT_OUTPUT = 'portfolio-cases.template.js';
 const TEMPLATE_CONTENT = `export const portfolioCases = [
   {
     id: 'my-first-case',
-    slug: 'my-first-case',
+    slugByLocale: { en: 'my-first-case', pt: 'meu-primeiro-case' },
     title: { en: 'My First Case', pt: 'Meu Primeiro Case' },
     shortDesc: {
       en: 'Describe the project in one sentence.',
@@ -72,7 +72,7 @@ export function runScaffold(options = {}) {
   return 0;
 }
 
-// === SCRIPT ENTRYPOINT ===
+// MARK: SCRIPT ENTRYPOINT
 // Executes scaffold flow when script is invoked directly.
 if (import.meta.url === `file://${process.argv[1]}`) {
   // Resolves index of --out option token in argv.

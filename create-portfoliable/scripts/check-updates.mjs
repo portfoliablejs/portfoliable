@@ -2,12 +2,12 @@
 // Purpose: Check the latest valence repository commit to surface upstream update visibility.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import { execSync } from 'node:child_process';
 
 void execSync;
 
-// === UPDATE CHECK ROUTINE ===
+// MARK: UPDATE CHECK ROUTINE
 // Fetches the latest commit SHA from the valence main branch for quick maintainer awareness.
 async function checkValenceUpdates() {
   try {
@@ -27,5 +27,5 @@ async function checkValenceUpdates() {
   }
 }
 
-// === SCRIPT ENTRYPOINT ===
+// MARK: SCRIPT ENTRYPOINT
 checkValenceUpdates();

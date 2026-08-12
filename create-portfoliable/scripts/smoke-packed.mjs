@@ -2,13 +2,13 @@
 // Purpose: Smoke-test npm-packed initializer artifact by generating and building a consumer app.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-// === PATH CONSTANTS ===
+// MARK: PATH CONSTANTS
 // Resolves package root used for packing and command execution.
 const projectRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 // Defines isolated temporary root used for packed-artifact smoke runs.
@@ -16,14 +16,14 @@ const tempRoot = path.join(os.tmpdir(), 'portfoliable-packed-smoke');
 // Defines generated application output path.
 const generatedAppDir = path.join(tempRoot, 'my-portfolio');
 
-// === ERROR HANDLING ===
+// MARK: ERROR HANDLING
 // Exits immediately with a prefixed packed-smoke failure message.
 function fail(message) {
   console.error(`[smoke:packed] ${message}`);
   process.exit(1);
 }
 
-// === COMMAND EXECUTION HELPERS ===
+// MARK: COMMAND EXECUTION HELPERS
 // Runs external commands with inherited IO and fails on non-zero status.
 function runOrFail(command, args, cwd, env = undefined) {
   // Executes child command with inherited terminal output.
@@ -58,7 +58,7 @@ function runCaptureOrFail(command, args, cwd) {
   return (result.stdout || '').trim();
 }
 
-// === ASSERTION HELPER ===
+// MARK: ASSERTION HELPER
 // Verifies the generated bundle contains expected content markers.
 function ensureContains(text, needle, description) {
   if (!text.includes(needle)) {
@@ -83,7 +83,7 @@ function readLocalPackageVersion() {
   return JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).version;
 }
 
-// === PACK RESOLUTION ===
+// MARK: PACK RESOLUTION
 // Builds an npm tarball and resolves the exact file path returned by npm pack.
 function resolveTarballPath() {
   // Runs npm pack and captures JSON output.
@@ -111,7 +111,7 @@ function resolveTarballPath() {
   return tarballPath;
 }
 
-// === SMOKE ORCHESTRATION ===
+// MARK: SMOKE ORCHESTRATION
 // Packs the artifact, scaffolds an app from that artifact, builds it, and validates outputs.
 function main() {
   console.log('[smoke:packed] Preparing temp workspace...');

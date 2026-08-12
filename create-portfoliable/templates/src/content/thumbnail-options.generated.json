@@ -1,0 +1,1044 @@
+{
+  "source": "/Users/lio/Documents/Projects/portfoliable/create-portfoliable/src/stories/assets/mockups",
+  "generatedAt": "2026-08-12T02:59:19.838Z",
+  "order": [
+    "thumbBrand",
+    "thumbCategory",
+    "thumbModel",
+    "thumbColor"
+  ],
+  "structure": "thumbBrand -> thumbCategory -> thumbModel -> thumbColor",
+  "thumbBrand": {
+    "apple": {
+      "thumbCategory": {
+        "desktop": {
+          "thumbModel": {
+            "Apple iMac": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Apple iMac 24 2021": {
+              "thumbColor": [
+                "Apple iMac 24 Blue",
+                "Apple iMac 24 Green",
+                "Apple iMac 24 Orange",
+                "Apple iMac 24 Purple",
+                "Apple iMac 24 Red",
+                "Apple iMac 24 Silver",
+                "Apple iMac 24 Yellow"
+              ]
+            },
+            "Apple iMac Pro": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Apple iMac Retina": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Apple Macbook": {
+              "thumbColor": [
+                "Apple-Macbook-Gold",
+                "Apple-Macbook-Space-Grey"
+              ]
+            },
+            "Apple MacBook Air": {
+              "thumbColor": [
+                "Gold",
+                "Silver",
+                "Space Grey"
+              ]
+            },
+            "Apple MacBook Air M5": {
+              "thumbColor": [
+                "MacBook Air M5 13-inch Midnight",
+                "MacBook Air M5 13-inch Silver",
+                "MacBook Air M5 13-inch Sky Blue",
+                "MacBook Air M5 13-inch Starlight",
+                "MacBook Air M5 15-inch Midnight",
+                "MacBook Air M5 15-inch Silver",
+                "MacBook Air M5 15-inch Sky Blue",
+                "MacBook Air M5 15-inch Starlight"
+              ]
+            },
+            "Apple MacBook Pro": {
+              "thumbColor": [
+                "13 Silver",
+                "13 Space Grey",
+                "16 Silver",
+                "16 Space Grey"
+              ]
+            },
+            "Apple Pro Display XDR": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Apple Thunderbolt Display": {
+              "thumbColor": [
+                "Default"
+              ]
+            }
+          }
+        },
+        "mobile": {
+          "thumbModel": {
+            "Apple iPhone 11": {
+              "thumbColor": [
+                "Black",
+                "Green",
+                "Purple",
+                "Red",
+                "White",
+                "Yellow"
+              ]
+            },
+            "Apple iPhone 11 Pro": {
+              "thumbColor": [
+                "Gold",
+                "Midnight Green",
+                "Silver",
+                "Space Grey"
+              ]
+            },
+            "Apple iPhone 11 Pro Max": {
+              "thumbColor": [
+                "Gold",
+                "Midnight Green",
+                "Silver",
+                "Space Grey"
+              ]
+            },
+            "Apple iPhone 12": {
+              "thumbColor": [
+                "Black",
+                "Blue",
+                "Green",
+                "Red",
+                "White"
+              ]
+            },
+            "Apple iPhone 12 Mini": {
+              "thumbColor": [
+                "Black",
+                "Blue",
+                "Green",
+                "Red",
+                "White"
+              ]
+            },
+            "Apple iPhone 12 Pro": {
+              "thumbColor": [
+                "Gold",
+                "Graphite",
+                "Pacific Blue",
+                "Silver"
+              ]
+            },
+            "Apple iPhone 12 Pro Max": {
+              "thumbColor": [
+                "Gold",
+                "Graphite",
+                "Pacific Blue",
+                "Silver"
+              ]
+            },
+            "Apple iPhone 13": {
+              "thumbColor": [
+                "— Blue",
+                "— Midnight",
+                "— Pink",
+                "— Red",
+                "— Starlight"
+              ]
+            },
+            "Apple iPhone 13 Mini": {
+              "thumbColor": [
+                "iPhone 13 Mini — Blue",
+                "iPhone 13 Mini — Midnight",
+                "iPhone 13 Mini — Pink",
+                "iPhone 13 Mini — Red",
+                "iPhone 13 Mini — Starlight"
+              ]
+            },
+            "Apple iPhone 13 Pro": {
+              "thumbColor": [
+                "— Gold",
+                "— Graphite",
+                "— Sierra Blue",
+                "— Silver"
+              ]
+            },
+            "Apple iPhone 13 Pro Max": {
+              "thumbColor": [
+                "— Gold",
+                "— Graphite",
+                "— Sierra Blue",
+                "— Silver"
+              ]
+            },
+            "Apple iPhone 17": {
+              "thumbColor": [
+                "iPhone 17 - Black - Landscape",
+                "iPhone 17 - Black - Portrait",
+                "iPhone 17 - Lavender - Landscape",
+                "iPhone 17 - Lavender - Portrait",
+                "iPhone 17 - Mist Blue - Landscape",
+                "iPhone 17 - Mist Blue - Portrait",
+                "iPhone 17 - Sage - Landscape",
+                "iPhone 17 - Sage - Portrait",
+                "iPhone 17 - White - Landscape",
+                "iPhone 17 - White - Portrait"
+              ]
+            },
+            "Apple iPhone 17 Pro": {
+              "thumbColor": [
+                "iPhone 17 Pro - Cosmic Orange - Landscape",
+                "iPhone 17 Pro - Cosmic Orange - Portrait",
+                "iPhone 17 Pro - Deep Blue - Landscape",
+                "iPhone 17 Pro - Deep Blue - Portrait",
+                "iPhone 17 Pro - Silver - Landscape",
+                "iPhone 17 Pro - Silver - Portrait"
+              ]
+            },
+            "Apple iPhone 17 Pro Max": {
+              "thumbColor": [
+                "iPhone 17 Pro Max - Cosmic Orange - Landscape",
+                "iPhone 17 Pro Max - Cosmic Orange - Portrait",
+                "iPhone 17 Pro Max - Deep Blue - Landscape",
+                "iPhone 17 Pro Max - Deep Blue - Portrait",
+                "iPhone 17 Pro Max - Silver - Landscape",
+                "iPhone 17 Pro Max - Silver - Portrait"
+              ]
+            },
+            "Apple iPhone 5c": {
+              "thumbColor": [
+                "Blue",
+                "Green",
+                "Red",
+                "White",
+                "Yellow"
+              ]
+            },
+            "Apple iPhone 5s": {
+              "thumbColor": [
+                "Gold",
+                "Silver",
+                "Space Gray"
+              ]
+            },
+            "Apple iPhone 6s": {
+              "thumbColor": [
+                "Gold",
+                "Rose Gold",
+                "Silver",
+                "Space Gray"
+              ]
+            },
+            "Apple iPhone 6s Plus": {
+              "thumbColor": [
+                "Gold",
+                "Rose Gold",
+                "Silver",
+                "Space Gray"
+              ]
+            },
+            "Apple iPhone 7": {
+              "thumbColor": [
+                "Gold",
+                "Jet Black",
+                "Matte Black",
+                "Rose Gold",
+                "Silver"
+              ]
+            },
+            "Apple iPhone 7 Plus": {
+              "thumbColor": [
+                "Gold",
+                "Jet Black",
+                "Matte Black",
+                "Rose Gold",
+                "Silver"
+              ]
+            },
+            "Apple iPhone 8": {
+              "thumbColor": [
+                "Gold",
+                "Silver",
+                "Space Grey"
+              ]
+            },
+            "Apple iPhone 8 Plus": {
+              "thumbColor": [
+                "Gold",
+                "Silver",
+                "Space Grey"
+              ]
+            },
+            "Apple iPhone Air": {
+              "thumbColor": [
+                "iPhone Air - Cloud White - Landscape",
+                "iPhone Air - Cloud White - Portrait",
+                "iPhone Air - Light Gold - Landscape",
+                "iPhone Air - Light Gold - Portrait",
+                "iPhone Air - Sky Blue - Landscape",
+                "iPhone Air - Sky Blue - Portrait",
+                "iPhone Air - Space Black - Landscape",
+                "iPhone Air - Space Black - Portrait"
+              ]
+            },
+            "Apple iPhone SE": {
+              "thumbColor": [
+                "Black",
+                "Red",
+                "White"
+              ]
+            },
+            "Apple iPhone X": {
+              "thumbColor": [
+                "Silver",
+                "Space Grey"
+              ]
+            },
+            "Apple iPhone XR": {
+              "thumbColor": [
+                "Blue",
+                "Coral",
+                "Red",
+                "Silver",
+                "Space Grey",
+                "Yellow"
+              ]
+            },
+            "Apple iPhone XS": {
+              "thumbColor": [
+                "Gold",
+                "Silver",
+                "Space Grey"
+              ]
+            },
+            "Apple iPhone XS Max": {
+              "thumbColor": [
+                "Gold",
+                "Silver",
+                "Space Grey"
+              ]
+            }
+          }
+        },
+        "tablet": {
+          "thumbModel": {
+            "Apple iPad": {
+              "thumbColor": [
+                "Gold",
+                "Silver",
+                "Space Grey"
+              ]
+            },
+            "Apple iPad Air 2020": {
+              "thumbColor": [
+                "Green Landscape",
+                "Green Portrait",
+                "Rose Gold Landscape",
+                "Rose Gold Portrait",
+                "Silver Landscape",
+                "Silver Portrait",
+                "Sky Blue Landscape",
+                "Sky Blue Portrait",
+                "Space Gray Landscape",
+                "Space Gray Portrait"
+              ]
+            },
+            "Apple iPad Mini": {
+              "thumbColor": [
+                "Gold",
+                "Silver",
+                "Space Grey"
+              ]
+            },
+            "Apple iPad Pro": {
+              "thumbColor": [
+                "11 Silver - Landscape",
+                "11 Silver - Portrait",
+                "11 Space Gray - Landscape",
+                "11 Space Gray - Portrait",
+                "13 Silver - Landscape",
+                "13 Silver - Portrait",
+                "13 Space Gray - Landscape",
+                "13 Space Gray - Portrait"
+              ]
+            }
+          }
+        },
+        "wearable": {
+          "thumbModel": {
+            "Apple Watch - 38mm": {
+              "thumbColor": [
+                "Apple Watch 38mm Black Steel + Black Closed",
+                "Apple Watch 38mm Gold + Black Leather Closed",
+                "Apple Watch 38mm Gold + Midnight Blue Closed",
+                "Apple Watch 38mm Rose Gold + Black Leather Closed",
+                "Apple Watch 38mm Rose Gold + Lavender Closed",
+                "Apple Watch 38mm Sport Aluminum + Blue Closed",
+                "Apple Watch 38mm Sport Aluminum + Fog Closed",
+                "Apple Watch 38mm Sport Aluminum + Green Closed",
+                "Apple Watch 38mm Sport Aluminum + Red Closed",
+                "Apple Watch 38mm Sport Aluminum + Walnut Closed",
+                "Apple Watch 38mm Sport Aluminum + White Closed",
+                "Apple Watch 38mm Sport Aluminum Gold + Antique White Closed",
+                "Apple Watch 38mm Sport Aluminum Rose Gold + Stone Closed",
+                "Apple Watch 38mm Sport Space Gray + Black Closed",
+                "Apple Watch 38mm Stainless Steel + Black Leather Closed",
+                "Apple Watch 38mm Steel + White Closed"
+              ]
+            },
+            "Apple Watch - 42mm": {
+              "thumbColor": [
+                "Apple Watch 42mm Black Steel + Black Closed",
+                "Apple Watch 42mm Gold + Black Leather Closed",
+                "Apple Watch 42mm Gold + Midnight Blue Closed",
+                "Apple Watch 42mm Rose Gold + Black Leather Closed",
+                "Apple Watch 42mm Rose Gold + Lavender Closed",
+                "Apple Watch 42mm Sport Aluminum + Blue Closed",
+                "Apple Watch 42mm Sport Aluminum + Fog Closed",
+                "Apple Watch 42mm Sport Aluminum + Green Closed",
+                "Apple Watch 42mm Sport Aluminum + Red Closed",
+                "Apple Watch 42mm Sport Aluminum + Walnut Closed",
+                "Apple Watch 42mm Sport Aluminum + White Closed",
+                "Apple Watch 42mm Sport Aluminum Gold + Antique White Closed",
+                "Apple Watch 42mm Sport Aluminum Rose Gold + Stone Closed",
+                "Apple Watch 42mm Sport Space Gray + Black Closed",
+                "Apple Watch 42mm Stainless Steel + Black Leather Closed",
+                "Apple Watch 42mm Steel + White Closed"
+              ]
+            },
+            "Apple Watch 2 - 38mm": {
+              "thumbColor": [
+                "Apple Watch 38mm Black Steel + Black Closed",
+                "Apple Watch 38mm Edition Closed",
+                "Apple Watch 38mm Rose Gold Aluminum + Midnight Blue Closed",
+                "Apple Watch 38mm Silver Aluminum + Cocoa Closed",
+                "Apple Watch 38mm Silver Aluminum + Concrete Closed",
+                "Apple Watch 38mm Silver Aluminum + Flat Silver Volt Nike Closed",
+                "Apple Watch 38mm Silver Aluminum + Flat Silver White Nike Closed",
+                "Apple Watch 38mm Silver Aluminum + Ocean Blue Closed",
+                "Apple Watch 38mm Silver Aluminum + Red Closed",
+                "Apple Watch 38mm Silver Aluminum + Turquoise Closed",
+                "Apple Watch 38mm Silver Aluminum + White Closed",
+                "Apple Watch 38mm Silver Aluminum + Yellow Closed",
+                "Apple Watch 38mm Space Gray Aluminum + Black Closed",
+                "Apple Watch 38mm Space Gray Aluminum + Black Cool Gray Nike Closed",
+                "Apple Watch 38mm Space Gray Aluminum + Black Volt Nike Closed",
+                "Apple Watch 38mm Sport Aluminum + Walnut Closed",
+                "Apple Watch 38mm Steel + White Closed"
+              ]
+            },
+            "Apple Watch 2 - 42mm": {
+              "thumbColor": [
+                "Apple Watch 42mm Edition Closed",
+                "Apple Watch 42mm Gold Aluminum + Cocoa Closed",
+                "Apple Watch 42mm Rose Gold Aluminum + Midnight Blue Closed",
+                "Apple Watch 42mm Silver Aluminum + Concrete Closed",
+                "Apple Watch 42mm Silver Aluminum + Flat Silver Volt Nike Closed",
+                "Apple Watch 42mm Silver Aluminum + Flat Silver White Nike Closed",
+                "Apple Watch 42mm Silver Aluminum + Green Closed",
+                "Apple Watch 42mm Silver Aluminum + Light Pink Closed",
+                "Apple Watch 42mm Silver Aluminum + Ocean Blue Closed",
+                "Apple Watch 42mm Silver Aluminum + Pink Sand Closed",
+                "Apple Watch 42mm Silver Aluminum + Red Closed",
+                "Apple Watch 42mm Silver Aluminum + Turquoise Closed",
+                "Apple Watch 42mm Silver Aluminum + White Closed",
+                "Apple Watch 42mm Silver Aluminum + Yellow Closed",
+                "Apple Watch 42mm Space Black Steel + Black Closed",
+                "Apple Watch 42mm Space Gray Aluminum + Black Closed",
+                "Apple Watch 42mm Space Gray Aluminum + Black Cool Gray Nike Closed",
+                "Apple Watch 42mm Space Gray Aluminum + Black Volt Nike Closed",
+                "Apple Watch 42mm Steel + White Closed"
+              ]
+            },
+            "Apple Watch Series 5 - 44mm": {
+              "thumbColor": [
+                "Apple Watch 44mm Gold Aluminum + Pink Sand Closed",
+                "Apple Watch 44mm Gold Stainless Steel + Stone Closed",
+                "Apple Watch 44mm Silver Aluminum + Clementine Closed",
+                "Apple Watch 44mm Space Black Stainless Steel + Alaskan Blue Closed",
+                "Apple Watch 44mm Space Black Titanium + Pine Green Closed",
+                "Apple Watch 44mm Space Grey Aluminum + Black Closed",
+                "Apple Watch 44mm Stainless Steel + Lemon Cream Closed",
+                "Apple Watch 44mm Titanium + Red Closed",
+                "Apple Watch 44mm White Ceramic + White Closed"
+              ]
+            },
+            "Apple Watch Series 6 - 40mm": {
+              "thumbColor": [
+                "Apple Watch 40mm Blue Aluminum",
+                "Apple Watch 40mm Dark Titanium",
+                "Apple Watch 40mm Gold Aluminum",
+                "Apple Watch 40mm Gold Stainless Steel",
+                "Apple Watch 40mm Graphite Stainless Steel",
+                "Apple Watch 40mm Light Titanium",
+                "Apple Watch 40mm Red Aluminum",
+                "Apple Watch 40mm Silver Aluminum",
+                "Apple Watch 40mm Silver Stainless Steel",
+                "Apple Watch 40mm Space Gray Aluminum"
+              ]
+            },
+            "Apple Watch Series 6 - 44mm": {
+              "thumbColor": [
+                "Apple Watch 44mm Blue Aluminum",
+                "Apple Watch 44mm Dark Titanium",
+                "Apple Watch 44mm Gold Aluminum",
+                "Apple Watch 44mm Gold Stainless Steel",
+                "Apple Watch 44mm Graphite Stainless Steel",
+                "Apple Watch 44mm Light Titanium",
+                "Apple Watch 44mm Red Aluminum",
+                "Apple Watch 44mm Silver Aluminum",
+                "Apple Watch 44mm Silver Stainless Steel",
+                "Apple Watch 44mm Space Gray Aluminum"
+              ]
+            },
+            "Apple Watch Series 6 - Cyprus Green Solo Loop - 40mm": {
+              "thumbColor": [
+                "Apple Watch 40mm Blue Aluminum Cyprus Green Solo Loop",
+                "Apple Watch 40mm Dark Titanium Cyprus Green Solo Loop",
+                "Apple Watch 40mm Gold Aluminum Cyprus Green Solo Loop",
+                "Apple Watch 40mm Gold Stainless Steel Cyprus Green Solo Loop",
+                "Apple Watch 40mm Graphite Stainless Steel Cyprus Green Solo Loop",
+                "Apple Watch 40mm Light Titanium Cyprus Green Solo Loop",
+                "Apple Watch 40mm Red Aluminum Cyprus Green Solo Loop",
+                "Apple Watch 40mm Silver Aluminum Cyprus Green Solo Loop",
+                "Apple Watch 40mm Silver Stainless Steel Cyprus Green Solo Loop",
+                "Apple Watch 40mm Space Gray Aluminum Cyprus Green Solo Loop"
+              ]
+            },
+            "Apple Watch Series 6 - Cyprus Green Solo Loop - 44mm": {
+              "thumbColor": [
+                "Apple Watch 44mm Blue Aluminum Cyprus Green Solo Loop",
+                "Apple Watch 44mm Dark Titanium Cyprus Green Solo Loop",
+                "Apple Watch 44mm Gold Aluminum Cyprus Green Solo Loop",
+                "Apple Watch 44mm Gold Stainless Steel Cyprus Green Solo Loop",
+                "Apple Watch 44mm Graphite Stainless Steel Cyprus Green Solo Loop",
+                "Apple Watch 44mm Light Titanium Cyprus Green Solo Loop",
+                "Apple Watch 44mm Red Aluminum Cyprus Green Solo Loop",
+                "Apple Watch 44mm Silver Aluminum Cyprus Green Solo Loop",
+                "Apple Watch 44mm Silver Stainless Steel Cyprus Green Solo Loop",
+                "Apple Watch 44mm Space Gray Aluminum Cyprus Green Solo Loop"
+              ]
+            },
+            "Apple Watch Series 6 - Ginger Solo Loop - 40mm": {
+              "thumbColor": [
+                "Apple Watch 40mm Blue Aluminum Ginger Solo Loop",
+                "Apple Watch 40mm Dark Titanium Ginger Solo Loop",
+                "Apple Watch 40mm Gold Aluminum Ginger Solo Loop",
+                "Apple Watch 40mm Gold Stainless Steel Ginger Solo Loop",
+                "Apple Watch 40mm Graphite Stainless Steel Ginger Solo Loop",
+                "Apple Watch 40mm Light Titanium Ginger Solo Loop",
+                "Apple Watch 40mm Red Aluminum Ginger Solo Loop",
+                "Apple Watch 40mm Silver Aluminum Ginger Solo Loop",
+                "Apple Watch 40mm Silver Stainless Steel Ginger Solo Loop",
+                "Apple Watch 40mm Space Gray Aluminum Ginger Solo Loop"
+              ]
+            },
+            "Apple Watch Series 6 - Ginger Solo Loop - 44mm": {
+              "thumbColor": [
+                "Apple Watch 44mm Blue Aluminum Ginger Solo Loop",
+                "Apple Watch 44mm Dark Titanium Ginger Solo Loop",
+                "Apple Watch 44mm Gold Aluminum Ginger Solo Loop",
+                "Apple Watch 44mm Gold Stainless Steel Ginger Solo Loop",
+                "Apple Watch 44mm Graphite Stainless Steel Ginger Solo Loop",
+                "Apple Watch 44mm Light Titanium Ginger Solo Loop",
+                "Apple Watch 44mm Red Aluminum Ginger Solo Loop",
+                "Apple Watch 44mm Silver Aluminum Ginger Solo Loop",
+                "Apple Watch 44mm Silver Stainless Steel Ginger Solo Loop",
+                "Apple Watch 44mm Space Gray Aluminum Ginger Solo Loop"
+              ]
+            },
+            "Apple Watch Series 6 - Pink Citrus Sport Closed - 40mm": {
+              "thumbColor": [
+                "Apple Watch 40mm Blue Aluminum Pink Citrus Sport",
+                "Apple Watch 40mm Dark Titanium Pink Citrus Sport",
+                "Apple Watch 40mm Gold Aluminum Pink Citrus Sport",
+                "Apple Watch 40mm Gold Stainless Steel Pink Citrus Sport",
+                "Apple Watch 40mm Graphite Stainless Steel Pink Citrus Sport",
+                "Apple Watch 40mm Light Titanium Pink Citrus Sport",
+                "Apple Watch 40mm Red Aluminum Pink Citrus Sport",
+                "Apple Watch 40mm Silver Aluminum Pink Citrus Sport",
+                "Apple Watch 40mm Silver Stainless Steel Pink Citrus Sport",
+                "Apple Watch 40mm Space Gray Aluminum Pink Citrus Sport"
+              ]
+            },
+            "Apple Watch Series 6 - Pink Citrus Sport Closed - 44mm": {
+              "thumbColor": [
+                "Apple Watch 44mm Blue Aluminum Pink Citrus Sport",
+                "Apple Watch 44mm Dark Titanium Pink Citrus Sport",
+                "Apple Watch 44mm Gold Aluminum Pink Citrus Sport",
+                "Apple Watch 44mm Gold Stainless Steel Pink Citrus Sport",
+                "Apple Watch 44mm Graphite Stainless Steel Pink Citrus Sport",
+                "Apple Watch 44mm Light Titanium Pink Citrus Sport",
+                "Apple Watch 44mm Red Aluminum Pink Citrus Sport",
+                "Apple Watch 44mm Silver Aluminum Pink Citrus Sport",
+                "Apple Watch 44mm Silver Stainless Steel Pink Citrus Sport",
+                "Apple Watch 44mm Space Gray Aluminum Pink Citrus Sport"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "dell": {
+      "thumbCategory": {
+        "desktop": {
+          "thumbModel": {
+            "Dell UltraSharp HD 5K Monitor": {
+              "thumbColor": [
+                "Dell UltraSharp 5K Monitor 27",
+                "Dell UltraSharp 5K Monitor 27 90deg"
+              ]
+            },
+            "Dell UltraSharp Monitor - 24 Inch": {
+              "thumbColor": [
+                "Dell UltraSharp 24",
+                "Dell UltraSharp 24 90deg"
+              ]
+            },
+            "Dell UltraSharp Monitor - 27 Inch": {
+              "thumbColor": [
+                "Dell UltraSharp 27",
+                "Dell UltraSharp 27 90deg"
+              ]
+            }
+          }
+        },
+        "tablet": {
+          "thumbModel": {
+            "Dell XPS 13": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Dell XPS 15": {
+              "thumbColor": [
+                "Default"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "google": {
+      "thumbCategory": {
+        "mobile": {
+          "thumbModel": {
+            "Google Pixel": {
+              "thumbColor": [
+                "Quite Black",
+                "Really Blue",
+                "Very Silver"
+              ]
+            },
+            "Google Pixel 2": {
+              "thumbColor": [
+                "Clearly White",
+                "Just Black",
+                "Kinda Blue"
+              ]
+            },
+            "Google Pixel 2 XL": {
+              "thumbColor": [
+                "Black and White",
+                "Just Black"
+              ]
+            },
+            "Google Pixel 3": {
+              "thumbColor": [
+                "- Clearly White",
+                "- Just Black",
+                "- Not Pink"
+              ]
+            },
+            "Google Pixel 3 XL": {
+              "thumbColor": [
+                "- Clearly White",
+                "- Just Black",
+                "- Not Pink"
+              ]
+            },
+            "Google Pixel 4": {
+              "thumbColor": [
+                "Clearly White",
+                "Just Black",
+                "Oh So Orange"
+              ]
+            },
+            "Google Pixel 4 XL": {
+              "thumbColor": [
+                "Clearly White",
+                "Just Black",
+                "Oh So Orange"
+              ]
+            },
+            "Google Pixel 5": {
+              "thumbColor": [
+                "Just Black",
+                "Sage"
+              ]
+            },
+            "Nexus 4": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Nexus 5X": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Nexus 6P": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Nexus 9": {
+              "thumbColor": [
+                "Default"
+              ]
+            }
+          }
+        },
+        "tablet": {
+          "thumbModel": {
+            "Google Slate": {
+              "thumbColor": [
+                "Google Pixel Slate"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "htcone": {
+      "thumbCategory": {
+        "mobile": {
+          "thumbModel": {
+            "HTC One A9": {
+              "thumbColor": [
+                "Black",
+                "White"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "huawei": {
+      "thumbCategory": {
+        "mobile": {
+          "thumbModel": {
+            "Huawei P8": {
+              "thumbColor": [
+                "Black",
+                "White"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "microsoft": {
+      "thumbCategory": {
+        "mobile": {
+          "thumbModel": {
+            "Microsoft Lumia 950": {
+              "thumbColor": [
+                "Black",
+                "White"
+              ]
+            }
+          }
+        },
+        "tablet": {
+          "thumbModel": {
+            "Microsoft Surface 3": {
+              "thumbColor": [
+                "Microsoft Surface Pro 3"
+              ]
+            },
+            "Microsoft Surface Book": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Microsoft Surface Pro 4": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Microsoft Surface Pro X": {
+              "thumbColor": [
+                "Surface Pro X Black",
+                "Surface Pro X Silver"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "motorola": {
+      "thumbCategory": {
+        "mobile": {
+          "thumbModel": {
+            "Motorola Moto E": {
+              "thumbColor": [
+                "Black",
+                "White"
+              ]
+            },
+            "Motorola Moto G": {
+              "thumbColor": [
+                "Default"
+              ]
+            }
+          }
+        },
+        "wearable": {
+          "thumbModel": {
+            "Motorola Moto 360": {
+              "thumbColor": [
+                "Men Black + Black Closed",
+                "Men Black + Black Open",
+                "Men Black + Cognac Closed",
+                "Men Black + Cognac Open",
+                "Men Gold + Black Closed",
+                "Men Gold + Black Open",
+                "Men Gold + Cognac Closed",
+                "Men Gold + Cognac Open",
+                "Men Silver + Black Closed",
+                "Men Silver + Black Open",
+                "Men Silver + Cognac Closed",
+                "Men Silver + Cognac Open",
+                "Women Gold + Blush Closed",
+                "Women Gold + Blush Open",
+                "Women Gold + Stone Closed",
+                "Women Gold + Stone Open",
+                "Women Rose Gold + Blush Closed",
+                "Women Rose Gold + Blush Open",
+                "Women Rose Gold + Stone Grey Closed",
+                "Women Rose Gold + Stone Grey Open",
+                "Women Silver + Blush Closed",
+                "Women Silver + Blush Open",
+                "Women Silver + Stone Grey Closed",
+                "Women Silver + Stone Grey Open"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "samsung": {
+      "thumbCategory": {
+        "mobile": {
+          "thumbModel": {
+            "Samsung Galaxy Note 5": {
+              "thumbColor": [
+                "Black",
+                "Gold",
+                "Pink",
+                "Silver Titanium",
+                "White"
+              ]
+            },
+            "Samsung Galaxy Note10": {
+              "thumbColor": [
+                "Aura Black",
+                "Aura Glow",
+                "Aura Pink",
+                "Aura Red",
+                "Aura White"
+              ]
+            },
+            "Samsung Galaxy Note10+": {
+              "thumbColor": [
+                "Aura Black",
+                "Aura Blue",
+                "Aura Glow",
+                "Aura White"
+              ]
+            },
+            "Samsung Galaxy S Duos": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Samsung Galaxy S10": {
+              "thumbColor": [
+                "Flamingo Pink",
+                "Prism Black",
+                "Prism Blue",
+                "Prism Green",
+                "Prism White"
+              ]
+            },
+            "Samsung Galaxy S10+": {
+              "thumbColor": [
+                "Ceramic White",
+                "Flamingo Pink",
+                "Prism Black",
+                "Prism Blue",
+                "Prism Green",
+                "Prism White"
+              ]
+            },
+            "Samsung Galaxy S20": {
+              "thumbColor": [
+                "Cloud Blue",
+                "Cloud Pink",
+                "Cosmic Gray"
+              ]
+            },
+            "Samsung Galaxy S20 Ultra": {
+              "thumbColor": [
+                "Samsung Galaxy S20 Utra Cosmic Black",
+                "Samsung Galaxy S20 Utra Cosmic Gray"
+              ]
+            },
+            "Samsung Galaxy S20+": {
+              "thumbColor": [
+                "Cloud Blue",
+                "Cosmic Black",
+                "Cosmic Gray"
+              ]
+            },
+            "Samsung Galaxy S21 5G": {
+              "thumbColor": [
+                "— Black",
+                "— Pink",
+                "— Violet",
+                "— White"
+              ]
+            },
+            "Samsung Galaxy S21 Ultra 5G": {
+              "thumbColor": [
+                "— Black",
+                "— Silver"
+              ]
+            },
+            "Samsung Galaxy S21+": {
+              "thumbColor": [
+                "5G — Black",
+                "5G — Silver",
+                "5G — Violet"
+              ]
+            },
+            "Samsung Galaxy S3": {
+              "thumbColor": [
+                "Default"
+              ]
+            },
+            "Samsung Galaxy S5": {
+              "thumbColor": [
+                "Black",
+                "White"
+              ]
+            },
+            "Samsung Galaxy S7": {
+              "thumbColor": [
+                "Black",
+                "Gold",
+                "Silver",
+                "White"
+              ]
+            },
+            "Samsung Galaxy S8": {
+              "thumbColor": [
+                "Arctic Silver",
+                "Coral Blue",
+                "Maple Gold",
+                "Midnight Black",
+                "Orchid Gray"
+              ]
+            },
+            "Samsung Galaxy S9": {
+              "thumbColor": [
+                "Burgundy Red",
+                "Coral Blue",
+                "Lilac Purple",
+                "Midnight Black",
+                "Sunrise Gold",
+                "Titanium Gray"
+              ]
+            },
+            "Samsung Galaxy Y": {
+              "thumbColor": [
+                "Black",
+                "White"
+              ]
+            }
+          }
+        },
+        "television": {
+          "thumbModel": {
+            "Samsung Frame": {
+              "thumbColor": [
+                "- Beige",
+                "- Beige with Studio Stand",
+                "- Beige without Stand",
+                "- Black",
+                "- Black with Studio Stand",
+                "- Black without Stand",
+                "- Brown",
+                "- Brown with Studio Stand",
+                "- Brown without Stand",
+                "- White",
+                "- White with Studio Stand",
+                "- White without Stand"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "sony": {
+      "thumbCategory": {
+        "television": {
+          "thumbModel": {
+            "Sony W850C": {
+              "thumbColor": [
+                "Default"
+              ]
+            }
+          }
+        },
+        "wearable": {
+          "thumbModel": {
+            "Sony SmartWatch 3": {
+              "thumbColor": [
+                "Black Closed",
+                "Black Open",
+                "White Closed",
+                "White Open"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "xiaomi": {
+      "thumbCategory": {
+        "mobile": {
+          "thumbModel": {
+            "Xiaomi Mi Mix Alpha": {
+              "thumbColor": [
+                "Back",
+                "Front",
+                "Side"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

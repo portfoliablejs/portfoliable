@@ -2,23 +2,87 @@
 /* Purpose: Define global runtime style resets and baseline viewport/body behavior. */
 /* Author: Lio Schimanko */
 
-/* === NOTES === */
+/* MARK: NOTES */
 /* This stylesheet intentionally avoids local @import dependencies. */
 
-/* === GLOBAL RESET === */
-/* Global resets for the portfolio app */
+/* MARK: GLOBAL RESET */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-/* === ROOT VIEWPORT SURFACE === */
+/* MARK: ROOT VIEWPORT SURFACE */
 body {
   margin: 0;
-  background-color: var(--color-bg);
+  background-color: var(--color-bg, var(--color-player-bg, #101218));
   color: var(--color-black);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
   height: 100vh;
   width: 100vw;
+  transition: background-color 280ms ease;
+}
+
+html {
+  background-color: var(--color-bg, var(--color-player-bg, #101218));
+  transition: background-color 280ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    transition: none;
+  }
+}
+
+/* MARK: A11Y DARK THEME TOKENS */
+/* Mirrors Valence accessibility token roles so dark-mode toggles always affect the full app shell. */
+html.a11y-dark-mode {
+  --color-bg: var(--color-player-bg);
+  --color-surface: #1C1C1E;
+  --color-surface-border: rgba(255, 255, 255, 0.12);
+
+  --color-black: #FFFFFF;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #F5F5F5;
+  --color-text-muted: #B2B2B2;
+
+  --color-card-bg: var(--color-surface);
+  --color-card-border: var(--color-surface-border);
+  --color-kbd-border: rgba(255, 255, 255, 0.2);
+}
+
+/* MARK: A11Y HIGH CONTRAST TOKENS */
+/* Forces maximum contrast token values for users who opt into high-contrast mode. */
+html.a11y-high-contrast {
+  --color-bg: #000000;
+  --color-surface: #000000;
+  --color-surface-border: #FFFFFF;
+
+  --color-black: #FFFFFF;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #FFFFFF;
+  --color-text-muted: #FFFFFF;
+
+  --color-gray-dark: #FFFFFF;
+  --color-gray-med: #FFFFFF;
+  --color-gray-light: #FFFFFF;
+
+  --color-card-bg: #000000;
+  --color-card-border: #FFFFFF;
+  --color-kbd-border: #FFFFFF;
+}
+
+/* MARK: A11Y FORCED COLORS TOKENS */
+/* Maps runtime tokens to system color keywords when forced-colors is active. */
+html.a11y-forced-colors {
+  --color-bg: Canvas;
+  --color-surface: Canvas;
+  --color-text-primary: CanvasText;
+  --color-text-secondary: CanvasText;
+  --color-text-muted: GrayText;
+
+  --color-card-bg: Canvas;
+  --color-card-border: CanvasText;
+  --color-surface-border: CanvasText;
 }

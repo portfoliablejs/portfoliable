@@ -1,35 +1,41 @@
-# Accessibility Checklist
+# Accessibility checklist
 
-Use this checklist before shipping docs or runtime-facing content changes.
+Use this checklist before Shipping or publishing a portfolio update.
 
-## Structure
+## Content structure
 
-- Headings follow logical order without skipping levels.
-- Links use descriptive text.
-- Lists and tables are used semantically.
+- headings follow a logical flow and do not skip levels
+- link text describes the destination or purpose
+- sections are easy to scan on mobile and desktop
+- each case has clear context and readable summary text
 
-## Visual and readability
+## Visual readability
 
-- Body text contrast is readable on default and themed backgrounds.
-- Font sizes remain legible on mobile breakpoints.
-- Motion-heavy UI has a reduced-motion-friendly path.
+- text remains readable on default and custom color themes
+- contrast is strong enough for both body text and UI labels
+- long-form case text stays comfortable to read on narrow screens
+- no important meaning depends on color alone
 
-## Interaction
+## Interaction and navigation
 
-- Core controls are reachable via keyboard.
-- Focus indicators are visible and not overridden.
-- Icon-only actions expose meaningful labels.
+- primary actions are reachable with the keyboard
+- focus states remain visible on custom theme overrides
+- icon-only controls include accessible labels
+- the language switcher and navigation controls remain usable in all supported locales
 
-## Media and localization
+## Media and content quality
 
-- Images have useful alternative descriptions when needed.
-- Language-specific content is complete in both supported locales.
+- images or video content include meaningful alternative text or relevant surrounding explanation
+- case summaries are not ambiguous or overly promotional without context
+- localized content is complete when a locale is active
+- motion-heavy sections still work when reduced motion is preferred
 
-## Final command checks
+## Final checks before release
 
 ```bash
 npm run validate:content
 npm run build
+npm run preview
 ```
 
-Add screenshot evidence in pull requests when accessibility-sensitive styles are changed.
+For large design changes, review the portfolio in multiple browsers and on mobile widths before publishing.

@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "vitepress dev .",
+    "live": "node ./scripts/live-web.mjs --host 127.0.0.1 --port 4173",
     "build": "vitepress build .",
     "preview": "vitepress preview . --host",
     "smoke": "node ./scripts/smoke-web.mjs"

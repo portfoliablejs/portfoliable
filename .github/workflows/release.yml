@@ -1,5 +1,11 @@
+# File: .github/workflows/release.yml
+# Purpose: Automate version planning, package publish, and release tagging for @portfoliable/create.
+# Author: Lio Schimanko
+
+# MARK: WORKFLOW NAME
 name: Release @portfoliable/create
 
+# MARK: TRIGGERS
 on:
   push:
     branches:
@@ -11,6 +17,7 @@ on:
         type: boolean
         default: false
 
+      # MARK: RELEASE JOB
 jobs:
   release:
     name: Release @portfoliable/create
@@ -19,6 +26,8 @@ jobs:
     permissions:
       contents: write
       id-token: write
+
+    # MARK: RELEASE STEPS
     steps:
       - name: Checkout
         uses: actions/checkout@v4

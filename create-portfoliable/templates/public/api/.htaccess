@@ -1,0 +1,4 @@
+# Prevent direct download of password hash records.
+<Files "password.config.json">
+  Require all denied
+</Files>

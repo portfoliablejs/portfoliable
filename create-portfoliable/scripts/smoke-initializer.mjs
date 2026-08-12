@@ -2,13 +2,13 @@
 // Purpose: Smoke-test local initializer output by generating a project and validating built artifacts.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-// === PATH CONSTANTS ===
+// MARK: PATH CONSTANTS
 // Resolves package root used to execute initializer and downstream build commands.
 const projectRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 // Defines isolated temporary workspace root used by the initializer smoke test.
@@ -16,14 +16,14 @@ const tempRoot = path.join(os.tmpdir(), 'portfoliable-initializer-smoke');
 // Defines output directory where the generated sample app is created.
 const generatedAppDir = path.join(tempRoot, 'my-portfolio');
 
-// === ERROR HANDLING ===
+// MARK: ERROR HANDLING
 // Exits immediately with a prefixed smoke-test failure message.
 function fail(message) {
   console.error(`[smoke:init] ${message}`);
   process.exit(1);
 }
 
-// === COMMAND EXECUTION ===
+// MARK: COMMAND EXECUTION
 // Runs an external command and stops the smoke test if the command exits non-zero.
 function runOrFail(command, args, cwd, env = undefined) {
   // Executes child commands with inherited IO for transparent diagnostics.
@@ -39,7 +39,7 @@ function runOrFail(command, args, cwd, env = undefined) {
   }
 }
 
-// === ASSERTION HELPER ===
+// MARK: ASSERTION HELPER
 // Verifies bundle output contains expected markers proving starter template content is present.
 function ensureContains(text, needle, description) {
   if (!text.includes(needle)) {
@@ -64,7 +64,7 @@ function readLocalPackageVersion() {
   return JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).version;
 }
 
-// === SMOKE ORCHESTRATION ===
+// MARK: SMOKE ORCHESTRATION
 // Generates an app from the local initializer, builds it, and validates emitted artifacts/content.
 function main() {
   console.log('[smoke:init] Preparing temp workspace...');
@@ -77,7 +77,7 @@ function main() {
   console.log('[smoke:init] Verifying generated default runtime dependency (no override)...');
   runOrFail(
     'node',
-    ['./bin/create-portfoliable.mjs', generatedAppDir, '--no-install', '--no-preview'],
+    ['./bin/create-portfoliable.mjs', generatedAppDir, '--no-install', '--no-preview', '--no-interactive'],
     projectRoot
   );
 
@@ -95,7 +95,7 @@ function main() {
   console.log('[smoke:init] Generating app from local initializer...');
   runOrFail(
     'node',
-    ['./bin/create-portfoliable.mjs', generatedAppDir, '--no-preview'],
+    ['./bin/create-portfoliable.mjs', generatedAppDir, '--no-preview', '--no-interactive'],
     projectRoot,
     { PORTFOLIABLE_RUNTIME_DEP: `file:${projectRoot}` }
   );

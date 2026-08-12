@@ -1,5 +1,11 @@
+# File: .github/workflows/web-release.yml
+# Purpose: Build and deploy the web documentation site to GitHub Pages.
+# Author: Lio Schimanko
+
+# MARK: WORKFLOW NAME
 name: Deploy Portfoliable Web
 
+# MARK: TRIGGERS
 on:
   push:
     branches:
@@ -9,18 +15,23 @@ on:
       - .github/workflows/web-release.yml
   workflow_dispatch:
 
+# MARK: WORKFLOW PERMISSIONS
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# MARK: CONCURRENCY CONTROL
 concurrency:
   group: pages-portfoliable-web
   cancel-in-progress: true
 
+# MARK: JOBS
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    # MARK: BUILD STEPS
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,6 +60,7 @@ jobs:
         with:
           path: ./web/.vitepress/dist
 
+  # MARK: DEPLOY JOB
   deploy:
     needs: build
     runs-on: ubuntu-latest

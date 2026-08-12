@@ -3,18 +3,18 @@
 // Purpose: Keep selected initializer template files synchronized with canonical root sources.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// === PATH CONSTANTS ===
+// MARK: PATH CONSTANTS
 // Resolves this script directory path.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Resolves package root used to resolve mapped source/target files.
 const repoRoot = path.resolve(__dirname, '..');
 
-// === TEMPLATE HEADER ===
+// MARK: TEMPLATE HEADER
 // Defines template parser header injected into synchronized parser target file.
 const TEMPLATE_PARSER_HEADER = [
   '// File: create-portfoliable/templates/src/parser/markdown.js',
@@ -24,12 +24,12 @@ const TEMPLATE_PARSER_HEADER = [
   ''
 ].join('\n');
 
-// === SYNC MAPPINGS ===
+// MARK: SYNC MAPPINGS
 // Lists source/target mapping definitions and optional transform functions.
 const mappings = [
   {
     source: 'src/parser/markdown.js',
-    target: 'create-portfoliable/templates/src/parser/markdown.js',
+    target: 'templates/src/parser/markdown.js',
     // Removes source header and injects template-specific header contract.
     transform: (sourceText) => {
       // Splits source into lines for header detection.
@@ -113,7 +113,7 @@ function syncOne(mapping, mode) {
   return true;
 }
 
-// === SCRIPT ENTRYPOINT ===
+// MARK: SCRIPT ENTRYPOINT
 // Runs all mappings in check or write mode and exits non-zero on drift.
 function main() {
   // Parses CLI args used to switch between check and write mode.

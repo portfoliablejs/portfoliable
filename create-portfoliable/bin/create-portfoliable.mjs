@@ -302,7 +302,7 @@ async function run() {
         'portfoliable-sync-locales': 'portfoliable sync-locales'
       },
       dependencies: {
-        '@portfoliablejs/valence': '^1.0.0-alpha',
+        '@portfoliablejs/valence': '^0.8.0 || ^1.0.0-alpha',
         '@portfoliable/create': runtimeDependencyVersion
       }
     },

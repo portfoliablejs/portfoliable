@@ -1,31 +1,50 @@
-# Deploy
+# Deploying a Portfoliable site
 
-Use separate workflows for package release and website deployment.
+Portfoliable separates the runtime package from the docs and marketing site. This is intentional: you should not force your app release workflow and your web publishing workflow into one pipeline.
 
-## Why split workflows
+## Two deployment tracks
 
-- Package release publishes npm artifacts and release tags.
-- Website deployment publishes static docs/marketing files to GitHub Pages.
-- Isolation avoids coupling website publish failures to npm release state.
+### 1. Package deployment
 
-## Web deployment artifact
+This track publishes the npm package and the generated app runtime. It is for the creator package and feature updates.
 
-The web workflow builds the VitePress site and uploads:
+### 2. Web deployment
+
+This track publishes the docs and marketing website, usually to a static host such as GitHub Pages.
+
+## The web artifact
+
+The web project builds a static VitePress export into:
 
 ```text
 web/.vitepress/dist
 ```
 
-## Production checks
+That is the artifact deployed by the web release workflow.
 
-1. Run web build locally.
-2. Verify navigation paths on homepage and /docs.
-3. Validate custom elements render correctly in static output.
-4. Deploy to Release environment via GitHub Actions.
+## Recommended production checklist
 
-<div class="docs-callout">
-  <strong>Tip</strong>
-  <p>
-    Keep package release automation unchanged and version web content independently through normal commits.
-  </p>
-</div>
+Before publishing the site, confirm:
+
+1. the VitePress build completes locally
+2. the home page and docs navigation still work as expected
+3. custom components render correctly in static output
+4. SEO and share metadata still look correct on the key routes
+5. home metadata values are still set correctly
+6. localized routes and `hreflang` data are still valid
+7. visibility flags still prevent or allow indexing as intended
+8. protected and private cases remain appropriately hidden when configured
+
+## Local validation commands
+
+```bash
+cd web
+npm run build
+npm run preview
+```
+
+Then test the navigation, case routes, and any updated localized pages in the browser.
+
+## Best practice
+
+Keep package change management separate from website publishing. The docs site should move when content or marketing changes, while the package release cycle can stay independent.

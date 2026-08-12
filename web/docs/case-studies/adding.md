@@ -1,43 +1,77 @@
-# Adding Case Studies
+# Adding a new case study
 
-Add new case studies through the scaffold flow so metadata stays valid from the beginning.
+The easiest and safest way to create a new case is to use the built-in scaffold command in your generated project.
 
-## Create a new case
+## Create the case
 
 ```bash
-npm run scaffold:case -- --slug your-case-slug
+npm run portfoliable-create-case -- --name "My New Case"
 ```
 
-This creates a markdown file under src/content/cases with starter frontmatter and content sections.
+This creates a starter case file under your content folder with the expected metadata structure and localized sections.
 
-## Complete required frontmatter
+## Fill in the required metadata
 
-Confirm these values exist before writing body content:
+Before writing the body content, confirm these values are present and correct:
 
-- id
-- slug
-- title.en and title.pt
-- shortDesc.en and shortDesc.pt
-- readTime.en and readTime.pt
-- year.en and year.pt
-- thumbCategory, thumbBrand, thumbModel, thumbColor
+- `id`
+- `slugByLocale`
+- localized `title`
+- localized `shortDesc`
+- localized `readTime`
+- `thumbCategory`
+- `thumbBrand`
+- `thumbModel`
+- `thumbColor`
 
-## Write your case content
+Without these, the case may not render correctly in the gallery or case reader.
 
-Use language sections for content body:
+## Keep the case content localized
 
-```markdown
-## English
-Your English content.
+Use explicit language blocks so each locale is easy to maintain:
 
-## Portuguese
-Seu conteudo em portugues.
+```md
+<!-- lang:en -->
+## Context
+Your English case details go here.
+
+<!-- lang:pt -->
+## Contexto
+Detalhes do caso em português.
 ```
 
-## Validate before commit
+This pattern keeps your content readable and prevents hidden localization issues.
+
+## Add supporting details
+
+Most strong case studies include:
+
+- a concise summary for the gallery card
+- a clear problem statement
+- the process or solution flow
+- measurable results or impact
+- action links for preview, repo, or live demo
+
+## Validate early and often
+
+Run the project validation before building:
 
 ```bash
 npm run validate:content
 ```
 
-Validation catches missing fields and malformed content contract values before build.
+Then preview the portfolio locally:
+
+```bash
+npm run build
+npm run preview
+```
+
+## Common mistakes to avoid
+
+- reusing an `id` that already exists
+- changing `slugByLocale` values after a case has been published
+- forgetting to translate required metadata fields for a new locale
+- leaving an invalid thumbnail metadata combination
+
+A clean case file is easier to maintain and safer to publish.

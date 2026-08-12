@@ -1,30 +1,34 @@
-# Editing Case Studies
+# Editing an existing case study
 
-Editing existing cases should preserve identifiers and URL stability.
+Case edits are usually low-risk as long as you preserve the metadata contract and the route identity of the case.
 
-## Safe edits
+## Safe changes
 
-These changes are low risk:
+These are usually safe to do in a normal update:
 
-- Updating title, summary, and article body text
-- Updating read-time labels
-- Updating repository and demo URLs
-- Refining thumbnail metadata while keeping file references valid
+- updating the title and summary copy
+- revising the case body text
+- updating read-time labels
+- adjusting repository or demo links
+- refining the thumbnail metadata while keeping the asset paths valid
 
 ## Changes that need extra care
 
-- id changes can break references and historical links
-- slug changes modify deep links and may require redirects
-- deleting language fields can break localized rendering
+These edits can affect deep links or content consistency:
 
-## Editing workflow
+- changing the case `id`
+- changing localized `slugByLocale` values
+- deleting or renaming a locale block
+- changing visibility rules or protection settings without checking the runtime behavior
 
-1. Open the target file in src/content/cases.
-2. Edit frontmatter first, then article body.
-3. Run content validation.
-4. Run local preview and check the case card and article view.
+## Recommended workflow
 
-## Recommended checks
+1. open the case file in your content folder
+2. update metadata first
+3. revise the localized body content
+4. check any associated thumbnail or share metadata
+5. run validation
+6. preview the generated portfolio locally
 
 ```bash
 npm run validate:content
@@ -32,4 +36,21 @@ npm run build
 npm run preview
 ```
 
-Keep edits small and review with screenshots when changing visual or metadata-heavy sections.
+## Good editing habits
+
+- keep route slugs stable once a case is published
+- preserve localized fields when a locale is still supported
+- avoid large metadata rewrites in a single change if possible
+- preview the home gallery and the case reader after significant edits
+
+## What to check in the browser
+
+After editing a case, review:
+
+- the home grid card
+- the case detail page
+- localized metadata output
+- any share or SEO fields tied to the case
+- thumbnail rendering in the gallery
+
+Small, focused edits are easier to review and less likely to create broken links.

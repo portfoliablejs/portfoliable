@@ -2,12 +2,12 @@
 // Purpose: Ensure valence compatibility assets exist locally before runtime build and preview commands.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-// === PATH UTILITIES ===
+// MARK: PATH UTILITIES
 // Deduplicates and normalizes candidate paths used while locating the valence package root.
 function uniquePaths(paths) {
   return [...new Set(paths.map((entry) => path.normalize(entry)))];
@@ -30,7 +30,7 @@ function resolveValenceRoot() {
   return candidates.find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) || null;
 }
 
-// === COMPATIBILITY PATCHES ===
+// MARK: COMPATIBILITY PATCHES
 // Ensures the valence sub-atomic index.css file exists for backward-compatible imports.
 function ensureValenceIndexCss(valenceRoot) {
   // Resolves expected valence CSS entrypoint path.
@@ -148,6 +148,45 @@ function ensureMockupsSymlink(valenceRoot) {
   return { created, reason: created ? 'linked' : 'already-linked' };
 }
 
+// Ensures runtime favicon assets exist so host app and default about image resolve without 404.
+function ensureRuntimeFaviconAssets() {
+  // Resolves package root from this script location.
+  const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+  const packageRoot = path.resolve(scriptDir, '..');
+
+  // Lists favicon assets that should be mirrored from template public assets into runtime public.
+  const assets = ['favicon.png', 'favicon.ico'];
+  const copied = [];
+  const missingSources = [];
+
+  // Ensures runtime public directory exists before mirroring assets.
+  const runtimePublicDir = path.resolve(packageRoot, 'public');
+  fs.mkdirSync(runtimePublicDir, { recursive: true });
+
+  for (const assetName of assets) {
+    // Resolves source asset from template files distributed to end users.
+    const sourceAsset = path.resolve(packageRoot, 'templates', 'public', assetName);
+    if (!fs.existsSync(sourceAsset)) {
+      missingSources.push(assetName);
+      continue;
+    }
+
+    // Resolves runtime mirror destination served at root URL path.
+    const targetAsset = path.resolve(runtimePublicDir, assetName);
+    if (fs.existsSync(targetAsset)) {
+      continue;
+    }
+
+    fs.copyFileSync(sourceAsset, targetAsset);
+    copied.push(assetName);
+  }
+
+  return {
+    copied,
+    missingSources
+  };
+}
+
 // Applies all compatibility patches that are required before runtime commands execute.
 export function ensureValenceCompatibility() {
   // Resolves valence package location from supported installation layouts.
@@ -170,9 +209,18 @@ export function ensureValenceCompatibility() {
   } else if (mockupLinkStatus.reason === 'missing-source') {
     console.warn('Valence mockup sync skipped: no mockup source found in @portfoliablejs/valence.');
   }
+
+  // Ensures root-level runtime favicon assets exist for host document and default about image.
+  const faviconAssetStatus = ensureRuntimeFaviconAssets();
+  if (faviconAssetStatus.copied.length > 0) {
+    console.log(`Patched runtime assets: restored ${faviconAssetStatus.copied.join(', ')} from templates/public.`);
+  }
+  if (faviconAssetStatus.missingSources.length > 0) {
+    console.warn(`Runtime favicon sync skipped for missing source assets: ${faviconAssetStatus.missingSources.join(', ')}`);
+  }
 }
 
-// === ENTRYPOINT DETECTION ===
+// MARK: ENTRYPOINT DETECTION
 // Determines whether this module is being run directly versus imported.
 function isDirectExecution() {
   // Reads the entrypoint argument from current process invocation.
@@ -186,7 +234,7 @@ function isDirectExecution() {
   return currentFileUrl === entrypointUrl;
 }
 
-// === SCRIPT ENTRYPOINT ===
+// MARK: SCRIPT ENTRYPOINT
 // Executes compatibility checks only when run as the main process entrypoint.
 if (isDirectExecution()) {
   try {

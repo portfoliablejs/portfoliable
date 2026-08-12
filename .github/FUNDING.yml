@@ -1,4 +1,9 @@
-# These are supported funding model platforms
+# File: .github/FUNDING.yml
+# Purpose: Configure repository sponsorship links shown by GitHub.
+# Author: Lio Schimanko
+
+# MARK: SPONSOR PLATFORMS
+# Supported funding model platforms.
 
 github: [schimanko]
 patreon: # Replace with a single Patreon username

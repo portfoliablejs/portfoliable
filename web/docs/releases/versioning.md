@@ -1,30 +1,35 @@
-# Versioning
+# Versioning and release flow
 
-Portfoliable separates website delivery from npm package delivery.
+Portfoliable has two separate delivery tracks: the npm package track and the web/docs track.
 
-## Two tracks
+## Package versioning
 
-- Package track: publishes npm artifacts and release tags.
-- Web track: publishes marketing/docs static output to GitHub Pages.
+The npm package follows conventional versioning:
 
-## Package semantics
+- `major` for breaking changes
+- `minor` for new backward-compatible features
+- `patch` for fixes and smaller changes
 
-For package releases, use conventional version bumps:
+This is the runtime and scaffold package release model.
 
-- major for breaking changes
-- minor for new backward-compatible features
-- patch for fixes and maintenance
+## Web versioning
 
-## Web semantics
+The website and docs can ship independently whenever:
 
-The website can ship independently whenever docs, marketing copy, or content structure changes.
+- onboarding content changes
+- docs navigation changes
+- marketing copy improves
+- product guidance is updated for end users
 
-<ds-divider></ds-divider>
+This prevents docs and runtime releases from becoming unnecessarily coupled.
 
-## Recommendation
+## Recommended release practice
 
-Treat docs changes like product changes:
+- keep package release work separate from website content work
+- review docs changes in pull requests
+- record meaningful user-facing changes in the changelog
+- publish the web build through the dedicated web release workflow when merged
 
-1. Use pull requests with review.
-2. Keep changeset notes in changelog updates.
-3. Publish via web release workflow once merged.
+## Why this matters
+
+Users usually care about the generated portfolio experience, not whether the package and docs site happened to ship in the same release window. Keeping these tracks independent makes the product easier to understand and easier to maintain.

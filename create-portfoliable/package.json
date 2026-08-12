@@ -83,7 +83,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@portfoliablejs/valence": "^1.0.0-alpha",
+    "@portfoliablejs/valence": "^0.8.0 || ^1.0.0-alpha",
     "lenis": "^1.3.25",
     "markdown-it": "^14.1.0",
     "markdown-it-deflist": "^2.1.0",
