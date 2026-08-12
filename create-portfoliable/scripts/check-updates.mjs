@@ -11,7 +11,7 @@ void execSync;
 // Fetches the latest commit SHA from the valence main branch for quick maintainer awareness.
 async function checkValenceUpdates() {
   try {
-    console.log('🔍 Checking @portfoliable/valence for updates...');
+    console.log('🔍 Checking @portfoliablejs/valence for updates...');
     // Calls the GitHub commits API to retrieve the current main-branch head.
     const res = await fetch('https://api.github.com/repos/portfoliablejs/valence/commits/main');
     if (!res.ok) return;

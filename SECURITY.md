@@ -4,7 +4,7 @@
 
 This policy applies to security issues affecting:
 
-- `@portfoliable/create`
+- `@portfoliablejs/create`
 - repository release workflows and automation
 
 ## Reporting a Vulnerability

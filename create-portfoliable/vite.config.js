@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { defineConfig } from 'vite';
 
-// Detects when @portfoliable/valence is installed as a local symlink.
+// Detects when @portfoliablejs/valence is installed as a local symlink.
 function isLocalLinkedValence() {
   const valencePath = path.resolve(process.cwd(), 'node_modules', '@portfoliable', 'valence');
   try {
@@ -73,7 +73,7 @@ export default defineConfig(({ command }) => {
           ]
         },
         watch: {
-          ignored: ['!**/node_modules/@portfoliable/valence/**']
+          ignored: ['!**/node_modules/@portfoliablejs/valence/**']
         }
       }
     : {};
@@ -91,7 +91,7 @@ export default defineConfig(({ command }) => {
     // In local-link mode, avoid prebundling Valence so edits in the linked package
     // are reflected immediately during development.
     optimizeDeps: (command === 'serve' && usingLocalValence)
-      ? { exclude: ['@portfoliable/valence'] }
+      ? { exclude: ['@portfoliablejs/valence'] }
       : undefined,
 
     // Allow and watch linked workspace files so HMR sees local Valence changes.

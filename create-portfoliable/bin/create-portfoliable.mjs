@@ -50,7 +50,7 @@ function resolveRuntimeDependencyVersion(currentFilePath) {
   console.warn(
     color(
       '33',
-      'Warning: could not resolve package version for @portfoliable/create default dependency. Falling back to latest.'
+      'Warning: could not resolve package version for @portfoliablejs/create default dependency. Falling back to latest.'
     )
   );
   return 'latest';
@@ -302,8 +302,8 @@ async function run() {
         'portfoliable-sync-locales': 'portfoliable sync-locales'
       },
       dependencies: {
-        '@portfoliable/valence': '^1.0.1',
-        '@portfoliable/create': runtimeDependencyVersion
+        '@portfoliablejs/valence': '^1.0.1',
+        '@portfoliablejs/create': runtimeDependencyVersion
       }
     },
     null,

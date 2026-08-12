@@ -74,7 +74,7 @@ function firstNetworkAddress() {
   return null;
 }
 
-// Fetches latest published @portfoliable/create version from npm registry.
+// Fetches latest published @portfoliablejs/create version from npm registry.
 async function fetchLatestVersion() {
   try {
     // Calls npm metadata endpoint for latest dist-tag payload.
@@ -440,7 +440,7 @@ function runThumbnailOptions(flags) {
 
   if (!mockupsRoot) {
     console.error(`${red}${bold}Could not locate Valence mockup catalog.${reset}`);
-    console.error('Expected either src/stories/assets/mockups or node_modules/@portfoliable/valence/src/stories/assets/mockups');
+    console.error('Expected either src/stories/assets/mockups or node_modules/@portfoliablejs/valence/src/stories/assets/mockups');
     return 1;
   }
 
@@ -470,7 +470,7 @@ function printStartupBox({ localUrl, networkUrl, localVersion, latestVersion }) 
   if (latestVersion && latestVersion !== localVersion && !latestVersion.includes('alpha')) {
     lines.push('');
     lines.push(`${yellow}A new version (${latestVersion}) is available!${reset}`);
-    lines.push(`Upgrade now: ${green}npm update @portfoliable/create${reset}`);
+    lines.push(`Upgrade now: ${green}npm update @portfoliablejs/create${reset}`);
     lines.push('Read changelog:');
     lines.push(`${dim}https://github.com/portfoliablejs/portfoliable/blob/main/CHANGELOG.md${reset}`);
   }
@@ -564,7 +564,7 @@ async function runDevServer(flags, options = {}) {
   // Creates Vite development server instance.
   const server = await createServer({
     optimizeDeps: {
-      exclude: ['@portfoliable/create']
+      exclude: ['@portfoliablejs/create']
     },
     server: {
       host: flags.host,

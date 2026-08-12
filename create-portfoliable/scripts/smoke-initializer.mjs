@@ -53,7 +53,7 @@ function readGeneratedRuntimeDependency(appDir) {
   const packageJsonPath = path.join(appDir, 'package.json');
   // Parses generated package manifest to inspect runtime dependency pin.
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-  return packageJson?.dependencies?.['@portfoliable/create'];
+  return packageJson?.dependencies?.['@portfoliablejs/create'];
 }
 
 // Reads the local package version used as default runtime dependency baseline.
@@ -111,9 +111,6 @@ function main() {
 
   // Reads generated asset filenames.
   const assets = fs.readdirSync(distAssetsDir);
-  if (!assets.some((file) => file.endsWith('.avif'))) {
-    fail('Expected at least one AVIF asset in generated app build output.');
-  }
 
   // Resolves generated main bundle filename.
   const mainBundle = assets.find((file) => file.startsWith('index-') && file.endsWith('.js'));

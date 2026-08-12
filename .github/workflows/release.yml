@@ -1,9 +1,9 @@
 # File: .github/workflows/release.yml
-# Purpose: Automate version planning, package publish, and release tagging for @portfoliable/create.
+# Purpose: Automate version planning, package publish, and release tagging for @portfoliablejs/create.
 # Author: Lio Schimanko
 
 # MARK: WORKFLOW NAME
-name: Release @portfoliable/create
+name: Release @portfoliablejs/create
 
 # MARK: TRIGGERS
 on:
@@ -20,12 +20,13 @@ on:
       # MARK: RELEASE JOB
 jobs:
   release:
-    name: Release @portfoliable/create
+    name: Release @portfoliablejs/create
     if: github.actor == 'schimanko'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
+      packages: write
 
     # MARK: RELEASE STEPS
     steps:
@@ -80,8 +81,8 @@ jobs:
       - name: Verify package identity
         run: |
           PACKAGE_NAME=$(npm --prefix ./create-portfoliable pkg get name | tr -d '"')
-          if [ "$PACKAGE_NAME" != "@portfoliable/create" ]; then
-            echo "Expected package name @portfoliable/create but found: $PACKAGE_NAME"
+          if [ "$PACKAGE_NAME" != "@portfoliablejs/create" ]; then
+            echo "Expected package name @portfoliablejs/create but found: $PACKAGE_NAME"
             exit 1
           fi
 
@@ -109,11 +110,27 @@ jobs:
             node ./create-portfoliable/scripts/release-orchestrator.mjs
           fi
 
-      - name: Publish @portfoliable/create to npm
+      - name: Publish @portfoliablejs/create to npm
         if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
           cd create-portfoliable
           npm publish --provenance --access public
+
+      - name: Setup GitHub Packages publishing
+        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: '@portfoliablejs'
+
+      - name: Publish @portfoliablejs/create to GitHub Packages
+        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        run: |
+          cd create-portfoliable
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push release commit and tags
         if: steps.release-plan.outputs.released_any == 'true' && steps.release-plan.outputs.dry_run != 'true'
@@ -121,7 +138,7 @@ jobs:
           git push origin main
           git push origin --tags
 
-      - name: Create GitHub release for @portfoliable/create
+      - name: Create GitHub release for @portfoliablejs/create
         if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

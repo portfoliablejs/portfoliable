@@ -27,7 +27,7 @@ To get to know Portfoliable, please visit the official [Portfoliable website](ht
 
 This monorepo contains the canonical Portfoliable implementation used by:
 
-- the initializer package: `@portfoliable/create`
+- the initializer package: `@portfoliablejs/create`
 - the generated consumer app runtime
 - the template files copied into new projects
 - the docs and release automation for the product
@@ -136,7 +136,7 @@ For product changes, update docs and behavior changes in the same PR.
 
 ### 8.1 Release policy
 
-This repository defines normative release behavior for the `@portfoliable/create` package.
+This repository defines normative release behavior for the `@portfoliablejs/create` package.
 
 Policy goals:
 
@@ -500,7 +500,7 @@ Trusted publishing verification:
 
 Verify npm trusted publisher mapping before deep debugging:
 
-- package: `@portfoliable/create`
+- package: `@portfoliablejs/create`
 - owner: `portfoliablejs`
 - repository: `portfoliable`
 - workflow file: `release.yml`

@@ -168,7 +168,7 @@ export default defineConfig({
       legalComments: 'none'
     },
     ssr: {
-      noExternal: ['@portfoliable/valence']
+      noExternal: ['@portfoliablejs/valence']
     },
     plugins: [],
     resolve: {

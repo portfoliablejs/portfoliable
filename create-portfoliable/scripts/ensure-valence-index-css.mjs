@@ -13,7 +13,7 @@ function uniquePaths(paths) {
   return [...new Set(paths.map((entry) => path.normalize(entry)))];
 }
 
-// Resolves the local filesystem root for @portfoliable/valence from common installation layouts.
+// Resolves the local filesystem root for @portfoliablejs/valence from common installation layouts.
 function resolveValenceRoot() {
   // Resolves this script directory so candidate paths can be built relative to package root.
   const scriptDir = path.dirname(fileURLToPath(import.meta.url));
@@ -22,9 +22,9 @@ function resolveValenceRoot() {
 
   // Defines installation candidates across consumer and package-local node_modules layouts.
   const candidates = uniquePaths([
-    path.resolve(process.cwd(), 'node_modules', '@portfoliable', 'valence'),
-    path.resolve(packageRoot, 'node_modules', '@portfoliable', 'valence'),
-    path.resolve(packageRoot, '..', '@portfoliable', 'valence')
+    path.resolve(process.cwd(), 'node_modules', '@portfoliablejs', 'valence'),
+    path.resolve(packageRoot, 'node_modules', '@portfoliablejs', 'valence'),
+    path.resolve(packageRoot, '..', '@portfoliablejs', 'valence')
   ]);
 
   return candidates.find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) || null;
@@ -192,7 +192,7 @@ export function ensureValenceCompatibility() {
   // Resolves valence package location from supported installation layouts.
   const valenceRoot = resolveValenceRoot();
   if (!valenceRoot) {
-    console.warn('Could not locate @portfoliable/valence to apply compatibility patches.');
+    console.warn('Could not locate @portfoliablejs/valence to apply compatibility patches.');
     return;
   }
 
@@ -207,7 +207,7 @@ export function ensureValenceCompatibility() {
   if (mockupLinkStatus.created) {
     console.log('Patched valence compatibility: linked src/stories/assets/mockups to valence catalog.');
   } else if (mockupLinkStatus.reason === 'missing-source') {
-    console.warn('Valence mockup sync skipped: no mockup source found in @portfoliable/valence.');
+    console.warn('Valence mockup sync skipped: no mockup source found in @portfoliablejs/valence.');
   }
 
   // Ensures root-level runtime favicon assets exist for host document and default about image.

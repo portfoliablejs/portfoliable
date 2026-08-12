@@ -39,7 +39,7 @@ import {
     Toast,
     VideoPlayer,
     PlayerView
-} from '@portfoliable/valence';
+} from '@portfoliablejs/valence';
 
 void Article;
 void Header;

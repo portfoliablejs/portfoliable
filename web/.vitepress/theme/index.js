@@ -6,7 +6,7 @@ export default {
   extends: DefaultTheme,
   enhanceApp() {
     if (inBrowser) {
-      import('@portfoliable/valence');
+      import('@portfoliablejs/valence');
     }
   }
 };
