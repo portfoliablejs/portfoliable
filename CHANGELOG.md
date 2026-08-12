@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/portfoliablejs/portfoliable/compare/v1.0.3...v1.1.0) (2026-08-12)
+
+### Features
+
+* feat(create): make npm create portfoliable canonical ([408aea3](https://github.com/portfoliablejs/portfoliable/commit/408aea3a33c8ba3aa8d3afdcf3398bc7b88b2780))
+
 ## [1.0.3](https://github.com/portfoliablejs/portfoliable/compare/v1.0.2...v1.0.3) (2026-08-12)
 
 ### Bug Fixes
@@ -78,6 +84,7 @@ This changelog tracks runtime package and initializer changes for `@portfoliable
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
