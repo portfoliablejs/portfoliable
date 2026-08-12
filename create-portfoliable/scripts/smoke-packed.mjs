@@ -175,15 +175,8 @@ function main() {
 
     // Loads generated main bundle text for assertions.
     const bundleText = fs.readFileSync(path.join(distAssetsDir, mainBundle), 'utf8');
-    ensureContains(bundleText, 'Mobile Product Launch', 'starter case title');
-    ensureContains(bundleText, 'Mobile Checkout Flow', 'starter case title');
-    ensureContains(bundleText, 'Compact Research Archive', 'starter case title');
-    ensureContains(bundleText, 'Wearable Companion', 'starter case title');
-
-    ensureContains(bundleText, 'Apple iPhone 12', 'starter model mapping');
-    ensureContains(bundleText, 'Apple iPad Pro 11', 'starter model mapping');
-    ensureContains(bundleText, 'Apple Macbook Pro 13', 'starter model mapping');
-    ensureContains(bundleText, 'Apple Watch 44mm', 'starter model mapping');
+    ensureContains(bundleText, 'Making Portfoliable', 'starter case title');
+    ensureContains(bundleText, 'Apple MacBook Air M5', 'starter model mapping');
 
     console.log('[smoke:packed] Packed-artifact smoke checks passed.');
   } finally {
