@@ -25,7 +25,7 @@ If both commands return a version, you are ready to continue.
 Run the initializer from a folder where you want the project to live:
 
 ```bash
-npm create portfoliable my-portfolio
+npm create @portfoliable my-portfolio
 ```
 
 You can replace `my-portfolio` with your own project name. If the target folder does not exist, the initializer creates it. If it already exists, the initializer may ask before overwriting files.
@@ -33,13 +33,13 @@ You can replace `my-portfolio` with your own project name. If the target folder 
 You can also skip install during scaffolding if needed:
 
 ```bash
-npm create portfoliable my-portfolio -- --no-install
+npm create @portfoliable my-portfolio -- --no-install
 ```
 
 And if the folder already exists and you want to overwrite, use:
 
 ```bash
-npm create portfoliable my-portfolio -- --force
+npm create @portfoliable my-portfolio -- --force
 ```
 
 ## Move into the new project

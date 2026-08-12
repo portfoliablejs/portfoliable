@@ -50,7 +50,7 @@ function resolveRuntimeDependencyVersion(currentFilePath) {
   console.warn(
     color(
       '33',
-      'Warning: could not resolve package version for create-portfoliable default dependency. Falling back to latest.'
+      'Warning: could not resolve package version for @portfoliablejs/create-portfoliable default dependency. Falling back to latest.'
     )
   );
   return 'latest';
@@ -119,7 +119,7 @@ function parseArgs(argv) {
 
 // Prints help/usage text for initializer flags.
 function printHelp() {
-  console.log('Usage: npm create portfoliable [project-name] [-- --force] [-- --no-install] [-- --no-preview] [-- --no-dev] [-- --no-interactive]');
+  console.log('Usage: npm create @portfoliablejs/portfoliable [project-name] [-- --force] [-- --no-install] [-- --no-preview] [-- --no-dev] [-- --no-interactive]');
   console.log('');
   console.log('Options:');
   console.log('  --force       Create in a non-empty directory');
@@ -303,7 +303,7 @@ async function run() {
       },
       dependencies: {
         '@portfoliablejs/valence': '^1.0.1',
-        'create-portfoliable': runtimeDependencyVersion
+        '@portfoliablejs/create-portfoliable': runtimeDependencyVersion
       }
     },
     null,

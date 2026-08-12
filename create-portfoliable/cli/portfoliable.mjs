@@ -74,11 +74,11 @@ function firstNetworkAddress() {
   return null;
 }
 
-// Fetches latest published create-portfoliable version from npm registry.
+// Fetches latest published @portfoliablejs/create-portfoliable version from npm registry.
 async function fetchLatestVersion() {
   try {
     // Calls npm metadata endpoint for latest dist-tag payload.
-    const response = await fetch('https://registry.npmjs.org/create-portfoliable/latest');
+    const response = await fetch('https://registry.npmjs.org/@portfoliablejs%2fcreate-portfoliable/latest');
     if (!response.ok) return null;
 
     // Parses registry response payload.
@@ -470,8 +470,8 @@ function printStartupBox({ localUrl, networkUrl, localVersion, latestVersion }) 
   if (latestVersion && latestVersion !== localVersion && !latestVersion.includes('alpha')) {
     lines.push('');
     lines.push(`${yellow}A new version (${latestVersion}) is available!${reset}`);
-    lines.push(`Upgrade now: ${green}npm update create-portfoliable${reset}`);
-    lines.push(`If it still persists, run: ${green}npm install create-portfoliable@latest${reset}`);
+    lines.push(`Upgrade now: ${green}npm update @portfoliablejs/create-portfoliable${reset}`);
+    lines.push(`If it still persists, run: ${green}npm install @portfoliablejs/create-portfoliable@latest${reset}`);
     lines.push('Read changelog:');
     lines.push(`${dim}https://github.com/portfoliablejs/portfoliable/blob/main/CHANGELOG.md${reset}`);
   }
@@ -565,7 +565,7 @@ async function runDevServer(flags, options = {}) {
   // Creates Vite development server instance.
   const server = await createServer({
     optimizeDeps: {
-      exclude: ['create-portfoliable']
+      exclude: ['@portfoliablejs/create-portfoliable']
     },
     server: {
       host: flags.host,
