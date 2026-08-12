@@ -12,7 +12,6 @@ on:
       - main
     paths:
       - web/**
-      - .github/workflows/web-release.yml
   workflow_dispatch:
 
 # MARK: WORKFLOW PERMISSIONS

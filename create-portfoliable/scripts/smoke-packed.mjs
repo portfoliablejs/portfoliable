@@ -72,7 +72,7 @@ function readGeneratedRuntimeDependency(appDir) {
   const packageJsonPath = path.join(appDir, 'package.json');
   // Parses generated package manifest to inspect runtime dependency version.
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-  return packageJson?.dependencies?.['@portfoliablejs/create'];
+  return packageJson?.dependencies?.['@portfoliablejs/create-portfoliable'];
 }
 
 // Reads local package version used as expected default dependency baseline.

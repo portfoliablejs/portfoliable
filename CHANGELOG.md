@@ -9,7 +9,7 @@
 ### Bug Fixes
 
 * test(smoke): align starter-case markers with template-case ([91f2c46](https://github.com/portfoliablejs/portfoliable/commit/91f2c46743db14b9849b290f54eb8ead5102b766))
-* chore(deps): align valence to @portfoliable/valence@^1.0.1 ([752a699](https://github.com/portfoliablejs/portfoliable/commit/752a69967a76ca2a2133c9ef1dcd3d163500be1a))
+* chore(deps): align valence to @portfoliablejs/valence@^1.0.1 ([752a699](https://github.com/portfoliablejs/portfoliable/commit/752a69967a76ca2a2133c9ef1dcd3d163500be1a))
 * chore: migrate valence dependency to @portfoliable scope ([3f4949d](https://github.com/portfoliablejs/portfoliable/commit/3f4949df3786afc912b3fb1ef5ffab388664c30d))
 * fix: remove valence styles subpath import causing build export error ([4049987](https://github.com/portfoliablejs/portfoliable/commit/40499876c1fc5f3c5dc011f4e3a963c74c49d988))
 
@@ -29,7 +29,7 @@
 
 ### Bug Fixes
 
-* chore: finalize @portfoliable/create package contract and release metadata ([1f68628](https://github.com/portfoliablejs/portfoliable/commit/1f686282b7de2e91a74ab0a60241be21ae9b6a37))
+* chore: finalize @portfoliablejs/create-portfoliable package contract and release metadata ([1f68628](https://github.com/portfoliablejs/portfoliable/commit/1f686282b7de2e91a74ab0a60241be21ae9b6a37))
 
 ## [0.5.3](https://github.com/portfoliablejs/portfoliable/compare/v0.5.2...v0.5.3) (2026-08-02)
 
@@ -40,7 +40,7 @@
 
 # Changelog
 
-This changelog tracks runtime package and initializer changes for `@portfoliable/create`.
+This changelog tracks runtime package and initializer changes for `@portfoliablejs/create-portfoliable`.
 
 ## Format
 
@@ -62,7 +62,7 @@ This changelog tracks runtime package and initializer changes for `@portfoliable
 
 ### Fixed
 
-- Initializer now derives generated `@portfoliable/create` dependency from package metadata instead of a stale hardcoded semver.
+- Initializer now derives generated `@portfoliablejs/create-portfoliable` dependency from package metadata instead of a stale hardcoded semver.
 - Smoke coverage now verifies no-override scaffolding dependency version to prevent future release drift regressions.
 
 ### Security
