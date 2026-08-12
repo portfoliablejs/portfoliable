@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/portfoliablejs/portfoliable/compare/v1.0.0-alpha...v1.0.1) (2026-08-12)
+
+### Bug Fixes
+
+* test(smoke): align starter-case markers with template-case ([91f2c46](https://github.com/portfoliablejs/portfoliable/commit/91f2c46743db14b9849b290f54eb8ead5102b766))
+* chore(deps): align valence to @portfoliable/valence@^1.0.1 ([752a699](https://github.com/portfoliablejs/portfoliable/commit/752a69967a76ca2a2133c9ef1dcd3d163500be1a))
+* chore: migrate valence dependency to @portfoliable scope ([3f4949d](https://github.com/portfoliablejs/portfoliable/commit/3f4949df3786afc912b3fb1ef5ffab388664c30d))
+* fix: remove valence styles subpath import causing build export error ([4049987](https://github.com/portfoliablejs/portfoliable/commit/40499876c1fc5f3c5dc011f4e3a963c74c49d988))
+
 ## [0.7.0](https://github.com/portfoliablejs/portfoliable/compare/v0.6.0...v0.7.0) (2026-08-03)
 
 ### Features
@@ -57,6 +66,7 @@ This changelog tracks runtime package and initializer changes for `@portfoliable
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
