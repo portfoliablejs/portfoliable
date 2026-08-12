@@ -38,16 +38,16 @@ function readJson(filePath) {
 // Reads declared valence dependency range from repository package metadata.
 function getDeclaredRange(repoRoot) {
   const pkg = readJson(path.join(repoRoot, 'package.json'));
-  const range = pkg?.dependencies?.['@portfoliablejs/valence'];
+  const range = pkg?.dependencies?.['@portfoliable/valence'];
   if (!range) {
-    fail('Missing dependency declaration for @portfoliablejs/valence in package.json');
+    fail('Missing dependency declaration for @portfoliable/valence in package.json');
   }
   return range;
 }
 
 // Detects currently installed valence mode (missing, npm package, or local link).
 function getInstalledState(repoRoot) {
-  const modulePath = path.join(repoRoot, 'node_modules', '@portfoliablejs', 'valence');
+  const modulePath = path.join(repoRoot, 'node_modules', '@portfoliable', 'valence');
 
   if (!fs.existsSync(modulePath)) {
     return {
@@ -73,7 +73,7 @@ function getInstalledState(repoRoot) {
 
 // Warns when required template exports are missing from installed valence source.
 function warnIfTemplateExportsMissing(repoRoot) {
-  const mainPath = path.join(repoRoot, 'node_modules', '@portfoliablejs', 'valence', 'src', 'main.js');
+  const mainPath = path.join(repoRoot, 'node_modules', '@portfoliable', 'valence', 'src', 'main.js');
   if (!fs.existsSync(mainPath)) return;
 
   const source = fs.readFileSync(mainPath, 'utf8');
@@ -82,7 +82,7 @@ function warnIfTemplateExportsMissing(repoRoot) {
 
   if (hasHomeViewExport && hasPlayerViewExport) return;
 
-  console.warn('warning: installed @portfoliablejs/valence package is missing template exports required by create-portfoliable runtime (HomeView/PlayerView).');
+  console.warn('warning: installed @portfoliable/valence package is missing template exports required by create-portfoliable runtime (HomeView/PlayerView).');
   console.warn('warning: use npm run valence:local while developing until a published Valence version includes template exports.');
 }
 
@@ -119,17 +119,17 @@ function switchToLocal(repoRoot) {
   }
 
   const localPkg = readJson(localPackageJsonPath);
-  if (localPkg.name !== '@portfoliablejs/valence') {
-    fail(`Expected package name @portfoliablejs/valence at ${localPackageJsonPath}, found ${localPkg.name || '(missing)'}`);
+  if (localPkg.name !== '@portfoliable/valence') {
+    fail(`Expected package name @portfoliable/valence at ${localPackageJsonPath}, found ${localPkg.name || '(missing)'}`);
   }
 
-  run('npm', ['install', `@portfoliablejs/valence@file:${localPath}`, '--no-save']);
+  run('npm', ['install', `@portfoliable/valence@file:${localPath}`, '--no-save']);
   run('npm', ['run', 'ensure:valence']);
 }
 
 // Installs valence from the declared npm range and refreshes compatibility assets.
 function switchToNpm(declaredRange) {
-  run('npm', ['install', `@portfoliablejs/valence@${declaredRange}`, '--no-save']);
+  run('npm', ['install', `@portfoliable/valence@${declaredRange}`, '--no-save']);
   run('npm', ['run', 'ensure:valence']);
 }
 

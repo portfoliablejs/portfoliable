@@ -378,7 +378,7 @@ function resolveMockupsRoot() {
   // Defines candidate catalog paths in app source and installed dependency locations.
   const candidates = [
     path.resolve(process.cwd(), 'src', 'stories', 'assets', 'mockups'),
-    path.resolve(process.cwd(), 'node_modules', '@portfoliablejs', 'valence', 'src', 'stories', 'assets', 'mockups')
+    path.resolve(process.cwd(), 'node_modules', '@portfoliable', 'valence', 'src', 'stories', 'assets', 'mockups')
   ];
 
   return candidates.find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) || null;
@@ -440,7 +440,7 @@ function runThumbnailOptions(flags) {
 
   if (!mockupsRoot) {
     console.error(`${red}${bold}Could not locate Valence mockup catalog.${reset}`);
-    console.error('Expected either src/stories/assets/mockups or node_modules/@portfoliablejs/valence/src/stories/assets/mockups');
+    console.error('Expected either src/stories/assets/mockups or node_modules/@portfoliable/valence/src/stories/assets/mockups');
     return 1;
   }
 
