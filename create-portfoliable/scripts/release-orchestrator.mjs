@@ -2,11 +2,11 @@
 // Purpose: Compute semantic release plans and perform package/changelog/tag mutations for releases.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync, appendFileSync, existsSync } from "node:fs";
 
-// === RELEASE CONFIGURATION ===
+// MARK: RELEASE CONFIGURATION
 // Defines canonical repository URL used for changelog compare and commit links.
 const REPO_URL = "https://github.com/portfoliablejs/portfoliable";
 // Enables dry-run behavior when --dry-run is provided on process args.
@@ -26,7 +26,7 @@ const packages = [
   },
 ];
 
-// === GIT HELPERS ===
+// MARK: GIT HELPERS
 // Executes git with standardized options and optional allow-failure behavior.
 function git(args, options = {}) {
   try {
@@ -60,7 +60,7 @@ function getCommitRange(lastTag) {
   return `${firstCommit}..HEAD`;
 }
 
-// === COMMIT CLASSIFICATION ===
+// MARK: COMMIT CLASSIFICATION
 // Parses conventional commit headers and detects explicit breaking marker in header.
 function parseCommitType(subject) {
   // Matches conventional commit headers with optional scope and breaking marker.
@@ -153,17 +153,18 @@ function readCommits(range, paths) {
     });
 }
 
-// === VERSION AND FILE MUTATION HELPERS ===
+// MARK: VERSION AND FILE MUTATION HELPERS
 // Computes the next semantic version string from current semver and bump level.
 function bumpVersion(currentVersion, level) {
-  // Parses the current semver string into numeric tuple components.
-  const parts = currentVersion.split(".").map((part) => Number(part));
-  // Destructures numeric semver components for bump logic.
-  const [major, minor, patch] = parts;
-
-  if ([major, minor, patch].some((part) => Number.isNaN(part))) {
+  // Supports prerelease strings (for example, 1.0.0-alpha) by parsing numeric core semver.
+  const match = String(currentVersion).match(/^(\d+)\.(\d+)\.(\d+)(?:[-+].*)?$/);
+  if (!match) {
     throw new Error(`Invalid semver version: ${currentVersion}`);
   }
+
+  const major = Number(match[1]);
+  const minor = Number(match[2]);
+  const patch = Number(match[3]);
 
   if (level === "major") {
     return `${major + 1}.0.0`;
@@ -237,7 +238,7 @@ function setGithubOutput(name, value) {
   appendFileSync(process.env.GITHUB_OUTPUT, `${name}=${value}\n`);
 }
 
-// === RELEASE PLANNING ===
+// MARK: RELEASE PLANNING
 // Creates release plan for a single package configuration.
 function createReleasePlan(pkg) {
   // Resolves previous tag baseline and scoped commit range.
@@ -283,7 +284,7 @@ function createReleasePlan(pkg) {
   };
 }
 
-// === ORCHESTRATION ENTRYPOINT ===
+// MARK: ORCHESTRATION ENTRYPOINT
 // Coordinates planning, optional mutation, commit creation, and tag creation.
 function run() {
   // Builds release plans for all configured packages and filters to releasable subset.

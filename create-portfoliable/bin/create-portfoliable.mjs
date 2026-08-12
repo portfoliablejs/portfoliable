@@ -3,17 +3,25 @@
 // Purpose: Create a new Portfoliable consumer app from starter templates.
 // Author: Lio Schimanko
 
-// === IMPORTS ===
+// MARK: IMPORTS
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import {
+  ui,
+  printRailSegment,
+  isInteractiveTerminal,
+  promptFancyDotsPreference,
+  readProjectUiPreferences,
+  writeProjectUiPreferences
+} from '../scripts/terminal-ui.mjs';
 
-// === DEFAULTS ===
+// MARK: DEFAULTS
 // Defines default target folder when no project name is provided.
 const DEFAULT_TARGET = 'my-portfolio';
 
-// === CLI DISPLAY HELPERS ===
+// MARK: CLI DISPLAY HELPERS
 // Wraps a message with ANSI color code and reset sequence.
 function color(code, message) {
   return `\x1b[${code}m${message}\x1b[0m`;
@@ -48,7 +56,7 @@ function resolveRuntimeDependencyVersion(currentFilePath) {
   return 'latest';
 }
 
-// === ARGUMENT PARSING ===
+// MARK: ARGUMENT PARSING
 // Parses initializer arguments and returns normalized options.
 function parseArgs(argv) {
   // Extracts runtime args excluding node executable and script path.
@@ -91,6 +99,16 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (arg === '--no-interactive') {
+      options.interactive = false;
+      continue;
+    }
+
+    if (arg === '--interactive') {
+      options.interactive = true;
+      continue;
+    }
+
     if (!arg.startsWith('-') && options.target === DEFAULT_TARGET) {
       options.target = arg;
     }
@@ -101,45 +119,18 @@ function parseArgs(argv) {
 
 // Prints help/usage text for initializer flags.
 function printHelp() {
-  console.log('Usage: npm create @portfoliable [project-name] [-- --force] [-- --no-install] [-- --no-preview] [-- --no-dev]');
+  console.log('Usage: npm create @portfoliable [project-name] [-- --force] [-- --no-install] [-- --no-preview] [-- --no-dev] [-- --no-interactive]');
   console.log('');
   console.log('Options:');
   console.log('  --force       Create in a non-empty directory');
   console.log('  --no-install  Skip npm install');
   console.log('  --no-preview  Skip auto-starting live preview (compat alias for --no-dev)');
   console.log('  --no-dev      Skip auto-starting live preview');
+  console.log('  --no-interactive  Disable first-run interactive prompts');
+  console.log('  --interactive     Force first-run interactive prompts when TTY is available');
 }
 
-// Prints command reference box shown after scaffolding.
-function printCommandsBox() {
-  // Defines fixed width for terminal output box formatting.
-  const width = 86;
-  // Creates one boxed line with padded content.
-  const line = (text = '') => `│ ${text.padEnd(width - 4)} │`;
-
-  console.log('╭' + '─'.repeat(width - 2) + '╮');
-  console.log(line('Available commands'));
-  console.log(line());
-  console.log(line('[Start]'));
-  console.log(line('  npm run portfoliable'));
-  console.log(line());
-  console.log(line('[Build and Preview]'));
-  console.log(line('  npm run portfoliable-build'));
-  console.log(line('  npm run portfoliable-preview'));
-  console.log(line());
-  console.log(line('[Thumbnail Catalog]'));
-  console.log(line('  npm run portfoliable-thumbnail-options'));
-  console.log(line('  npm run portfoliable-thumbnail-options -- --full'));
-  console.log(line('  npm run portfoliable-thumbnail-options -- --json'));
-  console.log(line());
-  console.log(line('[Create Content]'));
-  console.log(line('  npm run portfoliable-create-case'));
-  console.log(line('  npm run portfoliable-scaffold-case'));
-  console.log(line('  npx portfoliable create-case --name "My New Case"'));
-  console.log('╰' + '─'.repeat(width - 2) + '╯');
-}
-
-// === NAME AND PATH HELPERS ===
+// MARK: NAME AND PATH HELPERS
 // Converts a freeform project name into npm-safe package name format.
 function sanitizePackageName(input) {
   return input
@@ -242,9 +233,9 @@ function copyTemplateDirectory(templateRoot, relativeDirPath, targetRoot) {
   }
 }
 
-// === INITIALIZER ORCHESTRATION ===
+// MARK: INITIALIZER ORCHESTRATION
 // Executes full scaffold flow: parse options, create files, install deps, and optional launch.
-function run() {
+async function run() {
   // Parses command-line options.
   const options = parseArgs(process.argv);
 
@@ -265,6 +256,8 @@ function run() {
   const targetDir = path.resolve(cwd, options.target);
   // Resolves runtime dependency version for generated app dependencies.
   const runtimeDependencyVersion = resolveRuntimeDependencyVersion(currentFile);
+  // Resolves current terminal interaction policy.
+  const interactiveEnabled = options.interactive !== false;
 
   if (!options.force && !isDirectoryEmpty(targetDir)) {
     console.error(color('31', `Refusing to create in non-empty directory: ${targetDir}`));
@@ -287,14 +280,29 @@ function run() {
       type: 'module',
       scripts: {
         portfoliable: 'portfoliable dev',
+        dev: 'portfoliable dev',
+        build: 'portfoliable build',
+        preview: 'portfoliable preview',
+        'validate:content': 'node ./scripts/validate-content.mjs',
+        'validate:protection': 'node ./scripts/validate-protection.mjs',
+        'convert:audio': 'node ./scripts/convert-wav-to-mp3.mjs',
+        'convert:video': 'node ./scripts/convert-video-to-mp4.mjs',
+        'password:hash': 'node ./scripts/generate-password-hash.mjs',
+        'create:case': 'node ./scripts/scaffold-case.mjs',
+        'delete:case': 'node ./scripts/delete-case.mjs',
+        'sync:locales': 'node ./scripts/sync-locales.mjs',
+        'sync:locales:watch': 'node ./scripts/sync-locales.mjs --watch',
+        'add:language': 'node ./scripts/add-language.mjs',
+        'delete:language': 'node ./scripts/delete-language.mjs',
         'portfoliable-build': 'portfoliable build',
         'portfoliable-preview': 'portfoliable preview',
         'portfoliable-thumbnail-options': 'portfoliable thumbnail-options',
         'portfoliable-create-case': 'portfoliable create-case',
-        'portfoliable-scaffold-case': 'node ./scripts/scaffold-case.mjs'
+        'portfoliable-delete-case': 'portfoliable delete-case',
+        'portfoliable-sync-locales': 'portfoliable sync-locales'
       },
       dependencies: {
-        '@portfoliablejs/valence': '^0.1.0',
+        '@portfoliablejs/valence': '^1.0.0-alpha',
         '@portfoliable/create': runtimeDependencyVersion
       }
     },
@@ -316,25 +324,46 @@ function run() {
   if (fs.existsSync(templateAssetsDir) && fs.statSync(templateAssetsDir).isDirectory()) {
     copyTemplateDirectory(templateRoot, path.join('src', 'assets'), targetDir);
   }
-  copyTemplateTree(templateRoot, path.join('scripts', 'scaffold-case.mjs'), targetDir);
-  copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'mobile-product-launch.md'), targetDir);
-  copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'mobile-checkout-flow.md'), targetDir);
-  copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'compact-research-archive.md'), targetDir);
-  copyTemplateTree(templateRoot, path.join('src', 'content', 'cases', 'wearable-companion.md'), targetDir);
+  copyTemplateDirectory(templateRoot, 'scripts', targetDir);
+  copyTemplateDirectory(templateRoot, path.join('src', 'content'), targetDir);
+  copyTemplateDirectory(templateRoot, 'configs', targetDir);
+  copyTemplateDirectory(templateRoot, 'public', targetDir);
+  copyTemplateTree(templateRoot, 'README.md', targetDir);
 
-  // Generates starter README content in the scaffolded project.
-  const readme = `# ${projectName}\n\nCreated with @portfoliable/create.\n\n## Where to edit cases\n\n- Add or update markdown cases in \`src/content/cases/\`\n- Each \`.md\` file becomes a gallery item and updates in the browser during \`npm run portfoliable\`\n- Device frames are resolved from the installed Valence catalog\n\n## Commands\n\n### Start\n\n- npm run portfoliable\n\n### Build and Preview\n\n- npm run portfoliable-build\n- npm run portfoliable-preview\n\n### Thumbnail Catalog\n\n- npm run portfoliable-thumbnail-options\n- npm run portfoliable-thumbnail-options -- --full\n- npm run portfoliable-thumbnail-options -- --json\n\n### Create Content\n\n- npm run portfoliable-create-case\n- npm run portfoliable-scaffold-case\n- npx portfoliable create-case --name \"My New Case\"\n`;
-  fs.writeFileSync(path.join(targetDir, 'README.md'), readme, 'utf8');
-
+  printRailSegment();
+  printRailSegment({ dot: true, label: `${color('36', 'Creating project structure...')}` });
   console.log(color('36', `Created ${projectName} at ${targetDir}`));
+
+  const existingPreferences = readProjectUiPreferences(targetDir);
+  const isFirstRun = !existingPreferences;
+  let fancyDots = existingPreferences?.fancyDots ?? true;
+
+  if (isFirstRun) {
+    if (interactiveEnabled && isInteractiveTerminal()) {
+      printRailSegment();
+      printRailSegment({ dot: true, label: `${ui.dim}First-time setup${ui.reset}` });
+      fancyDots = await promptFancyDotsPreference({
+        question: 'Use decorative terminal lines and dots in this project?',
+        defaultValue: true,
+        width: 86
+      });
+    } else {
+      console.log(color('33', 'Interactive first-run selection skipped (non-interactive terminal).'));
+    }
+
+    writeProjectUiPreferences(targetDir, fancyDots);
+    console.log(color('36', `Saved terminal UI preference: ${fancyDots ? 'decorative' : 'simple'}.`));
+  }
 
   if (!options.install) {
     console.log(color('33', 'Skipped npm install (--no-install).'));
-    printCommandsBox();
     console.log(`Next steps:\n  cd ${options.target}\n  npm install\n  npm run portfoliable`);
+    console.log(color('36', 'After launch, Portfoliable will ask if you want to open the command guide.'));
     return;
   }
 
+  printRailSegment();
+  printRailSegment({ dot: true, label: `${color('36', 'Installing dependencies...')}` });
   console.log(color('36', 'Installing dependencies...'));
   // Runs npm install in newly scaffolded project.
   const installResult = spawnSync('npm', ['install'], {
@@ -348,10 +377,12 @@ function run() {
   }
 
   console.log(color('32', 'Setup complete.'));
-
-  printCommandsBox();
+  printRailSegment({ dot: true, label: `${color('32', 'Dependencies installed.')}` });
+  console.log(color('36', 'Command guide is available after launch via interactive prompt.'));
 
   if (options.launch) {
+    printRailSegment();
+    printRailSegment({ dot: true, label: `${color('36', 'Preparing first build...')}` });
     console.log(color('36', 'Building starter app...'));
     // Executes initial production build to validate scaffold output.
     const buildResult = spawnSync('npm', ['run', 'portfoliable-build'], {
@@ -364,8 +395,9 @@ function run() {
       process.exit(buildResult.status || 1);
     }
 
-    console.log(color('36', 'Launching live preview (auto-opens in browser)...'));
-  // Starts development server with auto-open for immediate verification.
+    printRailSegment({ dot: true, label: `${color('32', 'Starter build complete.')}` });
+    console.log(color('36', 'Launching development server (auto-opens in browser)...'));
+    // Starts development server with auto-open for immediate verification.
     const devResult = spawnSync('npm', ['run', 'portfoliable', '--', '--open'], {
       cwd: targetDir,
       stdio: 'inherit'
@@ -380,5 +412,9 @@ function run() {
   console.log(`Next steps:\n  cd ${options.target}\n  npm run portfoliable`);
 }
 
+// MARK: SCRIPT ENTRYPOINT
 // Executes initializer orchestration.
-run();
+run().catch((error) => {
+  console.error(color('31', error?.stack || String(error)));
+  process.exit(1);
+});

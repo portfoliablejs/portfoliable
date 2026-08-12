@@ -1,6 +1,6 @@
 {
   "name": "portfoliable-repo",
-  "version": "0.4.15",
+  "version": "1.0.0-alpha",
   "description": "Repository root for create-portfoliable maintainer workflows.",
   "license": "MIT",
   "private": true,
@@ -43,6 +43,7 @@
     "smoke:initializer": "npm --prefix ./create-portfoliable run smoke:initializer",
     "smoke:packed": "npm --prefix ./create-portfoliable run smoke:packed",
     "web:dev": "npm --prefix ./web run dev",
+    "web:live": "npm --prefix ./web run live",
     "web:build": "npm --prefix ./web run build",
     "web:preview": "npm --prefix ./web run preview",
     "web:smoke": "npm --prefix ./web run smoke"
