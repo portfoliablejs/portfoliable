@@ -1,6 +1,6 @@
 {
   "name": "@portfoliablejs/create",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Unified Portfoliable package with initializer and runtime CLI",
   "private": false,
   "type": "module",

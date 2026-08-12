@@ -1,3 +1,9 @@
+## [1.0.2](https://github.com/portfoliablejs/portfoliable/compare/v1.0.1...v1.0.2) (2026-08-12)
+
+### Bug Fixes
+
+* chore(release): migrate create and consumers to @portfoliablejs scope ([859c21c](https://github.com/portfoliablejs/portfoliable/commit/859c21c53230f0d0e328d31a11882bcb1e57e483))
+
 ## [1.0.1](https://github.com/portfoliablejs/portfoliable/compare/v1.0.0-alpha...v1.0.1) (2026-08-12)
 
 ### Bug Fixes
@@ -66,6 +72,7 @@ This changelog tracks runtime package and initializer changes for `@portfoliable
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
