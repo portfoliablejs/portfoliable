@@ -5,7 +5,7 @@ This page tracks user-facing changes to the Portfoliable website and documentati
 ## 2026-08-12
 
 - refocused the public docs around actual end-user workflows
-- rewrote onboarding and setup content around `npm create @portfoliable`
+- rewrote onboarding and setup content around `npm create portfoliable`
 - consolidated the product manual around generated project usage
 - improved guidance for configuration, content authoring, localization, sharing, and deployment
 
