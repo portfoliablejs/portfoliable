@@ -1,6 +1,6 @@
 {
   "name": "create-portfoliable",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Unified Portfoliable package with initializer and runtime CLI",
   "private": false,
   "type": "module",
