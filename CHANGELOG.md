@@ -1,3 +1,9 @@
+## [1.2.5](https://github.com/portfoliablejs/portfoliable/compare/v1.2.4...v1.2.5) (2026-08-14)
+
+### Bug Fixes
+
+* fix: guard duplicate npm versions before publish ([f7efb03](https://github.com/portfoliablejs/portfoliable/commit/f7efb03bc8d36aab279ca38e4bb6f9dd88e1d91f))
+
 ## [1.2.4](https://github.com/portfoliablejs/portfoliable/compare/v1.2.3...v1.2.4) (2026-08-14)
 
 ### Bug Fixes
@@ -117,6 +123,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
