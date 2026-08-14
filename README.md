@@ -184,8 +184,10 @@ Dry-run rules:
 
 Publishing rules:
 
-- npm publishing must use trusted identity and provenance
-- publish command includes `--provenance`
+- npm.org publishes the canonical unscoped `create-portfoliable` package with trusted identity and provenance
+- GitHub Packages publishes the same version and payload under the required `@portfoliablejs/create-portfoliable` alias
+- each registry is an explicit publish target; publishing to GitHub Packages does not mirror a release to npm.org
+- the npm.org publish command includes `--provenance`
 - long-lived credential strategies are discouraged by default
 - publish and tagging only proceed after validation gates succeed
 
@@ -225,7 +227,8 @@ Trigger model:
 
 Current job topology:
 
-- release job: checkout full repo history and tags, install dependencies, validate/build, compute release plan, publish package, push commit and tags, create GitHub release
+- release job: checkout full repo history and tags, install dependencies, validate/build, compute the release plan, create one canonical tarball, push the release commit and tag atomically, publish to npm.org, publish its scoped alias to GitHub Packages, and create the GitHub release
+- GitHub Packages sync: a manual recovery mode that copies one existing npm.org version to GitHub Packages without changing versions, commits, tags, or GitHub releases
 - Pages deploy job: separate web deployment flow only for web content
 
 Orchestrator responsibilities:
@@ -241,7 +244,8 @@ When release conditions are met and run mode allows mutation, the orchestrator u
 Security model:
 
 - workflow permission includes `id-token: write`
-- npm publish command includes provenance flags
+- npm.org publish includes provenance flags and uses the npm trusted publisher mapping
+- GitHub Packages publish uses the workflow `GITHUB_TOKEN` with `packages: write`
 - trusted publisher mapping on npm must match owner, repo, and workflow identity
 
 Token-based fallback should be avoided unless explicitly required for exceptional recovery.
@@ -252,6 +256,28 @@ Publishing transition status:
 - starting with `1.0.4`, releases are expected to be published by the `portfoliablejs` trusted publisher mapping for `release.yml`.
 - keep `1.0.3` available for compatibility; do not rewrite its history unless a security incident requires that action.
 - local manual `npm publish` is incident-only and must not be used for normal releases.
+
+Registry identities:
+
+- npm.org: `create-portfoliable`, used by `npm create portfoliable@latest` and `npx create-portfoliable`
+- GitHub Packages: `@portfoliablejs/create-portfoliable`, required because GitHub's npm registry only accepts scoped packages
+- the workflow changes the package name only in an extracted temporary artifact; the checked-in package name remains `create-portfoliable`
+
+GitHub Packages recovery:
+
+1. Open the `Release create-portfoliable` workflow and choose **Run workflow**.
+2. Enter the existing npm.org version in `github_package_version`.
+3. The workflow verifies that version on npm.org and publishes only the missing scoped GitHub Packages alias.
+4. Leave `github_package_version` empty for normal release planning or dry-run behavior.
+
+Tagged npm release recovery:
+
+1. Use this mode only when the release commit and `v<version>` tag reached GitHub but npm.org did not receive the version.
+2. Run the workflow with that version in `npm_package_version`.
+3. The workflow rebuilds the canonical tarball from the existing tag, publishes any missing npm.org and GitHub Packages versions, and creates the GitHub release if it is missing.
+4. Set only one of `npm_package_version` or `github_package_version` in a recovery run.
+
+The first GitHub Packages version may require an organization owner to change package visibility from private to public in package settings. Keep the package connected to `portfoliablejs/portfoliable` and inherit repository access.
 
 Validation gates before release-affecting changes are merged:
 
@@ -278,9 +304,15 @@ Typical failure modes and signals:
 3. npm `ENEEDAUTH`
    - indicates authentication drift from the trusted OIDC flow
 4. push/tag failure
-   - often permission or branch protection mismatch
+   - often permission, branch protection, or a new `main` commit arriving during release planning
 5. skipped Pages deploy
    - usually dry-run behavior or failed upstream artifact stage
+6. GitHub Packages `E404`
+   - often indicates package scope, repository access, or `GITHUB_TOKEN` permission drift
+7. npm.org succeeded but GitHub Packages failed
+   - rerun the workflow with the released version in `github_package_version`; do not create another npm version or publish locally
+8. release tag succeeded but npm.org failed
+   - rerun the workflow with the tagged version in `npm_package_version`; the recovery path is idempotent across both registries
 
 Observability and diagnostics:
 
@@ -288,7 +320,7 @@ Observability and diagnostics:
 - job IDs and failing step stage
 - orchestrator outputs (`released_any`, `released_package`, version/tag)
 - npm error code and raw log context
-- run mode (normal vs dry-run)
+- run mode (release, dry-run, GitHub Packages sync, or tagged release recovery)
 - actor and branch context
 
 ### 8.3 Incident runbook

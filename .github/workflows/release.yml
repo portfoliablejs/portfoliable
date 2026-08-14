@@ -10,8 +10,30 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Plan a release without changing files or publishing packages
+        required: true
+        default: true
+        type: boolean
+      github_package_version:
+        description: Existing npm.org version to sync only to GitHub Packages
+        required: false
+        default: ""
+        type: string
+      npm_package_version:
+        description: Existing tagged version to recover to npm.org and GitHub Packages
+        required: false
+        default: ""
+        type: string
 
-      # MARK: RELEASE JOB
+# MARK: CONCURRENCY
+concurrency:
+  group: release-create-portfoliable
+  cancel-in-progress: false
+
+# MARK: RELEASE JOB
 jobs:
   release:
     name: Release create-portfoliable
@@ -31,6 +53,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node
@@ -42,8 +65,38 @@ jobs:
           package-manager-cache: false
           registry-url: https://registry.npmjs.org/
 
+      - name: Determine release operation
+        id: operation
+        env:
+          REQUESTED_GITHUB_SYNC_VERSION: ${{ inputs.github_package_version }}
+          REQUESTED_NPM_RECOVERY_VERSION: ${{ inputs.npm_package_version }}
+        run: |
+          set -euo pipefail
+          if [ -n "$REQUESTED_GITHUB_SYNC_VERSION" ] && [ -n "$REQUESTED_NPM_RECOVERY_VERSION" ]; then
+            echo "Choose only one package recovery input."
+            exit 1
+          fi
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "$REQUESTED_NPM_RECOVERY_VERSION" ]; then
+            node -e 'if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(process.argv[1])) { console.error("Invalid package version: " + process.argv[1]); process.exit(1); }' "$REQUESTED_NPM_RECOVERY_VERSION"
+            echo "mode=recover" >> "$GITHUB_OUTPUT"
+            echo "recovery_version=$REQUESTED_NPM_RECOVERY_VERSION" >> "$GITHUB_OUTPUT"
+            echo "Recovering tagged release v$REQUESTED_NPM_RECOVERY_VERSION across package registries."
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "$REQUESTED_GITHUB_SYNC_VERSION" ]; then
+            node -e 'if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(process.argv[1])) { console.error("Invalid package version: " + process.argv[1]); process.exit(1); }' "$REQUESTED_GITHUB_SYNC_VERSION"
+            echo "mode=sync" >> "$GITHUB_OUTPUT"
+            echo "sync_version=$REQUESTED_GITHUB_SYNC_VERSION" >> "$GITHUB_OUTPUT"
+            echo "Syncing create-portfoliable@$REQUESTED_GITHUB_SYNC_VERSION to GitHub Packages only."
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "mode=dry-run" >> "$GITHUB_OUTPUT"
+            echo "Planning a release without publishing."
+          else
+            echo "mode=release" >> "$GITHUB_OUTPUT"
+            echo "Running the full release pipeline."
+          fi
+
       - name: Import GPG key for verified commits and tags
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
+        if: steps.operation.outputs.mode == 'release'
         env:
           RELEASE_GPG_PRIVATE_KEY: ${{ secrets.RELEASE_GPG_PRIVATE_KEY }}
           RELEASE_GPG_KEY_ID: ${{ secrets.RELEASE_GPG_KEY_ID }}
@@ -73,9 +126,11 @@ jobs:
           echo "RELEASE_SIGN=true" >> $GITHUB_ENV
 
       - name: Install dependencies
+        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
         run: npm --prefix ./create-portfoliable ci
 
       - name: Verify package identity
+        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
         run: |
           PACKAGE_NAME=$(npm --prefix ./create-portfoliable pkg get name | tr -d '"')
           if [ "$PACKAGE_NAME" != "create-portfoliable" ]; then
@@ -83,23 +138,31 @@ jobs:
             exit 1
           fi
 
+      - name: Test
+        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
+        run: npm --prefix ./create-portfoliable run test
+
       - name: Build
+        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
         run: npm --prefix ./create-portfoliable run build
 
       - name: Packed artifact smoke
+        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
         run: npm --prefix ./create-portfoliable run smoke:packed
 
       - name: Configure git
+        if: steps.operation.outputs.mode == 'release'
         run: |
           git config user.name "schimanko"
           git config user.email "schimanko@users.noreply.github.com"
 
       - name: Compute release plan and apply versions
         id: release-plan
+        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "${{ steps.operation.outputs.mode }}" = "dry-run" ]; then
             echo "dry_run=true" >> $GITHUB_OUTPUT
             echo "Running release dry-run for create-portfoliable"
             node ./create-portfoliable/scripts/release-orchestrator.mjs --dry-run
@@ -112,26 +175,111 @@ jobs:
       - name: Debug release plan outputs
         if: always()
         run: |
+          echo "mode=${{ steps.operation.outputs.mode }}"
+          echo "sync_version=${{ steps.operation.outputs.sync_version }}"
+          echo "recovery_version=${{ steps.operation.outputs.recovery_version }}"
           echo "dry_run=${{ steps.release-plan.outputs.dry_run }}"
           echo "released_any=${{ steps.release-plan.outputs.released_any }}"
           echo "released_package=${{ steps.release-plan.outputs.released_package }}"
           echo "package_version=${{ steps.release-plan.outputs.package_version }}"
           echo "package_tag=${{ steps.release-plan.outputs.package_tag }}"
 
-      - name: Push release commit and tags
-        if: steps.release-plan.outputs.released_any == 'true' && steps.release-plan.outputs.dry_run != 'true'
+      - name: Create canonical package artifact
+        id: package-artifact
+        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
+        env:
+          MODE: ${{ steps.operation.outputs.mode }}
+          RECOVERY_VERSION: ${{ steps.operation.outputs.recovery_version }}
         run: |
-          git push origin main
-          git push origin --tags
+          set -euo pipefail
+          ARTIFACT_DIRECTORY="$RUNNER_TEMP/create-portfoliable-artifact"
+          rm -rf "$ARTIFACT_DIRECTORY"
+          mkdir -p "$ARTIFACT_DIRECTORY"
+
+          if [ "$MODE" = "recover" ]; then
+            TAG="v$RECOVERY_VERSION"
+            if ! git rev-parse --verify --quiet "refs/tags/$TAG" >/dev/null; then
+              echo "Recovery tag does not exist: $TAG"
+              exit 1
+            fi
+            SOURCE_DIRECTORY="$RUNNER_TEMP/create-portfoliable-recovery-source"
+            rm -rf "$SOURCE_DIRECTORY"
+            mkdir -p "$SOURCE_DIRECTORY"
+            git archive "$TAG" create-portfoliable | tar -x -C "$SOURCE_DIRECTORY"
+            PACKAGE_DIRECTORY="$SOURCE_DIRECTORY/create-portfoliable"
+            ARCHIVED_VERSION=$(node -p "require('$PACKAGE_DIRECTORY/package.json').version")
+            if [ "$ARCHIVED_VERSION" != "$RECOVERY_VERSION" ]; then
+              echo "Expected tag $TAG to contain version $RECOVERY_VERSION but found $ARCHIVED_VERSION"
+              exit 1
+            fi
+          else
+            PACKAGE_DIRECTORY="./create-portfoliable"
+          fi
+
+          PACK_JSON=$(npm pack "$PACKAGE_DIRECTORY" --pack-destination "$ARTIFACT_DIRECTORY" --json)
+          TARBALL_NAME=$(printf '%s' "$PACK_JSON" | node -e 'const fs = require("node:fs"); const result = JSON.parse(fs.readFileSync(0, "utf8")); if (!Array.isArray(result) || !result[0]?.filename) process.exit(1); process.stdout.write(result[0].filename);')
+          TARBALL_PATH="$ARTIFACT_DIRECTORY/$TARBALL_NAME"
+          if [ ! -f "$TARBALL_PATH" ]; then
+            echo "Canonical package artifact was not created: $TARBALL_PATH"
+            exit 1
+          fi
+          echo "tarball=$TARBALL_PATH" >> "$GITHUB_OUTPUT"
+          echo "version=${RECOVERY_VERSION:-${{ steps.release-plan.outputs.package_version }}}" >> "$GITHUB_OUTPUT"
+          echo "Created canonical artifact: $TARBALL_NAME"
+
+      - name: Prepare GitHub Packages alias
+        id: github-package-alias
+        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' || steps.operation.outputs.mode == 'sync' }}
+        env:
+          MODE: ${{ steps.operation.outputs.mode }}
+          RELEASE_TARBALL: ${{ steps.package-artifact.outputs.tarball }}
+          ARTIFACT_VERSION: ${{ steps.package-artifact.outputs.version }}
+          SYNC_VERSION: ${{ steps.operation.outputs.sync_version }}
+        run: |
+          set -euo pipefail
+          if [ "$MODE" = "release" ] || [ "$MODE" = "recover" ]; then
+            CANONICAL_TARBALL="$RELEASE_TARBALL"
+            EXPECTED_VERSION="$ARTIFACT_VERSION"
+          else
+            ARTIFACT_DIRECTORY="$RUNNER_TEMP/create-portfoliable-sync-artifact"
+            rm -rf "$ARTIFACT_DIRECTORY"
+            mkdir -p "$ARTIFACT_DIRECTORY"
+            PACK_JSON=$(npm pack "create-portfoliable@$SYNC_VERSION" --pack-destination "$ARTIFACT_DIRECTORY" --json --registry https://registry.npmjs.org/)
+            TARBALL_NAME=$(printf '%s' "$PACK_JSON" | node -e 'const fs = require("node:fs"); const result = JSON.parse(fs.readFileSync(0, "utf8")); if (!Array.isArray(result) || !result[0]?.filename) process.exit(1); process.stdout.write(result[0].filename);')
+            CANONICAL_TARBALL="$ARTIFACT_DIRECTORY/$TARBALL_NAME"
+            EXPECTED_VERSION="$SYNC_VERSION"
+          fi
+
+          STAGED_PACKAGE_DIRECTORY="$RUNNER_TEMP/github-package-alias"
+          rm -rf "$STAGED_PACKAGE_DIRECTORY"
+          mkdir -p "$STAGED_PACKAGE_DIRECTORY"
+          tar -xzf "$CANONICAL_TARBALL" -C "$STAGED_PACKAGE_DIRECTORY" --strip-components=1
+          if [ ! -f "$STAGED_PACKAGE_DIRECTORY/package.json" ]; then
+            echo "Package artifact did not extract a root package.json."
+            exit 1
+          fi
+          node ./create-portfoliable/scripts/prepare-github-package.mjs "$STAGED_PACKAGE_DIRECTORY"
+          node -e '
+            const fs = require("node:fs");
+            const manifest = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+            const expectedVersion = process.argv[2];
+            const expectedRepository = process.argv[3];
+            if (manifest.name !== "@portfoliablejs/create-portfoliable") throw new Error(`Unexpected GitHub package name: ${manifest.name}`);
+            if (manifest.version !== expectedVersion) throw new Error(`Expected version ${expectedVersion} but found ${manifest.version}`);
+            if (manifest.repository?.url !== expectedRepository) throw new Error(`Unexpected repository URL: ${manifest.repository?.url}`);
+            if (manifest.publishConfig?.registry !== "https://npm.pkg.github.com") throw new Error(`Unexpected GitHub registry: ${manifest.publishConfig?.registry}`);
+          ' "$STAGED_PACKAGE_DIRECTORY/package.json" "$EXPECTED_VERSION" "git+https://github.com/$GITHUB_REPOSITORY.git"
+          echo "directory=$STAGED_PACKAGE_DIRECTORY" >> "$GITHUB_OUTPUT"
+          echo "version=$EXPECTED_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Upgrade npm for OIDC Trusted Publishing
-        if: steps.release-plan.outputs.dry_run != 'true'
+        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
         run: |
           npm install -g npm@latest
           hash -r
 
       - name: Diagnostics for npm trusted publishing
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
         run: |
           PACKAGE_NAME=$(node -p "require('./create-portfoliable/package.json').name")
           echo "package=$PACKAGE_NAME"
@@ -144,63 +292,122 @@ jobs:
           fi
 
       - name: Final npm version guard
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        id: npm-package
+        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
+        env:
+          MODE: ${{ steps.operation.outputs.mode }}
+          VERSION: ${{ steps.package-artifact.outputs.version }}
         run: |
-          VERSION=$(node -p "require('./create-portfoliable/package.json').version")
-          PUBLISHED="$(npm view create-portfoliable versions --json 2>/dev/null || echo '[]')"
+          set -euo pipefail
+          PUBLISHED="$(npm view create-portfoliable versions --json --registry https://registry.npmjs.org/)"
           echo "guard_version=$VERSION"
           echo "guard_registry_versions_json=$PUBLISHED"
           export PUBLISHED
-          node -e 'const version = process.argv[1]; const published = JSON.parse(process.env.PUBLISHED || "[]"); if (published.includes(version)) { console.error("Version already exists on npm registry: " + version); process.exit(1); }' "$VERSION"
-          echo "guard_decision=proceeding with npm publish for version $VERSION"
-
-      - name: Publish create-portfoliable to npm
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        run: |
-          cd create-portfoliable
-          npm publish --provenance --access public --registry https://registry.npmjs.org/
-
-      - name: Detect GitHub Packages publish eligibility
-        id: package-targets
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
-        run: |
-          PACKAGE_NAME=$(node -p "require('./create-portfoliable/package.json').name")
-          echo "package_name=$PACKAGE_NAME"
-          if [[ "$PACKAGE_NAME" == @* ]]; then
-            echo "github_packages=true" >> "$GITHUB_OUTPUT"
-            echo "Scoped package detected; GitHub Packages publish is allowed."
+          if node -e 'const version = process.argv[1]; const value = JSON.parse(process.env.PUBLISHED || "[]"); const published = Array.isArray(value) ? value : [value]; process.exit(published.includes(version) ? 0 : 1);' "$VERSION"; then
+            if [ "$MODE" = "release" ]; then
+              echo "Version already exists on npm registry: $VERSION"
+              exit 1
+            fi
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+            echo "guard_decision=version already exists; skipping npm.org publish"
           else
-            echo "github_packages=false" >> "$GITHUB_OUTPUT"
-            echo "Unscoped package detected; skipping GitHub Packages publish to avoid duplicate package publication."
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+            echo "guard_decision=proceeding with npm.org publish for version $VERSION"
           fi
 
+      - name: Push release commit and tag atomically
+        if: steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_any == 'true'
+        run: |
+          TAG="${{ steps.release-plan.outputs.package_tag }}"
+          git fetch origin main
+          REMOTE_MAIN=$(git rev-parse origin/main)
+          RELEASE_PARENT=$(git rev-parse HEAD^)
+          if [ "$RELEASE_PARENT" != "$REMOTE_MAIN" ]; then
+            echo "origin/main changed during release planning; refusing a non-fast-forward release push."
+            exit 1
+          fi
+          git push --atomic origin HEAD:main "refs/tags/$TAG"
+
+      - name: Publish create-portfoliable to npm
+        if: steps.npm-package.outputs.should_publish == 'true'
+        run: |
+          npm publish "${{ steps.package-artifact.outputs.tarball }}" --provenance --access public --registry https://registry.npmjs.org/
+
       - name: Setup GitHub Packages publishing
-        if: steps.package-targets.outputs.github_packages == 'true'
+        if: steps.github-package-alias.outcome == 'success'
         uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: https://npm.pkg.github.com
           scope: '@portfoliablejs'
 
-      - name: Publish create-portfoliable to GitHub Packages
-        if: steps.package-targets.outputs.github_packages == 'true'
+      - name: Check GitHub Packages version
+        id: github-package
+        if: steps.github-package-alias.outcome == 'success'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.github-package-alias.outputs.version }}
         run: |
-          cd create-portfoliable
-          npm config set "@portfoliablejs:registry" "https://npm.pkg.github.com"
-          npm publish --registry https://npm.pkg.github.com --access public
+          PACKAGE_NAME="@portfoliablejs/create-portfoliable"
+          ERROR_LOG="$RUNNER_TEMP/github-package-view-error.log"
+          echo "package=$PACKAGE_NAME"
+          echo "version=$VERSION"
+          echo "registry=https://npm.pkg.github.com"
+          if PUBLISHED_VERSION=$(npm view "$PACKAGE_NAME@$VERSION" version --registry https://npm.pkg.github.com 2>"$ERROR_LOG"); then
+            if [ "$PUBLISHED_VERSION" != "$VERSION" ]; then
+              echo "Expected existing GitHub Packages version $VERSION but found $PUBLISHED_VERSION"
+              exit 1
+            fi
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+            echo "decision=version already exists; skipping GitHub Packages publish"
+          elif grep -Eq 'E404|404 Not Found' "$ERROR_LOG"; then
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+            echo "decision=version is missing; proceeding with GitHub Packages publish"
+          else
+            cat "$ERROR_LOG"
+            exit 1
+          fi
+
+      - name: Publish create-portfoliable to GitHub Packages
+        if: steps.github-package.outputs.should_publish == 'true'
+        run: |
+          npm publish "${{ steps.github-package-alias.outputs.directory }}" --registry https://npm.pkg.github.com --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub release for create-portfoliable
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODE: ${{ steps.operation.outputs.mode }}
+          RELEASE_TAG: ${{ steps.release-plan.outputs.package_tag }}
+          RECOVERY_VERSION: ${{ steps.operation.outputs.recovery_version }}
         run: |
-          TAG="${{ steps.release-plan.outputs.package_tag }}"
-          curl --silent --show-error --fail \
-            -X POST \
+          set -euo pipefail
+          if [ "$MODE" = "recover" ]; then
+            TAG="v$RECOVERY_VERSION"
+          else
+            TAG="$RELEASE_TAG"
+          fi
+          RESPONSE_FILE="$RUNNER_TEMP/github-release-response.json"
+          HTTP_STATUS=$(curl --silent --show-error \
+            -o "$RESPONSE_FILE" \
+            -w "%{http_code}" \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/releases" \
-            -d "{\"tag_name\":\"${TAG}\",\"name\":\"${TAG}\",\"generate_release_notes\":true}"
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG")
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "GitHub release already exists for $TAG; skipping creation."
+          elif [ "$HTTP_STATUS" = "404" ]; then
+            curl --silent --show-error --fail \
+              -X POST \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/releases" \
+              -d "{\"tag_name\":\"${TAG}\",\"name\":\"${TAG}\",\"generate_release_notes\":true}"
+          else
+            cat "$RESPONSE_FILE"
+            echo "Unexpected GitHub release lookup status: $HTTP_STATUS"
+            exit 1
+          fi
 

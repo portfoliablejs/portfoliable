@@ -16,7 +16,7 @@ npx create-portfoliable my-site
 - installs the runtime dependencies needed for the generated project
 - configures the project structure and base files
 - provides a local dev, build, and preview workflow
-- publishes from the `@portfoliablejs` npm org and GitHub Packages
+- publishes the canonical package to npm.org and a scoped alias to GitHub Packages
 
 ## Documentation
 
@@ -25,10 +25,12 @@ npx create-portfoliable my-site
 
 ## Publishing
 
-This package is released through the repository workflow and publishes to the `@portfoliablejs` npm org. The release process checks the live npm registry before publishing so it cannot reuse a version that already exists.
+This package is released only through the repository workflow. The canonical npm.org identity is `create-portfoliable`, which preserves `npm create portfoliable@latest`. The same version and payload are also published to GitHub Packages as `@portfoliablejs/create-portfoliable`, because GitHub's npm registry requires scoped names.
+
+The registries are separate publish targets; publishing to one does not mirror to the other. The release workflow checks each registry before publishing and provides manual recovery modes for a version missing from GitHub Packages or a tagged release missing from npm.org.
 
 ## License
 
 MIT
 
-This package is published through the Portfoliable npm org and the GitHub Packages release workflow.
+Normal maintainers do not publish this package locally.

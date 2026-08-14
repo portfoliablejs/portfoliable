@@ -35,9 +35,12 @@ git --version
 
 ## Branching and Pull Requests
 
-1. Create a feature branch from `main`.
-2. Keep branch history clean and scoped to one change theme.
-3. Open a pull request with a precise summary, validation evidence, and impact statement.
+1. Synchronize before starting with `git pull --rebase origin main`.
+2. Create a feature branch from `main`.
+3. Keep branch history clean and scoped to one change theme.
+4. Open a pull request with a precise summary, validation evidence, and impact statement.
+
+The release workflow writes version and changelog commits back to `main`. After a release finishes, synchronize again with `git pull --rebase origin main` before pushing follow-up work. Workflow concurrency serializes automated releases, but it cannot rebase a developer's local branch.
 
 Recommended pull request sections:
 
@@ -94,9 +97,9 @@ npm run verify:integration
 
 Any change to release semantics, path scope filtering, CI conditions, or publish logic must update:
 
-- `docs/release/RELEASE_POLICY.md`
-- `docs/release/RELEASE_AUTOMATION_AND_CICD.md`
-- `docs/release/INCIDENT_RUNBOOK.md` when failure modes or procedures change
+- the release policy and automation sections in `README.md`
+- `create-portfoliable/README.md` when package identity or distribution behavior changes
+- the incident runbook in `README.md` when failure modes or procedures change
 
 ## Review Expectations
 
