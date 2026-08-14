@@ -201,6 +201,24 @@ export function isVersionPublished(publishedVersions, candidateVersion) {
   return Array.isArray(publishedVersions) && publishedVersions.includes(candidateVersion);
 }
 
+export function resolveNextUniqueVersion(currentVersion, level, publishedVersions) {
+  let candidate = currentVersion;
+  let attempts = 0;
+
+  while (isVersionPublished(publishedVersions, candidate) && attempts < 20) {
+    candidate = bumpVersion(candidate, level);
+    attempts += 1;
+  }
+
+  if (isVersionPublished(publishedVersions, candidate)) {
+    throw new Error(
+      `Unable to find an unpublished ${level} version after ${attempts} attempts starting from ${currentVersion}.`
+    );
+  }
+
+  return candidate;
+}
+
 function getPublishedVersionsForPackage(packageName) {
   try {
     const output = execFileSync("npm", ["view", packageName, "versions", "--json"], {
@@ -305,15 +323,14 @@ function createReleasePlan(pkg) {
     };
   }
 
-  // Reads current package version and computes next semantic version/tag.
+  // Reads current package version and computes the next unpublished semantic version/tag.
   const currentVersion = JSON.parse(readFileSync(pkg.packageJsonPath, "utf8")).version;
-  // Computes next version using selected bump level.
-  const nextVersion = bumpVersion(currentVersion, bump);
   const publishedVersions = getPublishedVersionsForPackage(pkg.npmPackageName);
+  const nextVersion = resolveNextUniqueVersion(currentVersion, bump, publishedVersions);
 
-  if (isVersionPublished(publishedVersions, nextVersion)) {
-    throw new Error(
-      `Refusing to publish ${pkg.displayName} version ${nextVersion}: it is already published to npm (${pkg.npmPackageName}). Please bump the version before releasing.`
+  if (isVersionPublished(publishedVersions, currentVersion)) {
+    console.log(
+      `Current version ${currentVersion} already exists on npm for ${pkg.npmPackageName}; advancing to ${nextVersion}.`
     );
   }
 
