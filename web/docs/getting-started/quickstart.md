@@ -5,7 +5,9 @@ This is the fastest path from a brand-new scaffolded app to a working first port
 ## 1. Create the project
 
 ```bash
-npm create @portfoliable my-portfolio
+npm create portfoliable@latest my-portfolio
+# or
+npm create portfoliable my-portfolio
 cd my-portfolio
 npm install
 ```

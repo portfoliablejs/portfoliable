@@ -6,6 +6,8 @@
 
 ## [1.0.3](https://github.com/portfoliablejs/portfoliable/compare/v1.0.2...v1.0.3) (2026-08-12)
 
+> Transition note: `1.0.3` was published during the move to org-controlled trusted publishing. `1.0.4+` is the expected baseline for releases published via the `portfoliablejs` trusted workflow.
+
 ### Bug Fixes
 
 * chore(create): rename package to create-portfoliable and trim web trigger ([575322d](https://github.com/portfoliablejs/portfoliable/commit/575322d85c3fcc0ce02dfcdedcfd88652f3f7751))
@@ -52,7 +54,7 @@
 
 # Changelog
 
-This changelog tracks runtime package and initializer changes for `@portfoliablejs/create-portfoliable`.
+This changelog tracks runtime package and initializer changes for `create-portfoliable`.
 
 ## Format
 
@@ -71,10 +73,11 @@ This changelog tracks runtime package and initializer changes for `@portfoliable
 
 - Standardized documentation language around content contract and thumbnail catalog.
 - Clarified separation between end-user consumer workflow and maintainer workflow.
+- Locked release policy to organization-controlled trusted publishing for `1.0.4+` while keeping `1.0.3` available for compatibility.
 
 ### Fixed
 
-- Initializer now derives generated `@portfoliablejs/create-portfoliable` dependency from package metadata instead of a stale hardcoded semver.
+- Initializer now derives generated `create-portfoliable` dependency from package metadata instead of a stale hardcoded semver.
 - Smoke coverage now verifies no-override scaffolding dependency version to prevent future release drift regressions.
 
 ### Security

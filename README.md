@@ -27,7 +27,7 @@ To get to know Portfoliable, please visit the official [Portfoliable website](ht
 
 This monorepo contains the canonical Portfoliable implementation used by:
 
-- the initializer package: `@portfoliablejs/create-portfoliable`
+- the initializer package: `create-portfoliable`
 - the generated consumer app runtime
 - the template files copied into new projects
 - the docs and release automation for the product
@@ -136,7 +136,7 @@ For product changes, update docs and behavior changes in the same PR.
 
 ### 8.1 Release policy
 
-This repository defines normative release behavior for the `@portfoliablejs/create-portfoliable` package.
+This repository defines normative release behavior for the `create-portfoliable` package.
 
 Policy goals:
 
@@ -245,6 +245,13 @@ Security model:
 - trusted publisher mapping on npm must match owner, repo, and workflow identity
 
 Token-based fallback should be avoided unless explicitly required for exceptional recovery.
+
+Publishing transition status:
+
+- `create-portfoliable@1.0.3` was published during migration while org-controlled trusted publishing was being aligned.
+- starting with `1.0.4`, releases are expected to be published by the `portfoliablejs` trusted publisher mapping for `release.yml`.
+- keep `1.0.3` available for compatibility; do not rewrite its history unless a security incident requires that action.
+- local manual `npm publish` is incident-only and must not be used for normal releases.
 
 Validation gates before release-affecting changes are merged:
 
@@ -449,6 +456,8 @@ Standard change workflow:
 4. open a pull request with validation evidence
 5. monitor release workflow outputs after merge
 
+Normal maintainers should not run local `npm publish`; use the release workflow path so publish provenance and org ownership remain consistent.
+
 Where to implement changes:
 
 - runtime and initializer behavior: `create-portfoliable/`
@@ -500,7 +509,7 @@ Trusted publishing verification:
 
 Verify npm trusted publisher mapping before deep debugging:
 
-- package: `@portfoliablejs/create-portfoliable`
+- package: `create-portfoliable`
 - owner: `portfoliablejs`
 - repository: `portfoliable`
 - workflow file: `release.yml`

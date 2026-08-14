@@ -3,7 +3,9 @@
 This is the short end-user guide for a project created with:
 
 ```bash
-npm create @portfoliablejs/portfoliable
+npm create portfoliable@latest
+# or
+npm create portfoliable
 ```
 
 Use it after scaffolding to run, edit, validate, and publish your portfolio.
@@ -13,7 +15,9 @@ For a more detailed user-manual, please visit the official [Portfoliable documen
 ## 1. Create and run a project
 
 ```bash
-npm create @portfoliablejs/portfoliable my-portfolio
+npm create portfoliable@latest my-portfolio
+# or
+npm create portfoliable my-portfolio
 cd my-portfolio
 npm run portfoliable
 ```

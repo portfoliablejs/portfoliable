@@ -1,6 +1,6 @@
 # Portfoliable user manual
 
-Welcome to Portfoliable. This guide is written for people who created a portfolio project with `npm create @portfoliable` and are now working in their generated app with `npm run portfoliable`.
+Welcome to Portfoliable. This guide is written for people who created a portfolio project with `npm create portfoliable@latest` (or `npm create portfoliable`) and are now working in their generated app with `npm run portfoliable`.
 
 This manual is intentionally product-first: it focuses on what you need to do in your own project, not on maintainer workflows or package release internals.
 
@@ -79,7 +79,9 @@ Most branding and app behavior are controlled by config files rather than scatte
 Most users do this on a normal project cycle:
 
 ```bash
-npm create @portfoliable my-portfolio
+npm create portfoliable@latest my-portfolio
+# or
+npm create portfoliable my-portfolio
 cd my-portfolio
 npm install
 npm run portfoliable

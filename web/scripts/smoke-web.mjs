@@ -35,7 +35,7 @@ assertExists('docs/accessibility/checklist.md');
 assertExists('.vitepress/config.mjs');
 
 assertContains('index.md', 'Portfoliable');
-assertContains('docs/getting-started/install.md', 'npm create @portfoliable');
+assertContains('docs/getting-started/install.md', 'npm create portfoliable@latest');
 assertContains('docs/guides/deploy.md', 'web/.vitepress/dist');
 
 console.log('web smoke checks passed');

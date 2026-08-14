@@ -6,7 +6,7 @@ This folder contains the public documentation and marketing site for Portfoliabl
 
 The web docs help people:
 
-- create a portfolio project with `npm create @portfoliable`
+- create a portfolio project with `npm create portfoliable@latest` (or `npm create portfoliable`)
 - run the generated app with `npm run portfoliable`
 - edit content and case metadata
 - customize branding, language, and visibility
