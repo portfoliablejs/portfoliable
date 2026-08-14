@@ -9,7 +9,8 @@
     "initializer",
     "portfolio",
     "portfoliable",
-    "vite"
+    "vite",
+    "npm-package"
   ],
   "homepage": "https://github.com/portfoliablejs/portfoliable/tree/main/create-portfoliable",
   "repository": {
