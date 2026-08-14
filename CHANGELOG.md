@@ -1,3 +1,9 @@
+## [1.2.6](https://github.com/portfoliablejs/portfoliable/compare/v1.2.5...v1.2.6) (2026-08-14)
+
+### Bug Fixes
+
+* fix: auto-bump to next unpublished npm version ([bedb868](https://github.com/portfoliablejs/portfoliable/commit/bedb86864715536bc8686197bb026658d47f3f3b))
+
 ## [1.2.5](https://github.com/portfoliablejs/portfoliable/compare/v1.2.4...v1.2.5) (2026-08-14)
 
 ### Bug Fixes
@@ -123,6 +129,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
