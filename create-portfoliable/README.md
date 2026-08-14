@@ -26,3 +26,5 @@ npx create-portfoliable my-site
 ## License
 
 MIT
+
+This package is published through the Portfoliable npm org and the GitHub Packages release workflow.
