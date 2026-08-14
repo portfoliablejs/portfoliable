@@ -1,3 +1,9 @@
+## [1.2.8](https://github.com/portfoliablejs/portfoliable/compare/v1.2.7...v1.2.8) (2026-08-14)
+
+### Bug Fixes
+
+* fix: add npm package metadata trigger ([8af7eba](https://github.com/portfoliablejs/portfoliable/commit/8af7ebaadd339a4e7b73c06e27111d8320b42651))
+
 ## [1.2.7](https://github.com/portfoliablejs/portfoliable/compare/v1.2.6...v1.2.7) (2026-08-14)
 
 ### Bug Fixes
@@ -135,6 +141,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
