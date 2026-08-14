@@ -1,3 +1,9 @@
+## [1.2.11](https://github.com/portfoliablejs/portfoliable/compare/v1.2.10...v1.2.11) (2026-08-14)
+
+### Bug Fixes
+
+* fix(release): publish scoped GitHub package alias ([2765fa0](https://github.com/portfoliablejs/portfoliable/commit/2765fa02885a44ccdfa89b7ad8f85d0391b31a91))
+
 ## [1.2.10](https://github.com/portfoliablejs/portfoliable/compare/v1.2.10...v1.2.10) (2026-08-14)
 
 ### Bug Fixes
@@ -159,6 +165,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
