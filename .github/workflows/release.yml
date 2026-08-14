@@ -21,6 +21,7 @@ on:
 jobs:
   release:
     name: Release create-portfoliable
+    if: github.repository_owner == 'portfoliablejs'
     runs-on: ubuntu-latest
     environment:
       name: Packages
@@ -96,8 +97,8 @@ jobs:
 
       - name: Configure git
         run: |
-          git config user.name "schimanko"
-          git config user.email "schimanko@users.noreply.github.com"
+          git config user.name "portfoliablejs"
+          git config user.email "portfoliablejs@users.noreply.github.com"
 
       - name: Compute release plan and apply versions
         id: release-plan
