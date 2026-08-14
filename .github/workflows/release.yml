@@ -158,10 +158,24 @@ jobs:
         if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
           cd create-portfoliable
-          npm publish --provenance --access public
+          npm publish --provenance --access public --registry https://registry.npmjs.org/
+
+      - name: Detect GitHub Packages publish eligibility
+        id: package-targets
+        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        run: |
+          PACKAGE_NAME=$(node -p "require('./create-portfoliable/package.json').name")
+          echo "package_name=$PACKAGE_NAME"
+          if [[ "$PACKAGE_NAME" == @* ]]; then
+            echo "github_packages=true" >> "$GITHUB_OUTPUT"
+            echo "Scoped package detected; GitHub Packages publish is allowed."
+          else
+            echo "github_packages=false" >> "$GITHUB_OUTPUT"
+            echo "Unscoped package detected; skipping GitHub Packages publish to avoid duplicate package publication."
+          fi
 
       - name: Setup GitHub Packages publishing
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: steps.package-targets.outputs.github_packages == 'true'
         uses: actions/setup-node@v7
         with:
           node-version: 24
@@ -169,10 +183,11 @@ jobs:
           scope: '@portfoliablejs'
 
       - name: Publish create-portfoliable to GitHub Packages
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: steps.package-targets.outputs.github_packages == 'true'
         run: |
           cd create-portfoliable
-          npm publish
+          npm config set "@portfoliablejs:registry" "https://npm.pkg.github.com"
+          npm publish --registry https://npm.pkg.github.com --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
