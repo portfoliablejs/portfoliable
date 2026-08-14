@@ -1,3 +1,15 @@
+## [1.2.10](https://github.com/portfoliablejs/portfoliable/compare/v1.2.5...v1.2.10) (2026-08-14)
+
+### Bug Fixes
+
+* fix: bump create-portfoliable to next unpublished npm version ([99e8ae6](https://github.com/portfoliablejs/portfoliable/commit/99e8ae6fcfc9f7d6ac955b0271eee3f324f35ec8))
+* chore(release): create-portfoliable@1.2.8 [skip ci] ([6787d06](https://github.com/portfoliablejs/portfoliable/commit/6787d06c9dbc364e1216aae76e3f6eb5cb11c94b))
+* fix: add npm package metadata trigger ([8af7eba](https://github.com/portfoliablejs/portfoliable/commit/8af7ebaadd339a4e7b73c06e27111d8320b42651))
+* chore(release): create-portfoliable@1.2.7 [skip ci] ([002198f](https://github.com/portfoliablejs/portfoliable/commit/002198f02923e6b4a466fca60bf0fffe849f32f6))
+* docs: clarify package publishing path ([8eedc94](https://github.com/portfoliablejs/portfoliable/commit/8eedc9424d9f8a5f217806f830b29d2c40602303))
+* chore(release): create-portfoliable@1.2.6 [skip ci] ([6cd7ad8](https://github.com/portfoliablejs/portfoliable/commit/6cd7ad825b4b1a009ce844726ac0c5ec0d011cc3))
+* fix: auto-bump to next unpublished npm version ([bedb868](https://github.com/portfoliablejs/portfoliable/commit/bedb86864715536bc8686197bb026658d47f3f3b))
+
 ## [1.2.8](https://github.com/portfoliablejs/portfoliable/compare/v1.2.7...v1.2.8) (2026-08-14)
 
 ### Bug Fixes
@@ -141,6 +153,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
