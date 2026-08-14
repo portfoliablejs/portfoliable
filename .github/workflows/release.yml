@@ -115,6 +115,25 @@ jobs:
           git push origin main
           git push origin --tags
 
+      - name: Upgrade npm for OIDC Trusted Publishing
+        if: steps.release-plan.outputs.dry_run != 'true'
+        run: |
+          npm install -g npm@latest
+          hash -r
+
+      - name: Diagnostics for npm trusted publishing
+        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        run: |
+          PACKAGE_NAME=$(node -p "require('./create-portfoliable/package.json').name")
+          echo "package=$PACKAGE_NAME"
+          echo "registry=$(npm config get registry)"
+          npm ping || true
+          REGISTRY="$(npm config get registry)"
+          if [ "$REGISTRY" != "https://registry.npmjs.org/" ] && [ "$REGISTRY" != "https://registry.npmjs.org" ]; then
+            echo "Unexpected npm registry: $REGISTRY"
+            exit 1
+          fi
+
       - name: Publish create-portfoliable to npm
         if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
