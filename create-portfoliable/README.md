@@ -23,6 +23,10 @@ npx create-portfoliable my-site
 - Repo: https://github.com/portfoliablejs/portfoliable
 - Package: https://www.npmjs.com/package/create-portfoliable
 
+## Publishing
+
+This package is released through the repository workflow and publishes to the `@portfoliablejs` npm org. The release process checks the live npm registry before publishing so it cannot reuse a version that already exists.
+
 ## License
 
 MIT
