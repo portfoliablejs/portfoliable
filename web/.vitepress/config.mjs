@@ -122,6 +122,7 @@ function buildDocsSidebar() {
 const repository = process.env.GITHUB_REPOSITORY?.split('/')[1];
 const actionsBase = repository ? `/${repository}/` : '/';
 const base = process.env.VITEPRESS_BASE || (process.env.GITHUB_ACTIONS ? actionsBase : '/');
+const siteHostname = process.env.SITE_HOSTNAME || 'https://portfoliable.js.org';
 
 export default defineConfig({
   title: 'Portfoliable',
@@ -130,7 +131,7 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   sitemap: {
-    hostname: 'https://portfoliablejs.github.io'
+    hostname: siteHostname
   },
   themeConfig: {
     logo: '/favicon.svg',

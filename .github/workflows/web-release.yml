@@ -49,6 +49,9 @@ jobs:
         run: npm --prefix ./web run smoke
 
       - name: Build web site
+        env:
+          VITEPRESS_BASE: /
+          SITE_HOSTNAME: https://portfoliable.js.org
         run: npm --prefix ./web run build
 
       - name: Setup Pages
