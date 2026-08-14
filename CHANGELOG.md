@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/portfoliablejs/portfoliable/compare/v1.1.0...v1.2.0) (2026-08-14)
+
+### Features
+
+* feat(create): migrate create command and trusted release workflow ([d4361db](https://github.com/portfoliablejs/portfoliable/commit/d4361db8fcb85b8983238997fbb7840079c5a5da))
+
 ## [1.1.0](https://github.com/portfoliablejs/portfoliable/compare/v1.0.3...v1.1.0) (2026-08-12)
 
 ### Features
@@ -87,6 +93,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
