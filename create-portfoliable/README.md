@@ -16,6 +16,7 @@ npx create-portfoliable my-site
 - installs the runtime dependencies needed for the generated project
 - configures the project structure and base files
 - provides a local dev, build, and preview workflow
+- publishes from the `@portfoliablejs` npm org and GitHub Packages
 
 ## Documentation
 
