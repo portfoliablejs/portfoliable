@@ -134,6 +134,17 @@ jobs:
             exit 1
           fi
 
+      - name: Final npm version guard
+        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        run: |
+          VERSION=$(node -p "require('./create-portfoliable/package.json').version")
+          PUBLISHED="$(npm view create-portfoliable versions --json 2>/dev/null || echo '[]')"
+          echo "version=$VERSION"
+          echo "published_versions=$PUBLISHED"
+          export PUBLISHED
+          node -e 'const version = process.argv[1]; const published = JSON.parse(process.env.PUBLISHED || "[]"); if (published.includes(version)) { console.error("Version already exists on npm registry: " + version); process.exit(1); }' "$VERSION"
+          echo "Version $VERSION is still unpublished; proceeding with npm publish."
+
       - name: Publish create-portfoliable to npm
         if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
         run: |
