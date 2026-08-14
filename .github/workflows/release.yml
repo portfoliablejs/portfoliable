@@ -101,9 +101,11 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
             echo "dry_run=true" >> $GITHUB_OUTPUT
+            echo "Running release dry-run for create-portfoliable"
             node ./create-portfoliable/scripts/release-orchestrator.mjs --dry-run
           else
             echo "dry_run=false" >> $GITHUB_OUTPUT
+            echo "Running release plan for create-portfoliable"
             node ./create-portfoliable/scripts/release-orchestrator.mjs
           fi
 

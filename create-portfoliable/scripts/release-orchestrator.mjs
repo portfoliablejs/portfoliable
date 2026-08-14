@@ -5,6 +5,7 @@
 // MARK: IMPORTS
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync, appendFileSync, existsSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 
 // MARK: RELEASE CONFIGURATION
 // Defines canonical repository URL used for changelog compare and commit links.
@@ -19,6 +20,7 @@ const packages = [
   {
     key: "package",
     displayName: "create-portfoliable",
+    npmPackageName: "create-portfoliable",
     packageJsonPath: "create-portfoliable/package.json",
     changelogPath: "CHANGELOG.md",
     tagPrefix: "v",
@@ -175,6 +177,46 @@ function bumpVersion(currentVersion, level) {
   return `${major}.${minor}.${patch + 1}`;
 }
 
+export function parsePublishedVersionList(rawResponse) {
+  if (!rawResponse || rawResponse.trim() === "") {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(rawResponse);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed
+      .filter((value) => typeof value === "string")
+      .map((value) => value.trim())
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+export function isVersionPublished(publishedVersions, candidateVersion) {
+  return Array.isArray(publishedVersions) && publishedVersions.includes(candidateVersion);
+}
+
+function getPublishedVersionsForPackage(packageName) {
+  try {
+    const output = execFileSync("npm", ["view", packageName, "versions", "--json"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    }).trim();
+    return parsePublishedVersionList(output);
+  } catch (error) {
+    const message = error?.stderr ? String(error.stderr) : String(error);
+    if (message.includes("E404") || message.includes("404 Not Found")) {
+      return [];
+    }
+    throw error;
+  }
+}
+
 // Updates package.json version field with computed release version.
 function updatePackageJson(filePath, nextVersion) {
   // Reads and parses package manifest.
@@ -267,6 +309,14 @@ function createReleasePlan(pkg) {
   const currentVersion = JSON.parse(readFileSync(pkg.packageJsonPath, "utf8")).version;
   // Computes next version using selected bump level.
   const nextVersion = bumpVersion(currentVersion, bump);
+  const publishedVersions = getPublishedVersionsForPackage(pkg.npmPackageName);
+
+  if (isVersionPublished(publishedVersions, nextVersion)) {
+    throw new Error(
+      `Refusing to publish ${pkg.displayName} version ${nextVersion}: it is already published to npm (${pkg.npmPackageName}). Please bump the version before releasing.`
+    );
+  }
+
   // Builds package tag string from prefix and next version.
   const nextTag = `${pkg.tagPrefix}${nextVersion}`;
 
@@ -359,5 +409,10 @@ function run() {
   }
 }
 
-// Executes orchestrator logic as the script main entrypoint.
-run();
+const isMainModule =
+  typeof process.argv[1] === "string" &&
+  import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (isMainModule) {
+  run();
+}
