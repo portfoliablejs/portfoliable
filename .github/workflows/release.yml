@@ -21,7 +21,6 @@ on:
 jobs:
   release:
     name: Release create-portfoliable
-    if: github.repository_owner == 'portfoliablejs'
     runs-on: ubuntu-latest
     environment:
       name: Packages
@@ -95,10 +94,20 @@ jobs:
       - name: Packed artifact smoke
         run: npm --prefix ./create-portfoliable run smoke:packed
 
+      - name: Verify npm identity is the org account
+        run: |
+          CURRENT_NPM_USER="$(npm whoami)"
+          echo "Current npm user: ${CURRENT_NPM_USER}"
+          if [ "${CURRENT_NPM_USER}" != "portfoliablejs" ]; then
+            echo "ERROR: npm publish is restricted to the portfoliablejs org account."
+            echo "Current account: ${CURRENT_NPM_USER}"
+            exit 1
+          fi
+
       - name: Configure git
         run: |
-          git config user.name "portfoliablejs"
-          git config user.email "portfoliablejs@users.noreply.github.com"
+          git config user.name "schimanko"
+          git config user.email "schimanko@users.noreply.github.com"
 
       - name: Compute release plan and apply versions
         id: release-plan
@@ -114,19 +123,35 @@ jobs:
           fi
 
       - name: Publish create-portfoliable to npm
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: steps.release-plan.outputs.dry_run != 'true'
         run: |
           cd create-portfoliable
           npm publish --provenance --access public
 
+      - name: Setup GitHub Packages publishing
+        if: steps.release-plan.outputs.dry_run != 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: '@portfoliablejs'
+
+      - name: Publish create-portfoliable to GitHub Packages
+        if: steps.release-plan.outputs.dry_run != 'true'
+        run: |
+          cd create-portfoliable
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Push release commit and tags
-        if: steps.release-plan.outputs.released_any == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: steps.release-plan.outputs.dry_run != 'true'
         run: |
           git push origin main
           git push origin --tags
 
       - name: Create GitHub release for create-portfoliable
-        if: steps.release-plan.outputs.released_package == 'true' && steps.release-plan.outputs.dry_run != 'true'
+        if: steps.release-plan.outputs.dry_run != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
