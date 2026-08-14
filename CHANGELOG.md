@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/portfoliablejs/portfoliable/compare/v1.2.0...v1.2.1) (2026-08-14)
+
+### Bug Fixes
+
+* fix: restore npm readme and maintainer identity ([1c31530](https://github.com/portfoliablejs/portfoliable/commit/1c315307f57d879c8b74710e1841a0cd6ede0519))
+
 ## [1.2.0](https://github.com/portfoliablejs/portfoliable/compare/v1.1.0...v1.2.0) (2026-08-14)
 
 ### Features
@@ -93,6 +99,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
