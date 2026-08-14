@@ -10,12 +10,6 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      dry_run:
-        description: Preview version bumps without writing commits, tags, or releases
-        type: boolean
-        default: false
 
       # MARK: RELEASE JOB
 jobs:
