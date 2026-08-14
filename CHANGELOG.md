@@ -1,3 +1,9 @@
+## [1.2.2](https://github.com/portfoliablejs/portfoliable/compare/v1.2.1...v1.2.2) (2026-08-14)
+
+### Bug Fixes
+
+* fix: clarify npm org publish path ([4ab1f19](https://github.com/portfoliablejs/portfoliable/commit/4ab1f19083b628991490464b0701493f6fc97f6c))
+
 ## [1.2.1](https://github.com/portfoliablejs/portfoliable/compare/v1.2.0...v1.2.1) (2026-08-14)
 
 ### Bug Fixes
@@ -99,6 +105,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
