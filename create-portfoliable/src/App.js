@@ -26,6 +26,7 @@ import {
     resolveHeaderVisibilityAttributeValue,
     resolveReturnOnlyVisibilityOverrides
 } from './header-visibility.contract.js';
+import { pickReachableRuntimeMediaUrl } from './runtime-media.contract.js';
 import Lenis from 'lenis';
 import {
     AudioPlayer,
@@ -5435,9 +5436,7 @@ class AppShell extends HTMLElement {
             });
         }
 
-        const videoSrcCandidates = this._buildRuntimeMediaCandidates(rawVideoSrc, {
-            preferTemplatePrefix: true
-        });
+        const videoSrcCandidates = this._buildRuntimeMediaCandidates(rawVideoSrc);
 
         if (videoSrcCandidates.length > 1) {
             const resolveToken = `${activeCaseId}:${activeLocale}:${Date.now()}`;
@@ -5791,28 +5790,9 @@ class AppShell extends HTMLElement {
         return candidates[0] || '';
     }
 
-    async _pickReachableRuntimeMediaUrl(candidates = []) {
-        for (const candidate of candidates) {
-            if (!candidate) continue;
-            if (/^(?:https?:|data:|blob:)/i.test(candidate)) {
-                return candidate;
-            }
-
-            try {
-                const response = await fetch(candidate, {
-                    method: 'HEAD',
-                    cache: 'no-store'
-                });
-
-                if (response.ok) {
-                    return candidate;
-                }
-            } catch {
-                // Try next candidate when HEAD checks are unavailable.
-            }
-        }
-
-        return candidates[0] || '';
+    // Resolves to '' when no candidate is confirmed so callers keep the already bound source.
+    _pickReachableRuntimeMediaUrl(candidates = []) {
+        return pickReachableRuntimeMediaUrl(candidates);
     }
 
     _buildRuntimeImageCandidates(value) {
