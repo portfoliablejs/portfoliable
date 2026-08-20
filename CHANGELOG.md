@@ -1,3 +1,9 @@
+## [1.2.12](https://github.com/portfoliablejs/portfoliable/compare/v1.2.11...v1.2.12) (2026-08-20)
+
+### Bug Fixes
+
+* fix(player): reject SPA-fallback responses when probing video sources ([a073fdb](https://github.com/portfoliablejs/portfoliable/commit/a073fdb126361b5097d500532c6949e0df0488a8))
+
 ## [1.2.11](https://github.com/portfoliablejs/portfoliable/compare/v1.2.10...v1.2.11) (2026-08-14)
 
 ### Bug Fixes
@@ -165,6 +171,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
