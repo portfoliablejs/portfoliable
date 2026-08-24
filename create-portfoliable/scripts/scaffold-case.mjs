@@ -10,11 +10,13 @@ import { readLocaleConfigFromI18nConfig, resolveI18nConfigPath } from '../templa
 
 // MARK: DEFAULTS
 // Defines default output path used when no known case root can be resolved.
-const DEFAULT_OUTPUT = 'src/content/cases/my-case/case.md';
+const DEFAULT_OUTPUT = 'src/content/cases/my-case/my-case.md';
 // Defines default case name used when no name is provided.
 const DEFAULT_NAME = 'My Case';
 // Defines candidate case roots in priority order for local repo and consumer apps.
 const DEFAULT_CASES_ROOTS = ['templates/src/content/cases', 'src/content/cases'];
+// Defines order increment applied when choosing the next generated case order value.
+const CASE_ORDER_STEP = 10;
 
 // MARK: DEFAULT CASE TEMPLATE
 // Centralized defaults used when scaffolding new cases.
@@ -178,15 +180,110 @@ function resolveCasesRoots(cwd) {
 }
 
   // Computes default output markdown path from first discovered cases root.
-function resolveDefaultOutFile(cwd, name) {
-  const caseSlug = toSlug(name);
+function resolvePrimaryCasesRoot(cwd) {
   const roots = resolveCasesRoots(cwd);
   if (roots.length > 0) {
-    const target = path.join(roots[0], caseSlug, 'case.md');
-    return path.relative(cwd, target);
+    return roots[0];
   }
 
-  return DEFAULT_OUTPUT;
+  return path.resolve(cwd, DEFAULT_CASES_ROOTS[0]);
+}
+
+function walkMarkdownFiles(rootDir, files = []) {
+  if (!fs.existsSync(rootDir)) {
+    return files;
+  }
+
+  const entries = fs.readdirSync(rootDir, { withFileTypes: true });
+  entries.forEach((entry) => {
+    const entryPath = path.join(rootDir, entry.name);
+    if (entry.isDirectory()) {
+      walkMarkdownFiles(entryPath, files);
+      return;
+    }
+
+    if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
+      files.push(entryPath);
+    }
+  });
+
+  return files;
+}
+
+function collectExistingCaseMetadata(caseRoot) {
+  const usedSlugs = new Set();
+  const caseOrders = [];
+  const markdownFiles = walkMarkdownFiles(caseRoot, []);
+
+  markdownFiles.forEach((filePath) => {
+    const relativePath = path.relative(caseRoot, filePath);
+    const pathSegments = relativePath.split(path.sep).filter(Boolean);
+    const folderSlug = pathSegments.length > 1 ? pathSegments[0] : '';
+    if (folderSlug) {
+      usedSlugs.add(toSlug(folderSlug));
+    }
+
+    const fileSlug = toSlug(path.basename(filePath, '.md'));
+    if (fileSlug) {
+      usedSlugs.add(fileSlug);
+    }
+
+    let source = '';
+    try {
+      source = fs.readFileSync(filePath, 'utf8');
+    } catch {
+      return;
+    }
+
+    const idMatch = source.match(/"id"\s*:\s*"([^"]+)"/);
+    if (idMatch?.[1]) {
+      usedSlugs.add(toSlug(idMatch[1]));
+    }
+
+    const slugBlockMatch = source.match(/"slugByLocale"\s*:\s*\{([\s\S]*?)\}/);
+    if (slugBlockMatch?.[1]) {
+      const slugValues = slugBlockMatch[1].matchAll(/:\s*"([^"]+)"/g);
+      for (const slugMatch of slugValues) {
+        if (slugMatch?.[1]) {
+          usedSlugs.add(toSlug(slugMatch[1]));
+        }
+      }
+    }
+
+    const orderMatch = source.match(/"caseOrder"\s*:\s*(\d+)/);
+    if (orderMatch?.[1]) {
+      const parsedOrder = Number.parseInt(orderMatch[1], 10);
+      if (Number.isFinite(parsedOrder)) {
+        caseOrders.push(parsedOrder);
+      }
+    }
+  });
+
+  return { usedSlugs, caseOrders };
+}
+
+function resolveUniqueSlug(baseSlug, usedSlugs) {
+  if (!usedSlugs.has(baseSlug)) {
+    return baseSlug;
+  }
+
+  let index = 2;
+  while (usedSlugs.has(`${baseSlug}-${index}`)) {
+    index += 1;
+  }
+
+  return `${baseSlug}-${index}`;
+}
+
+function resolveDefaultScaffoldValues(cwd, name) {
+  const caseRoot = resolvePrimaryCasesRoot(cwd);
+  const { usedSlugs, caseOrders } = collectExistingCaseMetadata(caseRoot);
+  const baseSlug = toSlug(name);
+  const slug = resolveUniqueSlug(baseSlug, usedSlugs);
+  const maxOrder = caseOrders.length > 0 ? Math.max(...caseOrders) : DEFAULT_CASE_TEMPLATE.caseOrder - CASE_ORDER_STEP;
+  const caseOrder = maxOrder + CASE_ORDER_STEP;
+  const outFile = path.relative(cwd, path.join(caseRoot, slug, `${slug}.md`));
+  return { outFile, slug, caseOrder };
 }
 
 // Derives case slug from output path patterns or fallback case name.
@@ -277,7 +374,7 @@ function formatCaseConfigBlock(caseConfig) {
 }
 
 // Build the markdown scaffold body used for new cases.
-function buildTemplate({ name, slug, localeCodes }) {
+function buildTemplate({ name, slug, caseOrder, localeCodes }) {
   // Derives normalized title for localized title fields.
   const title = toTitle(name);
   // Derives normalized slug for id and localized route slug fields.
@@ -292,7 +389,7 @@ function buildTemplate({ name, slug, localeCodes }) {
 
   const caseConfig = {
     id: cleanSlug,
-    caseOrder: DEFAULT_CASE_TEMPLATE.caseOrder,
+    caseOrder,
     slugByLocale: localizedValue({ default: cleanSlug }),
     socialImage: localizedValue({ default: DEFAULT_CASE_TEMPLATE.socialImage }),
     title: {
@@ -421,11 +518,24 @@ function buildTemplate({ name, slug, localeCodes }) {
 export function runCaseScaffold(options = {}) {
   // Resolves working directory used for output file path calculation.
   const cwd = options.cwd || process.cwd();
-  // Resolves output filename using option or context-aware default fallback.
-  const outFile = options.outFile || resolveDefaultOutFile(cwd, options.name || DEFAULT_NAME);
   // Resolves case display name using option or default fallback.
   const name = options.name || DEFAULT_NAME;
-  const caseSlug = resolveCaseSlugFromOutput(outFile, name);
+  const hasExplicitOutFile = typeof options.outFile === 'string' && options.outFile.trim().length > 0;
+
+  const defaultScaffold = hasExplicitOutFile
+    ? null
+    : resolveDefaultScaffoldValues(cwd, name);
+
+  // Resolves output filename using option or context-aware default fallback.
+  const outFile = hasExplicitOutFile
+    ? options.outFile
+    : (defaultScaffold?.outFile || DEFAULT_OUTPUT);
+
+  const caseSlug = hasExplicitOutFile
+    ? resolveCaseSlugFromOutput(outFile, name)
+    : defaultScaffold.slug;
+
+  const caseOrder = defaultScaffold?.caseOrder ?? DEFAULT_CASE_TEMPLATE.caseOrder;
   // Coerces force flag to explicit boolean.
   const force = Boolean(options.force);
   // Resolves absolute output path for scaffold file.
@@ -444,7 +554,7 @@ export function runCaseScaffold(options = {}) {
   }
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, buildTemplate({ name, slug: caseSlug, localeCodes }), 'utf8');
+  fs.writeFileSync(outputPath, buildTemplate({ name, slug: caseSlug, caseOrder, localeCodes }), 'utf8');
   console.log(`[scaffold-case] Created starter case file: ${outputPath}`);
   return 0;
 }

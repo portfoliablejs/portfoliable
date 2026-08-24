@@ -127,10 +127,14 @@ function readSupportedLocales(cwd = process.cwd()) {
 }
 
 // === DEFAULTS ===
-// Defines the default output path used when callers do not provide --out.
-const DEFAULT_OUTPUT = 'src/content/cases/my-case/case.md';
+// Defines the default output path fallback used when no cases root is available.
+const DEFAULT_OUTPUT = 'src/content/cases/my-case/my-case.md';
 // Defines fallback title text used when callers do not provide --name.
 const DEFAULT_NAME = 'My Case';
+// Defines candidate case roots in priority order for local repo and consumer apps.
+const DEFAULT_CASES_ROOTS = ['src/content/cases', 'templates/src/content/cases'];
+// Defines order increment applied when choosing the next generated case order value.
+const CASE_ORDER_STEP = 10;
 
 // === STRING NORMALIZATION HELPERS ===
 // Converts arbitrary text into a markdown-safe slug used for id and localized slug fields.
@@ -165,7 +169,7 @@ function parseArgs(argv) {
   const args = argv.slice(2);
   // Initializes parser output with defaults so missing flags still produce valid output.
   const options = {
-    outFile: DEFAULT_OUTPUT,
+    outFile: '',
     name: DEFAULT_NAME,
     force: false
   };
@@ -194,9 +198,130 @@ function parseArgs(argv) {
   return options;
 }
 
+function resolveCasesRoots(cwd) {
+  return DEFAULT_CASES_ROOTS
+    .map((relativeRoot) => path.resolve(cwd, relativeRoot))
+    .filter((absoluteRoot) => fs.existsSync(absoluteRoot) && fs.statSync(absoluteRoot).isDirectory());
+}
+
+function resolvePrimaryCasesRoot(cwd) {
+  const discoveredRoots = resolveCasesRoots(cwd);
+  if (discoveredRoots.length > 0) {
+    return discoveredRoots[0];
+  }
+
+  return path.resolve(cwd, DEFAULT_CASES_ROOTS[0]);
+}
+
+function walkMarkdownFiles(rootDir, files = []) {
+  if (!fs.existsSync(rootDir)) {
+    return files;
+  }
+
+  const entries = fs.readdirSync(rootDir, { withFileTypes: true });
+  entries.forEach((entry) => {
+    const entryPath = path.join(rootDir, entry.name);
+    if (entry.isDirectory()) {
+      walkMarkdownFiles(entryPath, files);
+      return;
+    }
+
+    if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
+      files.push(entryPath);
+    }
+  });
+
+  return files;
+}
+
+function collectExistingCaseMetadata(caseRoot) {
+  const usedSlugs = new Set();
+  const caseOrders = [];
+  const markdownFiles = walkMarkdownFiles(caseRoot, []);
+
+  markdownFiles.forEach((filePath) => {
+    const relativePath = path.relative(caseRoot, filePath);
+    const pathSegments = relativePath.split(path.sep).filter(Boolean);
+    const folderSlug = pathSegments.length > 1 ? pathSegments[0] : '';
+    if (folderSlug) {
+      usedSlugs.add(toSlug(folderSlug));
+    }
+
+    const fileSlug = toSlug(path.basename(filePath, '.md'));
+    if (fileSlug) {
+      usedSlugs.add(fileSlug);
+    }
+
+    let source = '';
+    try {
+      source = fs.readFileSync(filePath, 'utf8');
+    } catch {
+      return;
+    }
+
+    const idMatch = source.match(/"id"\s*:\s*"([^"]+)"/);
+    if (idMatch?.[1]) {
+      usedSlugs.add(toSlug(idMatch[1]));
+    }
+
+    const slugBlockMatch = source.match(/"slugByLocale"\s*:\s*\{([\s\S]*?)\}/);
+    if (slugBlockMatch?.[1]) {
+      const slugValues = slugBlockMatch[1].matchAll(/:\s*"([^"]+)"/g);
+      for (const slugMatch of slugValues) {
+        if (slugMatch?.[1]) {
+          usedSlugs.add(toSlug(slugMatch[1]));
+        }
+      }
+    }
+
+    const orderMatch = source.match(/"caseOrder"\s*:\s*(\d+)/);
+    if (orderMatch?.[1]) {
+      const parsedOrder = Number.parseInt(orderMatch[1], 10);
+      if (Number.isFinite(parsedOrder)) {
+        caseOrders.push(parsedOrder);
+      }
+    }
+  });
+
+  return { usedSlugs, caseOrders };
+}
+
+function resolveUniqueSlug(baseSlug, usedSlugs) {
+  if (!usedSlugs.has(baseSlug)) {
+    return baseSlug;
+  }
+
+  let index = 2;
+  while (usedSlugs.has(`${baseSlug}-${index}`)) {
+    index += 1;
+  }
+
+  return `${baseSlug}-${index}`;
+}
+
+function resolveCaseSlugFromOutput(outFile, name) {
+  const basename = path.basename(outFile || '');
+  if (basename.toLowerCase() === 'case.md') {
+    return toSlug(path.basename(path.dirname(outFile || '')) || name);
+  }
+
+  return toSlug(path.basename(outFile || '', '.md') || name);
+}
+
+function resolveDefaultScaffoldValues(cwd, name) {
+  const caseRoot = resolvePrimaryCasesRoot(cwd);
+  const { usedSlugs, caseOrders } = collectExistingCaseMetadata(caseRoot);
+  const baseSlug = toSlug(name);
+  const slug = resolveUniqueSlug(baseSlug, usedSlugs);
+  const maxOrder = caseOrders.length > 0 ? Math.max(...caseOrders) : DEFAULT_CASE_TEMPLATE.caseOrder - CASE_ORDER_STEP;
+  const caseOrder = maxOrder + CASE_ORDER_STEP;
+  const outFile = path.relative(cwd, path.join(caseRoot, slug, `${slug}.md`));
+  return { outFile, slug, caseOrder };
+}
+
 // === TEMPLATE CONSTRUCTION ===
 // Produces localized starter markdown content for a new case study.
-function buildTemplate({ name, slug }) {
+function buildTemplate({ name, slug, caseOrder }) {
   // Derives a normalized visible title from provided input.
   const title = toTitle(name);
   // Derives a safe slug fallback from either explicit slug or case name.
@@ -212,7 +337,7 @@ function buildTemplate({ name, slug }) {
 
   const caseConfig = {
     id: cleanSlug,
-    caseOrder: DEFAULT_CASE_TEMPLATE.caseOrder,
+    caseOrder,
     slugByLocale: localizedValue({ default: cleanSlug }),
     socialImage: localizedValue({ default: DEFAULT_CASE_TEMPLATE.socialImage }),
     title: {
@@ -397,25 +522,29 @@ function formatCaseConfigBlock(caseConfig) {
   return lines.join('\n');
 }
 
-function resolveCaseSlugFromOutput(outFile, name) {
-  const basename = path.basename(outFile || '');
-  if (basename.toLowerCase() === 'case.md') {
-    return toSlug(path.basename(path.dirname(outFile || '')) || name);
-  }
-
-  return toSlug(path.basename(outFile || '', '.md') || name);
-}
-
 // === SCAFFOLD EXECUTION ===
 // Creates a new case markdown file, respecting overwrite safety rules.
 export function runCaseScaffold(options = {}) {
   // Resolves working directory so script can be invoked from any location.
   const cwd = options.cwd || process.cwd();
-  // Reads desired output file path from options or uses default path.
-  const outFile = options.outFile || DEFAULT_OUTPUT;
   // Reads desired case display name from options or uses default title.
   const name = options.name || DEFAULT_NAME;
-  const caseSlug = resolveCaseSlugFromOutput(outFile, name);
+  const hasExplicitOutFile = typeof options.outFile === 'string' && options.outFile.trim().length > 0;
+
+  const defaultScaffold = hasExplicitOutFile
+    ? null
+    : resolveDefaultScaffoldValues(cwd, name);
+
+  // Reads desired output file path from options or uses resolved default path.
+  const outFile = hasExplicitOutFile
+    ? options.outFile
+    : (defaultScaffold?.outFile || DEFAULT_OUTPUT);
+
+  const caseSlug = hasExplicitOutFile
+    ? resolveCaseSlugFromOutput(outFile, name)
+    : defaultScaffold.slug;
+
+  const caseOrder = defaultScaffold?.caseOrder ?? DEFAULT_CASE_TEMPLATE.caseOrder;
   // Converts force option to explicit boolean for overwrite checks.
   const force = Boolean(options.force);
   // Resolves absolute output path to avoid relative path ambiguity.
@@ -428,7 +557,7 @@ export function runCaseScaffold(options = {}) {
   }
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, buildTemplate({ name, slug: caseSlug }), 'utf8');
+  fs.writeFileSync(outputPath, buildTemplate({ name, slug: caseSlug, caseOrder }), 'utf8');
   console.log(`[scaffold-case] Created starter case file: ${outputPath}`);
   return 0;
 }
