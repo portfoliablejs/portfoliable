@@ -1,3 +1,9 @@
+## [1.2.13](https://github.com/portfoliablejs/portfoliable/compare/v1.2.12...v1.2.13) (2026-08-24)
+
+### Bug Fixes
+
+* fix(create-portfoliable): link consumer about and i18n configs via runtime aliases ([700fdd9](https://github.com/portfoliablejs/portfoliable/commit/700fdd906bf329f3ff6fa004ecc3d7f62f5f8573))
+
 ## [1.2.12](https://github.com/portfoliablejs/portfoliable/compare/v1.2.11...v1.2.12) (2026-08-20)
 
 ### Bug Fixes
@@ -171,6 +177,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
