@@ -1,3 +1,9 @@
+## [1.2.15](https://github.com/portfoliablejs/portfoliable/compare/v1.2.14...v1.2.15) (2026-08-24)
+
+### Bug Fixes
+
+* fix(create-case): generate unique case slug path and order ([31e8550](https://github.com/portfoliablejs/portfoliable/commit/31e85502ab5a5856d27d9fc96ed1d384f29ed6eb))
+
 ## [1.2.14](https://github.com/portfoliablejs/portfoliable/compare/v1.2.13...v1.2.14) (2026-08-24)
 
 ### Bug Fixes
@@ -183,6 +189,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
