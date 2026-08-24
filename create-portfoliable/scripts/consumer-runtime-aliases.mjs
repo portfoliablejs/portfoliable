@@ -27,6 +27,14 @@ export function resolveConsumerRuntimeAliases(projectRoot = process.cwd()) {
       find: templateSpecifier,
       replacement: consumerAbsolutePath
     });
+
+    // Keep raw markdown imports in sync with consumer content overrides.
+    if (templateSpecifier.endsWith('.md')) {
+      aliases.push({
+        find: `${templateSpecifier}?raw`,
+        replacement: `${consumerAbsolutePath}?raw`
+      });
+    }
   }
 
   return aliases;
