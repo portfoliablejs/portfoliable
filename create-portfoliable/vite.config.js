@@ -6,6 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { defineConfig } from 'vite';
+import { resolveConsumerRuntimeAliases } from './scripts/consumer-runtime-aliases.mjs';
 
 // Detects when @portfoliablejs/valence is installed as a local symlink.
 function isLocalLinkedValence() {
@@ -63,6 +64,7 @@ function getManualChunk(id) {
 export default defineConfig(({ command }) => {
   const usingLocalValence = isLocalLinkedValence();
   const phpApiProxy = String(process.env.PORTFOLIABLE_PHP_API_PROXY || '').trim();
+  const runtimeAliases = resolveConsumerRuntimeAliases(process.cwd());
 
   const serverConfig = (command === 'serve' && usingLocalValence)
     ? {
@@ -88,6 +90,10 @@ export default defineConfig(({ command }) => {
   }
 
   return {
+    resolve: runtimeAliases.length > 0
+      ? { alias: runtimeAliases }
+      : undefined,
+
     // In local-link mode, avoid prebundling Valence so edits in the linked package
     // are reflected immediately during development.
     optimizeDeps: (command === 'serve' && usingLocalValence)

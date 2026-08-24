@@ -26,6 +26,7 @@ import {
   isInteractiveTerminal,
   readProjectUiPreferences
 } from '../scripts/terminal-ui.mjs';
+import { resolveConsumerRuntimeAliases } from '../scripts/consumer-runtime-aliases.mjs';
 
 // MARK: TERMINAL STYLES
 // ANSI color code used for success-status text.
@@ -562,8 +563,13 @@ async function runDevServer(flags, options = {}) {
     process.env.PORTFOLIABLE_PHP_API_PROXY = phpRuntime.proxyTarget;
   }
 
+  const runtimeAliases = resolveConsumerRuntimeAliases(process.cwd());
+
   // Creates Vite development server instance.
   const server = await createServer({
+    resolve: runtimeAliases.length > 0
+      ? { alias: runtimeAliases }
+      : undefined,
     optimizeDeps: {
       exclude: ['create-portfoliable']
     },
@@ -642,7 +648,10 @@ async function runBuild() {
   printRailSegment();
   printRailSegment({ dot: true, label: `${cyan}${bold}Starting build...${reset}` });
   console.log(`${cyan}${bold}Building Portfoliable...${reset}`);
-  await viteBuild();
+  const runtimeAliases = resolveConsumerRuntimeAliases(process.cwd());
+  await viteBuild(runtimeAliases.length > 0
+    ? { resolve: { alias: runtimeAliases } }
+    : undefined);
   console.log(`${green}Build complete.${reset}`);
   printRailSegment({ dot: true, label: `${green}${bold}Build complete.${reset}` });
 }
