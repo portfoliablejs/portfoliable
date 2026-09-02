@@ -12,6 +12,7 @@ import { pathToFileURL } from "node:url";
 const REPO_URL = "https://github.com/portfoliablejs/portfoliable";
 // Enables dry-run behavior when --dry-run is provided on process args.
 const isDryRun = process.argv.includes("--dry-run");
+const isPreparePr = process.argv.includes("--prepare-pr");
 // Enables signing release commit and tag objects when RELEASE_SIGN=true.
 const shouldSign = process.env.RELEASE_SIGN === "true";
 
@@ -409,6 +410,11 @@ function run() {
     commitArgs.splice(1, 0, "-S");
   }
   git(commitArgs);
+
+  if (isPreparePr) {
+    console.log("Release PR preparation enabled; skipping tag creation until merge.");
+    return;
+  }
 
   // Creates annotated or signed tags for each release if tag is not already present.
   for (const plan of releases) {
