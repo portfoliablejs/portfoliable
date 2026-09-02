@@ -179,11 +179,21 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           BRANCH="release/create-portfoliable-${GITHUB_RUN_ID}"
-          git push --set-upstream origin "$BRANCH"
-          gh pr create --base main --head "$BRANCH" \
-            --title "chore(release): create-portfoliable@${{ steps.release-plan.outputs.package_version }}" \
-            --body "Automated SSH-signed release preparation. Merge this PR to publish the package and create the release tag."
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "Release branch already exists; reusing it."
+          else
+            git push --set-upstream origin "$BRANCH"
+          fi
+          EXISTING_PR=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Release PR already exists: #$EXISTING_PR"
+          else
+            gh pr create --base main --head "$BRANCH" \
+              --title "chore(release): create-portfoliable@${{ steps.release-plan.outputs.package_version }}" \
+              --body "Automated SSH-signed release preparation. Merge this PR to publish the package and create the release tag."
+          fi
 
       - name: Debug release plan outputs
         if: always()
