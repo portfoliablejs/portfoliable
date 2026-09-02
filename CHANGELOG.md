@@ -1,3 +1,12 @@
+## [1.2.18](https://github.com/portfoliablejs/portfoliable/compare/v1.2.17...v1.2.18) (2026-09-02)
+
+### Bug Fixes
+
+* fix(dev): resolve Mermaid dayjs imports ([34a2978](https://github.com/portfoliablejs/portfoliable/commit/34a29784f2572e85ddcca565d9b5fe4e62bcdb9a))
+* fix(dev): alias Mermaid dayjs to ESM ([94f483e](https://github.com/portfoliablejs/portfoliable/commit/94f483edd4178143910f9cde91083448e9630bd6))
+* fix(dev): prebundle Mermaid dayjs dependency ([f2ae7af](https://github.com/portfoliablejs/portfoliable/commit/f2ae7afceb81e23962867da6e7bc6aa5f57cd3f1))
+* fix(dev): normalize Mermaid dependencies in Vite ([da9bf80](https://github.com/portfoliablejs/portfoliable/commit/da9bf80aa196180fb3ad4a335e54732c0c937e7a))
+
 ## [1.2.17](https://github.com/portfoliablejs/portfoliable/compare/v1.2.16...v1.2.17) (2026-09-02)
 
 ### Bug Fixes
@@ -204,6 +213,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
