@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/portfoliablejs/portfoliable/compare/v1.2.18...v1.3.0) (2026-09-02)
+
+### Features
+
+* feat(cli): report package-specific updates ([6fc33dd](https://github.com/portfoliablejs/portfoliable/commit/6fc33ddb9ea930b016377d9d153a3bc22a484900))
+
 ## [1.2.18](https://github.com/portfoliablejs/portfoliable/compare/v1.2.17...v1.2.18) (2026-09-02)
 
 ### Bug Fixes
@@ -213,6 +219,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
