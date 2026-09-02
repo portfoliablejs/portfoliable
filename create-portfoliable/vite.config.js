@@ -98,7 +98,7 @@ export default defineConfig(({ command }) => {
     // avoiding prebundling Valence so linked-package edits remain observable.
     optimizeDeps: command === 'serve'
       ? {
-          include: ['mermaid', 'dayjs'],
+          include: ['mermaid', 'mermaid > dayjs'],
           exclude: ['@portfoliablejs/valence']
         }
       : undefined,
