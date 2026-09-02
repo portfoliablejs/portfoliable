@@ -27,6 +27,7 @@ import {
   readProjectUiPreferences
 } from '../scripts/terminal-ui.mjs';
 import { resolveConsumerRuntimeAliases } from '../scripts/consumer-runtime-aliases.mjs';
+import { findPackageUpdates } from '../scripts/package-updates.mjs';
 
 function resolveMermaidDevAliases(runtimeAliases) {
   return [
@@ -81,21 +82,6 @@ function firstNetworkAddress() {
   }
 
   return null;
-}
-
-// Fetches latest published create-portfoliable version from npm registry.
-async function fetchLatestVersion() {
-  try {
-    // Calls npm metadata endpoint for latest dist-tag payload.
-    const response = await fetch('https://registry.npmjs.org/create-portfoliable/latest');
-    if (!response.ok) return null;
-
-    // Parses registry response payload.
-    const data = await response.json();
-    return data.version || null;
-  } catch {
-    return null;
-  }
 }
 
 // MARK: CLI ARGUMENT PARSING
@@ -496,7 +482,7 @@ function createCaseContentAssetPlugin() {
 }
 
 // Prints startup summary box for dev server sessions.
-function printStartupBox({ localUrl, networkUrl, localVersion, latestVersion }) {
+function printStartupBox({ localUrl, networkUrl, updates }) {
   const lines = [
     `${green}${bold}Portfoliable ready!${reset}`,
     `${dim}Dev server is live and ready for editing.${reset}`,
@@ -507,13 +493,20 @@ function printStartupBox({ localUrl, networkUrl, localVersion, latestVersion }) 
     `${bold}Next:${reset} open the local URL in your browser.`
   ];
 
-  if (latestVersion && latestVersion !== localVersion && !latestVersion.includes('alpha')) {
+  for (const update of updates) {
     lines.push('');
-    lines.push(`${yellow}A new version (${latestVersion}) is available!${reset}`);
-    lines.push(`Upgrade now: ${green}npm update create-portfoliable${reset}`);
-    lines.push(`If it still persists, run: ${green}npm install create-portfoliable@latest${reset}`);
+    const isValence = update.name === '@portfoliablejs/valence';
+    const packageLabel = isValence ? 'design system' : 'Portfoliable';
+    lines.push(`${yellow}A new ${packageLabel} update (${update.latestVersion}) is available!${reset}`);
+    lines.push(`Upgrade now: ${green}npm update ${update.name}${reset}`);
+    if (!isValence) {
+      lines.push(`If it still persists, run: ${green}npm install ${update.name}@latest${reset}`);
+    }
     lines.push('Read changelog:');
-    lines.push(`${dim}https://github.com/portfoliablejs/portfoliable/blob/main/CHANGELOG.md${reset}`);
+    const changelogUrl = isValence
+      ? 'https://github.com/portfoliablejs/valence/blob/main/CHANGELOG.md'
+      : 'https://github.com/portfoliablejs/portfoliable/blob/main/CHANGELOG.md';
+    lines.push(`${dim}${changelogUrl}${reset}`);
   }
 
   printRailAttachedBox({ width: 96, lines });
@@ -634,15 +627,24 @@ async function runDevServer(flags, options = {}) {
 
   // Resolves currently running CLI package version.
   const localVersion = resolvePackageVersion();
-  // Fetches latest published package version.
-  const latestVersion = await fetchLatestVersion();
+  const valencePackagePath = path.resolve(process.cwd(), 'node_modules', '@portfoliablejs', 'valence', 'package.json');
+  let valenceVersion = null;
+  try {
+    valenceVersion = JSON.parse(fs.readFileSync(valencePackagePath, 'utf8')).version || null;
+  } catch {
+    valenceVersion = null;
+  }
+  const updates = await findPackageUpdates([
+    { name: 'create-portfoliable', currentVersion: localVersion },
+    ...(valenceVersion ? [{ name: '@portfoliablejs/valence', currentVersion: valenceVersion }] : [])
+  ]);
 
   if (fancyDots) {
     printRailSegment({ dot: true, label: `${cyan}${bold}Starting...${reset}` });
     printRailSpacer();
   }
 
-  printStartupBox({ localUrl, networkUrl, localVersion, latestVersion });
+  printStartupBox({ localUrl, networkUrl, updates });
 
   if (isInteractiveTerminal() && flags.open !== false) {
     let showCommands = false;
