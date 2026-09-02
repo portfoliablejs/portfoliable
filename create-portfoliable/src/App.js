@@ -4662,7 +4662,7 @@ class AppShell extends HTMLElement {
                 ].join('::');
 
                 if (this._caseViewRenderSignature !== caseRenderSignature) {
-                    caseView.innerHTML = caseMarkup;
+                    caseView.innerHTML = this._normalizeArticleMediaUrls(caseMarkup);
                     this._caseViewRenderSignature = caseRenderSignature;
                 }
 
@@ -5365,7 +5365,9 @@ class AppShell extends HTMLElement {
         const thumbBrand = activeCase.thumbBrand || 'apple';
         const thumbModel = activeCase.thumbModel || 'Apple iPhone 12';
         const thumbColor = activeCase.thumbColor || 'Black';
-        const subtitleSrc = String(this.getLangCurrentLocaleOnly(this._resolveCasePrimaryVttProp(activeCase)) || '').trim();
+        const subtitleSrc = this._resolveRuntimeMediaUrl(
+            this.getLangCurrentLocaleOnly(this._resolveCasePrimaryVttProp(activeCase))
+        );
         const rawSubtitleConfig = this._resolveCasePrimaryVttProp(activeCase);
         const {
             breadcrumbMenuLabels,
@@ -5547,7 +5549,7 @@ class AppShell extends HTMLElement {
         const composedHtml = this.getLang(aboutPayload.bodyHtml) || '';
 
         if (aboutArticle.dataset.aboutHtml !== composedHtml) {
-            aboutArticle.innerHTML = composedHtml;
+            aboutArticle.innerHTML = this._normalizeArticleMediaUrls(composedHtml);
             aboutArticle.dataset.aboutHtml = composedHtml;
         }
 
@@ -5646,6 +5648,34 @@ class AppShell extends HTMLElement {
             if (!(diagramEl instanceof HTMLElement)) return;
             diagramEl.setAttribute('error-text', localizedErrorText);
         });
+    }
+
+    _normalizeArticleMediaUrls(html) {
+        if (typeof document === 'undefined') return String(html || '');
+
+        const template = document.createElement('template');
+        template.innerHTML = String(html || '');
+        template.content.querySelectorAll('[src]').forEach((element) => {
+            const source = element.getAttribute('src');
+            if (source) element.setAttribute('src', this._resolveRuntimeMediaUrl(source));
+        });
+        template.content.querySelectorAll('[poster]').forEach((element) => {
+            const poster = element.getAttribute('poster');
+            if (poster) element.setAttribute('poster', this._resolveRuntimeMediaUrl(poster));
+        });
+        template.content.querySelectorAll('[srcset]').forEach((element) => {
+            const srcset = element.getAttribute('srcset');
+            if (!srcset) return;
+            const normalizedSrcset = srcset.split(',').map((candidate) => {
+                const parts = candidate.trim().split(/\s+/);
+                if (!parts[0]) return candidate;
+                parts[0] = this._resolveRuntimeMediaUrl(parts[0]);
+                return parts.join(' ');
+            }).join(', ');
+            element.setAttribute('srcset', normalizedSrcset);
+        });
+
+        return template.innerHTML;
     }
 
     _resolveLocalizedConfigText(value) {

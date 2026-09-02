@@ -10,7 +10,7 @@ import markdownItTaskLists from 'markdown-it-task-lists';
 // MARK: MARKDOWN RENDERER
 // Uses markdown-it + plugins to support broad markdown syntax for case content.
 const markdownRenderer = new MarkdownIt({
-  html: false,
+  html: true,
   linkify: true,
   typographer: true,
   breaks: false
@@ -54,6 +54,16 @@ markdownRenderer.renderer.rules.link_open = (tokens, idx, options, env, self) =>
   }
 
   return self.renderToken(tokens, idx, options);
+};
+
+// Emits Mermaid fences as the Valence custom element instead of a code block.
+markdownRenderer.renderer.rules.fence = (tokens, idx) => {
+  const token = tokens[idx];
+  if (String(token.info || '').trim().split(/\s+/)[0].toLowerCase() !== 'mermaid') {
+    return `<pre><code>${markdownRenderer.utils.escapeHtml(token.content)}</code></pre>\n`;
+  }
+
+  return `<mermaid-diagram>${markdownRenderer.utils.escapeHtml(token.content)}</mermaid-diagram>\n`;
 };
 
 // MARK: VALIDATION CONTRACTS
@@ -105,6 +115,56 @@ function markdownToHtml(markdown) {
   }
 
   return markdownRenderer.render(source);
+}
+
+// Renders localized markdown sections into HTML using the shared markdown-it pipeline.
+export function renderLocalizedMarkdownHtml(bodyText, localeCodes = DEFAULT_LOCALE_CODES) {
+  const normalizedBodyText = String(bodyText || '').replace(/<!--\s*config\s*[\s\S]*?-->/gi, '').trim();
+  const targetLocales = normalizeLocaleCodes(localeCodes);
+  const sections = Object.fromEntries(targetLocales.map((localeCode) => [localeCode, '']));
+  const markerLocales = new Set();
+  const langRegex = /<!--\s*lang:([a-z0-9-]+)\s*-->/gi;
+  let activeLang = null;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = langRegex.exec(normalizedBodyText)) !== null) {
+    const markerLocale = String(match[1] || '').trim().toLowerCase();
+    if (!markerLocale) continue;
+    markerLocales.add(markerLocale);
+    if (!(markerLocale in sections)) {
+      sections[markerLocale] = '';
+    }
+
+    if (activeLang) {
+      sections[activeLang] += normalizedBodyText.slice(lastIndex, match.index);
+    }
+    activeLang = markerLocale;
+    lastIndex = langRegex.lastIndex;
+  }
+
+  if (activeLang) {
+    sections[activeLang] += normalizedBodyText.slice(lastIndex);
+  } else {
+    Object.keys(sections).forEach((localeCode) => {
+      sections[localeCode] = normalizedBodyText;
+    });
+  }
+
+  const resolvedLocales = normalizeLocaleCodes([...targetLocales, ...Object.keys(sections)]);
+  const htmlByLocale = Object.fromEntries(resolvedLocales.map((localeCode) => {
+    const sectionRaw = String(sections[localeCode] || '').trim();
+    return [localeCode, markdownToHtml(sectionRaw)];
+  }));
+
+  return {
+    htmlByLocale,
+    meta: {
+      localeCodes: resolvedLocales,
+      hasAnyLangMarker: markerLocales.size > 0,
+      hasLangMarkerByLocale: Object.fromEntries(resolvedLocales.map((localeCode) => [localeCode, markerLocales.has(localeCode)]))
+    }
+  };
 }
 
 // MARK: CONFIG BLOCK PARSING

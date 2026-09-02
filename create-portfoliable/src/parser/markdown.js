@@ -10,7 +10,7 @@ import markdownItTaskLists from 'markdown-it-task-lists';
 // MARK: MARKDOWN RENDERER
 // Uses markdown-it + plugins to support broad markdown syntax for case content.
 const markdownRenderer = new MarkdownIt({
-  html: false,
+  html: true,
   linkify: true,
   typographer: true,
   breaks: false
@@ -54,6 +54,16 @@ markdownRenderer.renderer.rules.link_open = (tokens, idx, options, env, self) =>
   }
 
   return self.renderToken(tokens, idx, options);
+};
+
+// Emits Mermaid fences as the Valence custom element instead of a code block.
+markdownRenderer.renderer.rules.fence = (tokens, idx) => {
+  const token = tokens[idx];
+  if (String(token.info || '').trim().split(/\s+/)[0].toLowerCase() !== 'mermaid') {
+    return `<pre><code>${markdownRenderer.utils.escapeHtml(token.content)}</code></pre>\n`;
+  }
+
+  return `<mermaid-diagram>${markdownRenderer.utils.escapeHtml(token.content)}</mermaid-diagram>\n`;
 };
 
 // MARK: VALIDATION CONTRACTS
