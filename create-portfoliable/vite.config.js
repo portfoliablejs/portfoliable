@@ -65,12 +65,6 @@ export default defineConfig(({ command }) => {
   const usingLocalValence = isLocalLinkedValence();
   const phpApiProxy = String(process.env.PORTFOLIABLE_PHP_API_PROXY || '').trim();
   const runtimeAliases = resolveConsumerRuntimeAliases(process.cwd());
-  const aliases = command === 'serve'
-    ? [
-        ...runtimeAliases,
-        { find: 'dayjs/dayjs.min.js', replacement: 'dayjs/esm/index.js' }
-      ]
-    : runtimeAliases;
 
   const serverConfig = (command === 'serve' && usingLocalValence)
     ? {
@@ -96,17 +90,14 @@ export default defineConfig(({ command }) => {
   }
 
   return {
-    resolve: aliases.length > 0
-      ? { alias: aliases }
+    resolve: runtimeAliases.length > 0
+      ? { alias: runtimeAliases }
       : undefined,
 
     // Keep Mermaid's CommonJS dependencies in Vite's normalized dev graph while
     // avoiding prebundling Valence so linked-package edits remain observable.
-    optimizeDeps: command === 'serve'
-      ? {
-          include: ['mermaid', 'mermaid > dayjs'],
-          exclude: ['@portfoliablejs/valence']
-        }
+    optimizeDeps: (command === 'serve' && usingLocalValence)
+      ? { exclude: ['@portfoliablejs/valence'] }
       : undefined,
 
     // Allow and watch linked workspace files so HMR sees local Valence changes.
