@@ -16,6 +16,7 @@ import {
   readProjectUiPreferences,
   writeProjectUiPreferences
 } from '../scripts/terminal-ui.mjs';
+import { findPackageUpdates } from '../scripts/package-updates.mjs';
 
 // MARK: DEFAULTS
 // Defines default target folder when no project name is provided.
@@ -384,6 +385,24 @@ async function run() {
   console.log(color('32', 'Setup complete.'));
   printRailSegment({ dot: true, label: `${color('32', 'Dependencies installed.')}` });
   console.log(color('36', 'Command guide is available after launch via interactive prompt.'));
+
+  const installedPackages = [
+    ['create-portfoliable', path.resolve(targetDir, 'node_modules', 'create-portfoliable', 'package.json')],
+    ['@portfoliablejs/valence', path.resolve(targetDir, 'node_modules', '@portfoliablejs', 'valence', 'package.json')]
+  ].flatMap(([name, packagePath]) => {
+    try {
+      return [{ name, currentVersion: JSON.parse(fs.readFileSync(packagePath, 'utf8')).version }];
+    } catch {
+      return [];
+    }
+  });
+  const updates = await findPackageUpdates(installedPackages);
+  for (const update of updates) {
+    const isValence = update.name === '@portfoliablejs/valence';
+    const label = isValence ? 'design system' : 'Portfoliable';
+    console.log(color('33', `A new ${label} update (${update.latestVersion}) is available.`));
+    console.log(`Run: ${color('32', `npm update ${update.name}`)}`);
+  }
 
   if (options.launch) {
     printRailSegment();
