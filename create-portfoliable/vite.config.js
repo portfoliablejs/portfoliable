@@ -94,8 +94,8 @@ export default defineConfig(({ command }) => {
       ? { alias: runtimeAliases }
       : undefined,
 
-    // In local-link mode, avoid prebundling Valence so edits in the linked package
-    // are reflected immediately during development.
+    // Keep Mermaid's CommonJS dependencies in Vite's normalized dev graph while
+    // avoiding prebundling Valence so linked-package edits remain observable.
     optimizeDeps: (command === 'serve' && usingLocalValence)
       ? { exclude: ['@portfoliablejs/valence'] }
       : undefined,

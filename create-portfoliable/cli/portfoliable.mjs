@@ -28,6 +28,14 @@ import {
 } from '../scripts/terminal-ui.mjs';
 import { resolveConsumerRuntimeAliases } from '../scripts/consumer-runtime-aliases.mjs';
 
+function resolveMermaidDevAliases(runtimeAliases) {
+  return [
+    ...runtimeAliases,
+    { find: /^dayjs$/, replacement: path.resolve(process.cwd(), 'node_modules/dayjs/esm/index.js') },
+    { find: 'dayjs/dayjs.min.js', replacement: path.resolve(process.cwd(), 'node_modules/dayjs/esm/index.js') }
+  ];
+}
+
 // MARK: TERMINAL STYLES
 // ANSI color code used for success-status text.
 const green = '\x1b[32m';
@@ -595,13 +603,13 @@ async function runDevServer(flags, options = {}) {
   }
 
   const runtimeAliases = resolveConsumerRuntimeAliases(process.cwd());
+  const mermaidDevAliases = resolveMermaidDevAliases(runtimeAliases);
 
   // Creates Vite development server instance.
   const server = await createServer({
-    resolve: runtimeAliases.length > 0
-      ? { alias: runtimeAliases }
-      : undefined,
+    resolve: { alias: mermaidDevAliases },
     optimizeDeps: {
+      include: ['mermaid', 'mermaid > dayjs'],
       exclude: ['create-portfoliable']
     },
     server: {
