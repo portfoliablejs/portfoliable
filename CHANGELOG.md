@@ -1,3 +1,10 @@
+## [1.4.0](https://github.com/portfoliablejs/portfoliable/compare/v1.3.0...v1.4.0) (2026-09-02)
+
+### Features
+
+* feat: aggregate Valence Pages and update case defaults (#100) ([03ad9a3](https://github.com/portfoliablejs/portfoliable/commit/03ad9a3db9050dad5660fec38bf2d697e3bfae80))
+* feat: aggregate valence pages and update case defaults ([f293eca](https://github.com/portfoliablejs/portfoliable/commit/f293ecaa445909086f7dff7e2180e6202e870d15))
+
 ## [1.3.0](https://github.com/portfoliablejs/portfoliable/compare/v1.2.18...v1.3.0) (2026-09-02)
 
 ### Features
@@ -219,6 +226,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
