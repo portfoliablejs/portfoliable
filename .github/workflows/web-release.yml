@@ -35,12 +35,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout Valence
+        uses: actions/checkout@v4
+        with:
+          repository: portfoliablejs/valence
+          ref: 6d486efc58b6fc80c935d92246ad808d9a9905af
+          path: valence
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: web/package-lock.json
+          cache-dependency-path: |
+            web/package-lock.json
+            valence/package-lock.json
+
+      - name: Install Valence dependencies
+        run: npm --prefix ./valence ci
+
+      - name: Build Valence Storybook
+        env:
+          STORYBOOK_BASE_PATH: ./
+        run: npm --prefix ./valence run build-storybook
 
       - name: Install web dependencies
         run: npm --prefix ./web ci
@@ -53,6 +70,12 @@ jobs:
           VITEPRESS_BASE: /
           SITE_HOSTNAME: https://portfoliable.js.org
         run: npm --prefix ./web run build
+
+      - name: Add Valence to web artifact
+        run: cp -R ./valence/storybook-static ./web/.vitepress/dist/valence
+
+      - name: Verify Valence web route
+        run: test -f ./web/.vitepress/dist/valence/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -42,7 +42,7 @@ const DEFAULT_CASE_TEMPLATE = {
   thumbCategory: 'mobile',
   thumbBrand: 'apple',
   thumbModel: 'Apple iPhone 17',
-  thumbColor: 'iPhone 17 - White - Portrait',
+  thumbColor: 'iPhone 17 - Black - Portrait',
   showCover: true,
   showSummary: true,
   showReader: true,

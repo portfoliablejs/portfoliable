@@ -122,6 +122,7 @@ function main() {
   const bundleText = fs.readFileSync(path.join(distAssetsDir, mainBundle), 'utf8');
   ensureContains(bundleText, 'Making Portfoliable', 'starter case title');
   ensureContains(bundleText, 'Apple MacBook Air M5', 'starter model mapping');
+  ensureContains(bundleText, 'iPhone 17 - Black - Portrait', 'starter thumbnail color');
 
   console.log('[smoke:init] Initializer smoke checks passed.');
 }
