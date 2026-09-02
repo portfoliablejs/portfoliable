@@ -1,0 +1,60 @@
+# File: .github/workflows/pr-guardrails.yml
+# Purpose: Validate pull requests before they can be merged.
+
+name: Pull Request Guardrails
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: pr-guardrails-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  guardrails:
+    name: Signed commits, tests, build, and content validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify every pull request commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          unverified=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/commits" \
+            --paginate \
+            --jq '.[] | select(.commit.verification.verified != true) | .sha')
+          if [ -n "$unverified" ]; then
+            echo "Unverified commit(s):"
+            echo "$unverified"
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: create-portfoliable/package-lock.json
+
+      - name: Install package dependencies
+        run: npm --prefix ./create-portfoliable ci
+
+      - name: Run package tests
+        run: npm --prefix ./create-portfoliable run test
+
+      - name: Validate package build
+        run: npm --prefix ./create-portfoliable run build
+
+      - name: Validate packaged content contracts
+        run: npm --prefix ./create-portfoliable run validate:content

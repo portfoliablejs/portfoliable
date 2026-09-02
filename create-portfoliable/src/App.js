@@ -35,6 +35,7 @@ import {
     A11Y_THEME_TOKEN_KEYS,
     Header,
     HomeView,
+    MermaidDiagram,
     Summary,
     Thumbnail,
     Toast,
@@ -49,6 +50,7 @@ void Summary;
 void Thumbnail;
 void Toast;
 void VideoPlayer;
+void MermaidDiagram;
 
 // MARK: HEADER DEFAULTS
 // Resolves runtime defaults and persistence keys used across navigation and resume flows.

@@ -456,6 +456,37 @@ function runThumbnailOptions(flags) {
   return 0;
 }
 
+// Emits case media files so authored src/content URLs survive production builds.
+function createCaseContentAssetPlugin() {
+  return {
+    name: 'portfoliable-case-content-assets',
+    generateBundle() {
+      const casesRoot = path.resolve(process.cwd(), 'src', 'content', 'cases');
+      if (!fs.existsSync(casesRoot)) return;
+
+      const emitDirectory = (directory) => {
+        for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+          const entryPath = path.join(directory, entry.name);
+          if (entry.isDirectory()) {
+            emitDirectory(entryPath);
+            continue;
+          }
+          if (entry.name.toLowerCase().endsWith('.md')) continue;
+
+          const relativePath = path.relative(process.cwd(), entryPath).replace(/\\/g, '/');
+          this.emitFile({
+            type: 'asset',
+            fileName: relativePath,
+            source: fs.readFileSync(entryPath)
+          });
+        }
+      };
+
+      emitDirectory(casesRoot);
+    }
+  };
+}
+
 // Prints startup summary box for dev server sessions.
 function printStartupBox({ localUrl, networkUrl, localVersion, latestVersion }) {
   const lines = [
@@ -649,9 +680,10 @@ async function runBuild() {
   printRailSegment({ dot: true, label: `${cyan}${bold}Starting build...${reset}` });
   console.log(`${cyan}${bold}Building Portfoliable...${reset}`);
   const runtimeAliases = resolveConsumerRuntimeAliases(process.cwd());
-  await viteBuild(runtimeAliases.length > 0
-    ? { resolve: { alias: runtimeAliases } }
-    : undefined);
+  await viteBuild({
+    ...(runtimeAliases.length > 0 ? { resolve: { alias: runtimeAliases } } : {}),
+    plugins: [createCaseContentAssetPlugin()]
+  });
   console.log(`${green}Build complete.${reset}`);
   printRailSegment({ dot: true, label: `${green}${bold}Build complete.${reset}` });
 }
