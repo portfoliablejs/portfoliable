@@ -46,6 +46,7 @@ jobs:
       contents: write
       id-token: write
       packages: write
+      pull-requests: write
 
     # MARK: RELEASE STEPS
     steps:
@@ -90,47 +91,38 @@ jobs:
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
             echo "mode=dry-run" >> "$GITHUB_OUTPUT"
             echo "Planning a release without publishing."
+          elif [[ "$(git log -1 --pretty=%B)" == *"chore(release): create-portfoliable@"* ]]; then
+            echo "mode=publish-merge" >> "$GITHUB_OUTPUT"
+            echo "Publishing the merged release commit."
           else
-            echo "mode=release" >> "$GITHUB_OUTPUT"
-            echo "Running the full release pipeline."
+            echo "mode=prepare-pr" >> "$GITHUB_OUTPUT"
+            echo "Preparing a release pull request."
           fi
 
-      - name: Import GPG key for verified commits and tags
-        if: steps.operation.outputs.mode == 'release'
+      - name: Configure SSH signing key for commits and tags
+        if: steps.operation.outputs.mode == 'prepare-pr' || steps.operation.outputs.mode == 'publish-merge' || steps.operation.outputs.mode == 'recover'
         env:
-          RELEASE_GPG_PRIVATE_KEY: ${{ secrets.RELEASE_GPG_PRIVATE_KEY }}
-          RELEASE_GPG_KEY_ID: ${{ secrets.RELEASE_GPG_KEY_ID }}
+          RELEASE_SSH_PRIVATE_KEY: ${{ secrets.RELEASE_SSH_PRIVATE_KEY }}
         run: |
-          if [ -z "${RELEASE_GPG_PRIVATE_KEY:-}" ]; then
-            echo "RELEASE_GPG_PRIVATE_KEY not set; proceeding without signed release commit/tag"
-            echo "RELEASE_SIGN=false" >> $GITHUB_ENV
-            exit 0
-          fi
-          if printf '%s' "$RELEASE_GPG_PRIVATE_KEY" | base64 --decode > /tmp/release-private-key.asc 2>/dev/null; then
-            true
-          else
-            printf '%s' "$RELEASE_GPG_PRIVATE_KEY" > /tmp/release-private-key.asc
-          fi
-          gpg --batch --import /tmp/release-private-key.asc
-          KEY_ID="$RELEASE_GPG_KEY_ID"
-          if [ -z "$KEY_ID" ]; then
-            KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | awk '/^sec/{print $2}' | awk -F/ '{print $2}' | head -n 1)
-          fi
-          if [ -z "$KEY_ID" ]; then
-            echo "Could not determine signing key id"
+          if [ -z "${RELEASE_SSH_PRIVATE_KEY:-}" ]; then
+            echo "RELEASE_SSH_PRIVATE_KEY is required by the verified-commit repository rule"
             exit 1
           fi
-          git config user.signingkey "$KEY_ID"
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "$RELEASE_SSH_PRIVATE_KEY" > "$HOME/.ssh/release-signing-key"
+          chmod 600 "$HOME/.ssh/release-signing-key"
+          git config gpg.format ssh
+          git config user.signingkey "$HOME/.ssh/release-signing-key"
           git config commit.gpgsign true
           git config tag.gpgsign true
           echo "RELEASE_SIGN=true" >> $GITHUB_ENV
 
       - name: Install dependencies
-        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
+        if: steps.operation.outputs.mode == 'prepare-pr' || steps.operation.outputs.mode == 'publish-merge' || steps.operation.outputs.mode == 'recover' || steps.operation.outputs.mode == 'dry-run'
         run: npm --prefix ./create-portfoliable ci
 
       - name: Verify package identity
-        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
+        if: steps.operation.outputs.mode == 'prepare-pr' || steps.operation.outputs.mode == 'publish-merge' || steps.operation.outputs.mode == 'dry-run'
         run: |
           PACKAGE_NAME=$(npm --prefix ./create-portfoliable pkg get name | tr -d '"')
           if [ "$PACKAGE_NAME" != "create-portfoliable" ]; then
@@ -139,38 +131,59 @@ jobs:
           fi
 
       - name: Test
-        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
+        if: steps.operation.outputs.mode == 'prepare-pr' || steps.operation.outputs.mode == 'publish-merge' || steps.operation.outputs.mode == 'dry-run'
         run: npm --prefix ./create-portfoliable run test
 
       - name: Build
-        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
+        if: steps.operation.outputs.mode == 'prepare-pr' || steps.operation.outputs.mode == 'publish-merge' || steps.operation.outputs.mode == 'dry-run'
         run: npm --prefix ./create-portfoliable run build
 
       - name: Packed artifact smoke
-        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
+        if: steps.operation.outputs.mode == 'prepare-pr' || steps.operation.outputs.mode == 'publish-merge' || steps.operation.outputs.mode == 'dry-run'
         run: npm --prefix ./create-portfoliable run smoke:packed
 
+      - name: Prepare release branch
+        if: steps.operation.outputs.mode == 'prepare-pr'
+        run: git switch -c "release/create-portfoliable-${GITHUB_RUN_ID}"
+
       - name: Configure git
-        if: steps.operation.outputs.mode == 'release'
+        if: steps.operation.outputs.mode == 'prepare-pr' || steps.operation.outputs.mode == 'publish-merge'
         run: |
           git config user.name "schimanko"
           git config user.email "schimanko@users.noreply.github.com"
 
       - name: Compute release plan and apply versions
         id: release-plan
-        if: steps.operation.outputs.mode == 'release' || steps.operation.outputs.mode == 'dry-run'
+        if: steps.operation.outputs.mode == 'prepare-pr' || steps.operation.outputs.mode == 'publish-merge' || steps.operation.outputs.mode == 'dry-run'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ steps.operation.outputs.mode }}" = "dry-run" ]; then
+          if [ "${{ steps.operation.outputs.mode }}" = "publish-merge" ]; then
+            VERSION=$(node -p "require('./create-portfoliable/package.json').version")
+            echo "released_any=true" >> "$GITHUB_OUTPUT"
+            echo "released_package=true" >> "$GITHUB_OUTPUT"
+            echo "package_version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "package_tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.operation.outputs.mode }}" = "dry-run" ]; then
             echo "dry_run=true" >> $GITHUB_OUTPUT
             echo "Running release dry-run for create-portfoliable"
             node ./create-portfoliable/scripts/release-orchestrator.mjs --dry-run
           else
             echo "dry_run=false" >> $GITHUB_OUTPUT
             echo "Running release plan for create-portfoliable"
-            node ./create-portfoliable/scripts/release-orchestrator.mjs
+            node ./create-portfoliable/scripts/release-orchestrator.mjs --prepare-pr
           fi
+
+      - name: Create release pull request
+        if: steps.operation.outputs.mode == 'prepare-pr' && steps.release-plan.outputs.released_any == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="release/create-portfoliable-${GITHUB_RUN_ID}"
+          git push --set-upstream origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "chore(release): create-portfoliable@${{ steps.release-plan.outputs.package_version }}" \
+            --body "Automated SSH-signed release preparation. Merge this PR to publish the package and create the release tag."
 
       - name: Debug release plan outputs
         if: always()
@@ -186,7 +199,7 @@ jobs:
 
       - name: Create canonical package artifact
         id: package-artifact
-        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
+        if: ${{ (steps.operation.outputs.mode == 'publish-merge' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
         env:
           MODE: ${{ steps.operation.outputs.mode }}
           RECOVERY_VERSION: ${{ steps.operation.outputs.recovery_version }}
@@ -229,7 +242,7 @@ jobs:
 
       - name: Prepare GitHub Packages alias
         id: github-package-alias
-        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' || steps.operation.outputs.mode == 'sync' }}
+        if: ${{ (steps.operation.outputs.mode == 'publish-merge' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' || steps.operation.outputs.mode == 'sync' }}
         env:
           MODE: ${{ steps.operation.outputs.mode }}
           RELEASE_TARBALL: ${{ steps.package-artifact.outputs.tarball }}
@@ -237,7 +250,7 @@ jobs:
           SYNC_VERSION: ${{ steps.operation.outputs.sync_version }}
         run: |
           set -euo pipefail
-          if [ "$MODE" = "release" ] || [ "$MODE" = "recover" ]; then
+          if [ "$MODE" = "publish-merge" ] || [ "$MODE" = "recover" ]; then
             CANONICAL_TARBALL="$RELEASE_TARBALL"
             EXPECTED_VERSION="$ARTIFACT_VERSION"
           else
@@ -273,13 +286,13 @@ jobs:
           echo "version=$EXPECTED_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Upgrade npm for OIDC Trusted Publishing
-        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
+        if: ${{ (steps.operation.outputs.mode == 'publish-merge' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
         run: |
           npm install -g npm@latest
           hash -r
 
       - name: Diagnostics for npm trusted publishing
-        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
+        if: ${{ (steps.operation.outputs.mode == 'publish-merge' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
         run: |
           PACKAGE_NAME=$(node -p "require('./create-portfoliable/package.json').name")
           echo "package=$PACKAGE_NAME"
@@ -293,7 +306,7 @@ jobs:
 
       - name: Final npm version guard
         id: npm-package
-        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
+        if: ${{ (steps.operation.outputs.mode == 'publish-merge' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
         env:
           MODE: ${{ steps.operation.outputs.mode }}
           VERSION: ${{ steps.package-artifact.outputs.version }}
@@ -315,18 +328,12 @@ jobs:
             echo "guard_decision=proceeding with npm.org publish for version $VERSION"
           fi
 
-      - name: Push release commit and tag atomically
-        if: steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_any == 'true'
+      - name: Push signed release tag after merge
+        if: steps.operation.outputs.mode == 'publish-merge' && steps.release-plan.outputs.released_any == 'true'
         run: |
           TAG="${{ steps.release-plan.outputs.package_tag }}"
-          git fetch origin main
-          REMOTE_MAIN=$(git rev-parse origin/main)
-          RELEASE_PARENT=$(git rev-parse HEAD^)
-          if [ "$RELEASE_PARENT" != "$REMOTE_MAIN" ]; then
-            echo "origin/main changed during release planning; refusing a non-fast-forward release push."
-            exit 1
-          fi
-          git push --atomic origin HEAD:main "refs/tags/$TAG"
+          git tag -s "$TAG" -m "Release $TAG"
+          git push origin "refs/tags/$TAG"
 
       - name: Publish create-portfoliable to npm
         if: steps.npm-package.outputs.should_publish == 'true'
@@ -376,7 +383,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub release for create-portfoliable
-        if: ${{ (steps.operation.outputs.mode == 'release' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
+        if: ${{ (steps.operation.outputs.mode == 'publish-merge' && steps.release-plan.outputs.released_package == 'true') || steps.operation.outputs.mode == 'recover' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MODE: ${{ steps.operation.outputs.mode }}
