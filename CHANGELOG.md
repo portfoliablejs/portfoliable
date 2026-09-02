@@ -1,3 +1,10 @@
+## [1.2.17](https://github.com/portfoliablejs/portfoliable/compare/v1.2.16...v1.2.17) (2026-09-02)
+
+### Bug Fixes
+
+* fix(create-portfoliable): emit case content assets ([0577c45](https://github.com/portfoliablejs/portfoliable/commit/0577c45882b2a6a0057be293808d1b5cdf234143))
+* fix(create-portfoliable): retain mermaid element registration ([95725f2](https://github.com/portfoliablejs/portfoliable/commit/95725f2c008958c43f7db71445a11a9bcbb4af1a))
+
 ## [1.2.16](https://github.com/portfoliablejs/portfoliable/compare/v1.2.15...v1.2.16) (2026-09-02)
 
 ### Bug Fixes
@@ -197,6 +204,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
