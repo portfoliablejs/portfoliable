@@ -1,3 +1,11 @@
+## [1.2.16](https://github.com/portfoliablejs/portfoliable/compare/v1.2.15...v1.2.16) (2026-09-02)
+
+### Bug Fixes
+
+* fix(ci): release packages through ssh-signed prs ([85ac3e3](https://github.com/portfoliablejs/portfoliable/commit/85ac3e3b792a15b8c9d6c8e3b9ba35fe18a880bf))
+* test(create-portfoliable): cover content rendering ([3356941](https://github.com/portfoliablejs/portfoliable/commit/335694115e60ff7b9412bd2850a038434aacec0e))
+* fix(create-portfoliable): render case media reliably ([bf79aac](https://github.com/portfoliablejs/portfoliable/commit/bf79aac5acc05303a75da2d96b04a196dfa7b2fe))
+
 ## [1.2.15](https://github.com/portfoliablejs/portfoliable/compare/v1.2.14...v1.2.15) (2026-08-24)
 
 ### Bug Fixes
@@ -189,6 +197,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
