@@ -1,3 +1,47 @@
+## [1.4.1](https://github.com/portfoliablejs/portfoliable/compare/v1.4.0...v1.4.1) (2026-10-26)
+
+### Bug Fixes
+
+* fix: preserve Valence component registration (#102) ([fb52eea](https://github.com/portfoliablejs/portfoliable/commit/fb52eea73a9c1733c191fb870ceeddcded777704))
+* fix: preserve Valence component registration ([e2b73fc](https://github.com/portfoliablejs/portfoliable/commit/e2b73fcebf737a01211e1db366762ce3559df22e))
+
+## [1.4.0](https://github.com/portfoliablejs/portfoliable/compare/v1.3.0...v1.4.0) (2026-09-02)
+
+### Features
+
+* feat: aggregate Valence Pages and update case defaults (#100) ([03ad9a3](https://github.com/portfoliablejs/portfoliable/commit/03ad9a3db9050dad5660fec38bf2d697e3bfae80))
+* feat: aggregate valence pages and update case defaults ([f293eca](https://github.com/portfoliablejs/portfoliable/commit/f293ecaa445909086f7dff7e2180e6202e870d15))
+
+## [1.3.0](https://github.com/portfoliablejs/portfoliable/compare/v1.2.18...v1.3.0) (2026-09-02)
+
+### Features
+
+* feat(cli): report package-specific updates ([6fc33dd](https://github.com/portfoliablejs/portfoliable/commit/6fc33ddb9ea930b016377d9d153a3bc22a484900))
+
+## [1.2.18](https://github.com/portfoliablejs/portfoliable/compare/v1.2.17...v1.2.18) (2026-09-02)
+
+### Bug Fixes
+
+* fix(dev): resolve Mermaid dayjs imports ([34a2978](https://github.com/portfoliablejs/portfoliable/commit/34a29784f2572e85ddcca565d9b5fe4e62bcdb9a))
+* fix(dev): alias Mermaid dayjs to ESM ([94f483e](https://github.com/portfoliablejs/portfoliable/commit/94f483edd4178143910f9cde91083448e9630bd6))
+* fix(dev): prebundle Mermaid dayjs dependency ([f2ae7af](https://github.com/portfoliablejs/portfoliable/commit/f2ae7afceb81e23962867da6e7bc6aa5f57cd3f1))
+* fix(dev): normalize Mermaid dependencies in Vite ([da9bf80](https://github.com/portfoliablejs/portfoliable/commit/da9bf80aa196180fb3ad4a335e54732c0c937e7a))
+
+## [1.2.17](https://github.com/portfoliablejs/portfoliable/compare/v1.2.16...v1.2.17) (2026-09-02)
+
+### Bug Fixes
+
+* fix(create-portfoliable): emit case content assets ([0577c45](https://github.com/portfoliablejs/portfoliable/commit/0577c45882b2a6a0057be293808d1b5cdf234143))
+* fix(create-portfoliable): retain mermaid element registration ([95725f2](https://github.com/portfoliablejs/portfoliable/commit/95725f2c008958c43f7db71445a11a9bcbb4af1a))
+
+## [1.2.16](https://github.com/portfoliablejs/portfoliable/compare/v1.2.15...v1.2.16) (2026-09-02)
+
+### Bug Fixes
+
+* fix(ci): release packages through ssh-signed prs ([85ac3e3](https://github.com/portfoliablejs/portfoliable/commit/85ac3e3b792a15b8c9d6c8e3b9ba35fe18a880bf))
+* test(create-portfoliable): cover content rendering ([3356941](https://github.com/portfoliablejs/portfoliable/commit/335694115e60ff7b9412bd2850a038434aacec0e))
+* fix(create-portfoliable): render case media reliably ([bf79aac](https://github.com/portfoliablejs/portfoliable/commit/bf79aac5acc05303a75da2d96b04a196dfa7b2fe))
+
 ## [1.2.15](https://github.com/portfoliablejs/portfoliable/compare/v1.2.14...v1.2.15) (2026-08-24)
 
 ### Bug Fixes
@@ -189,6 +233,12 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
+
+
+
+
+
 
 
 
