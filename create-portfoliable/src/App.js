@@ -27,6 +27,7 @@ import {
     resolveReturnOnlyVisibilityOverrides
 } from './header-visibility.contract.js';
 import { pickReachableRuntimeMediaUrl } from './runtime-media.contract.js';
+import './prism-runtime.js';
 import Lenis from 'lenis';
 import {
     AudioPlayer,
