@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/portfoliablejs/portfoliable/compare/v1.4.0...v1.4.1) (2026-10-26)
+
+### Bug Fixes
+
+* fix: preserve Valence component registration (#102) ([fb52eea](https://github.com/portfoliablejs/portfoliable/commit/fb52eea73a9c1733c191fb870ceeddcded777704))
+* fix: preserve Valence component registration ([e2b73fc](https://github.com/portfoliablejs/portfoliable/commit/e2b73fcebf737a01211e1db366762ce3559df22e))
+
 ## [1.4.0](https://github.com/portfoliablejs/portfoliable/compare/v1.3.0...v1.4.0) (2026-09-02)
 
 ### Features
@@ -226,6 +233,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
