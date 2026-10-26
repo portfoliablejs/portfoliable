@@ -1,3 +1,9 @@
+## [1.4.2](https://github.com/portfoliablejs/portfoliable/compare/v1.4.1...v1.4.2) (2026-10-26)
+
+### Bug Fixes
+
+* fix: initialize Prism before Valence components ([79d418a](https://github.com/portfoliablejs/portfoliable/commit/79d418a2eeb6d52d95f0c0f20b6e6f4491e54c80))
+
 ## [1.4.1](https://github.com/portfoliablejs/portfoliable/compare/v1.4.0...v1.4.1) (2026-10-26)
 
 ### Bug Fixes
@@ -233,6 +239,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
