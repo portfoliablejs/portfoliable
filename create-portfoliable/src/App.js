@@ -35,6 +35,7 @@ import {
     A11Y_THEME_TOKEN_KEYS,
     Header,
     HomeView,
+    Gallery,
     MermaidDiagram,
     Summary,
     Thumbnail,
@@ -43,14 +44,29 @@ import {
     PlayerView
 } from '@portfoliablejs/valence';
 
-void Article;
-void Header;
-void HomeView;
-void Summary;
-void Thumbnail;
-void Toast;
-void VideoPlayer;
-void MermaidDiagram;
+// Keeps Valence component modules in production bundles so their module-level
+// customElements.define calls are not removed as unused tree-shaken exports.
+function retainValenceComponentRegistrations() {
+    const componentRegistrations = [
+        ['ds-audio-player', AudioPlayer],
+        ['ds-article', Article],
+        ['ds-header', Header],
+        ['ds-home-view', HomeView],
+        ['ds-gallery', Gallery],
+        ['mermaid-diagram', MermaidDiagram],
+        ['ds-summary', Summary],
+        ['ds-thumbnail', Thumbnail],
+        ['ds-toast', Toast],
+        ['ds-video-player', VideoPlayer],
+        ['ds-player-view', PlayerView]
+    ];
+
+    for (const [elementName, component] of componentRegistrations) {
+        if (typeof component !== 'function' || customElements.get(elementName) !== component) {
+            throw new Error(`[portfoliable] Valence component registration failed: ${elementName}`);
+        }
+    }
+}
 
 // MARK: HEADER DEFAULTS
 // Resolves runtime defaults and persistence keys used across navigation and resume flows.
@@ -958,6 +974,7 @@ class AppShell extends HTMLElement {
     // Initializes shadow DOM, source content, and default runtime state.
     constructor() {
         super();
+        retainValenceComponentRegistrations();
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this._portfolioCases = getPortfolioCases();

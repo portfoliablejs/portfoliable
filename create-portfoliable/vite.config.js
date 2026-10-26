@@ -108,6 +108,11 @@ export default defineConfig(({ command }) => {
       // Keep warnings useful while avoiding noisy false alarms for optional async chunks.
       chunkSizeWarningLimit: 3000,
       rollupOptions: {
+        treeshake: {
+          // Valence modules register custom elements at module evaluation time.
+          // Preserve those registration side effects in production bundles.
+          moduleSideEffects: true
+        },
         output: {
           manualChunks: getManualChunk
         }

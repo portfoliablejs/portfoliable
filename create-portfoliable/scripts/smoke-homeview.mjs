@@ -80,6 +80,16 @@ function assertIncludes(haystack, needle, message) {
   }
 }
 
+// Verifies a custom element registration call survives production bundling.
+function assertCustomElementRegistration(haystack, elementName) {
+  const registrationPattern = new RegExp(
+    `customElements\\.define\\(["'\`]${elementName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'\`]`
+  );
+  if (!registrationPattern.test(haystack)) {
+    fail(`Production bundle does not register ${elementName}.`);
+  }
+}
+
 // MARK: SMOKE ORCHESTRATION
 // Runs build, inspects emitted bundle/assets, and validates HomeView/CaseView route expectations.
 function main() {
@@ -94,6 +104,8 @@ function main() {
 
   // HomeView template is mounted through ds-home-view.
   assertIncludes(bundleText, 'ds-home-view', 'HomeView marker not found in bundle.');
+  assertCustomElementRegistration(bundleText, 'ds-home-view');
+  assertCustomElementRegistration(bundleText, 'ds-gallery');
 
   // CaseView template must exist for in-app Home -> Case transitions.
   assertIncludes(bundleText, 'ds-case-view', 'CaseView marker not found in bundle.');
