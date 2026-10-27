@@ -1,3 +1,9 @@
+## [1.4.3](https://github.com/portfoliablejs/portfoliable/compare/v1.4.2...v1.4.3) (2026-10-27)
+
+### Bug Fixes
+
+* fix: stabilize browser runtime exports ([4cec593](https://github.com/portfoliablejs/portfoliable/commit/4cec593375976f90c2708b8944da90f17e205c09))
+
 ## [1.4.2](https://github.com/portfoliablejs/portfoliable/compare/v1.4.1...v1.4.2) (2026-10-26)
 
 ### Bug Fixes
@@ -239,6 +245,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
