@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/portfoliablejs/portfoliable/compare/v1.4.3...v1.4.4) (2026-10-27)
+
+### Bug Fixes
+
+* fix: support PrismJS in Vite browser runtime (#109) ([7e40558](https://github.com/portfoliablejs/portfoliable/commit/7e405586ee37acb09957d78fdb665c5653d79c80))
+* fix: support PrismJS in Vite browser runtime ([ee95fbc](https://github.com/portfoliablejs/portfoliable/commit/ee95fbcbc51378592a70a1618cf013d3455dabe5))
+
 ## [1.4.3](https://github.com/portfoliablejs/portfoliable/compare/v1.4.2...v1.4.3) (2026-10-27)
 
 ### Bug Fixes
@@ -245,6 +252,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
