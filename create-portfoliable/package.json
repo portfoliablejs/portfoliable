@@ -40,7 +40,15 @@
   "engines": {
     "node": ">=18"
   },
-  "main": "src/App.js",
+  "main": "src/main.js",
+  "exports": {
+    ".": {
+      "browser": "./src/main.js",
+      "import": "./src/main.js",
+      "default": "./src/main.js"
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
     "create": "bin/create-portfoliable.mjs",
     "create-portfoliable": "bin/create-portfoliable.mjs",
