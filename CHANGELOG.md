@@ -1,3 +1,10 @@
+## [1.4.6](https://github.com/portfoliablejs/portfoliable/compare/v1.4.5...v1.4.6) (2026-10-28)
+
+### Bug Fixes
+
+* fix: align generated portfolio article behavior (#113) ([25feb92](https://github.com/portfoliablejs/portfoliable/commit/25feb9230b6abc545d55dd4ac8b67a103728dbce))
+* fix: align generated portfolio article behavior ([72d82be](https://github.com/portfoliablejs/portfoliable/commit/72d82bedb74211e262103850ee899bd2ba923429))
+
 ## [1.4.5](https://github.com/portfoliablejs/portfoliable/compare/v1.4.4...v1.4.5) (2026-10-28)
 
 ### Bug Fixes
@@ -259,6 +266,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
