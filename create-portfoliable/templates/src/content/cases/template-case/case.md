@@ -5,10 +5,12 @@
   "caseOrder": 100,
   "slugByLocale": {
     "en": "template-case",
+    "pt": "template-case",
     "he": "template-case"
   },
   "socialImage": {
     "en": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&h=675&auto=format&fit=contain&bg=111111",
+    "pt": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&h=675&auto=format&fit=contain&bg=111111",
     "he": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&h=675&auto=format&fit=contain&bg=111111"
   },
 
@@ -16,25 +18,30 @@
   "title": {
     "show": true,
     "en": "Making Portfoliable",
+    "pt": "Making Portfoliable",
     "he": "בונים את Portfoliable"
   },
   "shortDesc": {
     "show": true,
     "en": "A little behind-the-scenes look of the open-source project.",
+    "pt": "A little behind-the-scenes look of the open-source project.",
     "he": "מבט קצר מאחורי הקלעים של פרויקט הקוד הפתוח."
   },
   "readTime": {
     "en": "1 min",
+    "pt": "1 min",
     "he": "דקה"
   },
   "kicker": {
     "en": "2026",
+    "pt": "2026",
     "he": "2026"
   },
 
   // Thumbnail and Cover
   "thumbSrc": {
     "en": "src/content/cases/template-case/cover.png",
+    "pt": "src/content/cases/template-case/cover.png",
     "he": "src/content/cases/template-case/he-cover.png"
   },
   "thumbCategory": "desktop",
@@ -47,21 +54,25 @@
   "showSummary": true,
   "summary": {
     "en": "Add an executive summary for this case.",
+    "pt": "Add an executive summary for this case.",
     "he": "הוסיפו תקציר מנהלים עבור הקייס הזה."
   },
   "summaryProps": {
     "text": {
       "en": "Add concise impact details, launch scope, and operational confidence outcomes.",
+      "pt": "Add concise impact details, launch scope, and operational confidence outcomes.",
       "he": "הוסיפו פרטי השפעה תמציתיים, היקף השקה ותוצאות של ביטחון תפעולי."
     },
     "active": true,
     "labelHeader": {
       "en": "Case Snapshot",
+      "pt": "Case Snapshot",
       "he": "תמונת מצב"
     },
     "showMetrics": true,
     "ariaLabel": {
       "en": "Case summary with key metrics",
+      "pt": "Case summary with key metrics",
       "he": "תקציר קייס עם מדדי מפתח"
     },
     "metrics": [
@@ -124,10 +135,12 @@
   // Audio Experience
   "audioLabel": {
     "en": "Case Audio Summary",
+    "pt": "Case Audio Summary",
     "he": "תקציר שמע לקייס"
   },
   "audioSrc": {
     "en": "src/content/cases/template-case/template-audio.mp3",
+    "pt": "src/content/cases/template-case/template-audio.mp3",
     "he": ""
   },
   "showPlayer": true,
@@ -150,6 +163,7 @@
       "icon-variant": "outline",
       "tooltip": {
         "en": "Share this case link",
+        "pt": "Share this case link",
         "he": "שיתוף קישור לקייס הזה"
       }
     },
@@ -159,6 +173,7 @@
       "icon-variant": "outline",
       "tooltip": {
         "en": "Share on LinkedIn",
+        "pt": "Share on LinkedIn",
         "he": "שיתוף בלינקדאין"
       }
     },
@@ -168,6 +183,7 @@
       "icon-variant": "outline",
       "tooltip": {
         "en": "Share on X",
+        "pt": "Share on X",
         "he": "שיתוף ב-X"
       }
     },
@@ -177,6 +193,7 @@
       "icon-variant": "outline",
       "tooltip": {
         "en": "Share on Facebook",
+        "pt": "Share on Facebook",
         "he": "שיתוף בפייסבוק"
       }
     },
@@ -196,30 +213,37 @@
       "icon-variant": "",
       "label": {
         "en": "Watch presentation",
+        "pt": "Watch presentation",
         "he": "צפייה במצגת"
       },
       "tooltip": {
         "en": "Open walkthrough video",
+        "pt": "Open walkthrough video",
         "he": "פתיחת סרטון walkthrough"
       },
       "url": {
         "en": "",
+        "pt": "",
         "he": ""
       },
       "videoSrc": {
         "en": "src/content/cases/template-case/template-video.mp4",
+        "pt": "src/content/cases/template-case/template-video.mp4",
         "he": ""
       },
       "vttSrc": {
         "en": "",
+        "pt": "",
         "he": ""
       },
       "imageAlt": {
         "en": "",
+        "pt": "",
         "he": ""
       },
       "ariaLabel": {
         "en": "",
+        "pt": "",
         "he": ""
       }
     },
@@ -230,22 +254,27 @@
       "icon-variant": "",
       "label": {
         "en": "Repository",
+        "pt": "Repository",
         "he": "מאגר"
       },
       "tooltip": {
         "en": "Open repo on GitHub",
+        "pt": "Open repo on GitHub",
         "he": "פתיחת המאגר ב-GitHub"
       },
       "url": {
         "en": "https://github.com/portfoliablejs/portfoliable",
+        "pt": "https://github.com/portfoliablejs/portfoliable",
         "he": "https://github.com/portfoliablejs/portfoliable"
       },
       "imageAlt": {
         "en": "",
+        "pt": "",
         "he": ""
       },
       "ariaLabel": {
         "en": "",
+        "pt": "",
         "he": ""
       }
     },
@@ -254,14 +283,17 @@
       "variant": "tertiary",
       "label": {
         "en": "Visit website",
+        "pt": "Visit website",
         "he": "ביקור באתר"
       },
       "tooltip": {
         "en": "Get to know this project",
+        "pt": "Get to know this project",
         "he": "להכיר את הפרויקט הזה"
       },
       "url": {
         "en": "https://www.portfoliable.js.org/",
+        "pt": "https://www.portfoliable.js.org/",
         "he": "https://www.portfoliable.js.org/"
       },
       "has-image": false,
@@ -269,10 +301,12 @@
       "image-alt": "",
       "imageAlt": {
         "en": "",
+        "pt": "",
         "he": ""
       },
       "ariaLabel": {
         "en": "",
+        "pt": "",
         "he": ""
       }
     }
@@ -365,7 +399,6 @@ Tradeoff
 - [x] Case schema with localized fields
 - [x] Reader + summary + navigator composition
 - [x] Markdown-based storytelling
-- [ ] Publish-ready production content for every locale
 
 
 ## Notes
@@ -380,6 +413,13 @@ This case is intentionally concise, but extensible.[^next-3]
 [^next-1]: Add sections for context, constraints, explorations, outcomes, metrics, and retrospective when adapting this template for production.
 [^next-2]: Add sections for context, constraints, explorations, outcomes, metrics, and retrospective when adapting this template for production.
 [^next-3]: Add sections for context, constraints, explorations, outcomes, metrics, and retrospective when adapting this template for production.
+
+<!-- lang:pt -->
+## Context
+Add localized context in pt.
+
+## Outcome
+Add localized outcome in pt.
 
 <!-- lang:he -->
 # בונים את Portfoliable
@@ -463,7 +503,6 @@ npm run portfoliable-create-case -- --name "Checkout Revamp"
 - [x] סכמת קייס עם שדות מקומיים
 - [x] קומפוזיציה של Reader + Summary + Navigator
 - [x] סיפור מבוסס Markdown
-- [ ] תוכן פרודקשן מוכן לפרסום בכל לוקאל
 
 ## הערות
 אפשר להתחיל בקטן ולהרחיב בהמשך. תיעוד פרקטי עדיף על המתנה לתנאים מושלמים.

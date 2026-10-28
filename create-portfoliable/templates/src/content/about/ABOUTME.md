@@ -3,6 +3,7 @@
   // Identity
   "slugByLocale": {
     "en": "about",
+    "pt": "about",
     "he": "about"
   },
   "socialImage": {
@@ -14,11 +15,13 @@
   "title": {
     "show": true,
     "en": "About Portfoliable",
+    "pt": "About Portfoliable",
     "he": "אודות Portfoliable"
   },
   "subtitle": {
     "show": true,
     "en": "A short introduction to the Portfoliable project",
+    "pt": "A short introduction to the Portfoliable project",
     "he": "היכרות קצרה עם פרויקט Portfoliable"
   },
 
@@ -38,6 +41,7 @@
       "icon-variant": "outline",
       "tooltip": {
         "en": "Share this about page",
+        "pt": "Share this about page",
         "he": "שיתוף דף האודות"
       }
     },
@@ -47,6 +51,7 @@
       "icon-variant": "outline",
       "tooltip": {
         "en": "Share on LinkedIn",
+        "pt": "Share on LinkedIn",
         "he": "שיתוף בלינקדאין"
       }
     },
@@ -56,6 +61,7 @@
       "icon-variant": "outline",
       "tooltip": {
         "en": "Share on X",
+        "pt": "Share on X",
         "he": "שיתוף ב-X"
       }
     },
@@ -65,6 +71,7 @@
       "icon-variant": "outline",
       "tooltip": {
         "en": "Share on Facebook",
+        "pt": "Share on Facebook",
         "he": "שיתוף בפייסבוק"
       }
     },
@@ -74,6 +81,39 @@
       "facebook": ""
     }
   },
+
+  // Custom Buttons
+  "customButtons": [
+    {
+      "label": {
+        "en": "Read the documentation",
+        "pt": "Ler a documentação",
+        "he": "קריאת התיעוד"
+      },
+      "url": {
+        "en": "https://portfoliable.js.org/docs/",
+        "pt": "https://portfoliable.js.org/docs/",
+        "he": "https://portfoliable.js.org/docs/"
+      },
+      "tooltip": {
+        "en": "Open the documentation",
+        "pt": "Abrir a documentação",
+        "he": "פתיחת התיעוד"
+      },
+      "variant": "secondary",
+      "icon": "",
+      "imageAlt": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      },
+      "ariaLabel": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      }
+    }
+  ],
 }
 -->
 
@@ -138,6 +178,11 @@ Remove:
 Read more at [Portfoliable](https://www.portfoliable.js.org/).
 
 [^1]: Markdown footnotes help add detail without breaking the flow.
+
+<!-- lang:pt -->
+# About Me
+
+Add localized About content in pt.
 
 <!-- lang:he -->
 # אודות Portfoliable

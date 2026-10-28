@@ -485,14 +485,16 @@ if (!customElements.get('runtime-case-view')) {
                                     display: grid;
                                     grid-template-rows: auto auto;
                                     width: 100%;
+                                    max-width: 100%;
+                                    min-width: 0;
                                     min-height: 100%;
                                     overflow: visible;
                                 }
 
                                 .header-wrap {
-                                    width: 100vw;
-                                    margin-left: calc(50% - 50vw);
-                                    margin-right: calc(50% - 50vw);
+                                    width: 100%;
+                                    max-width: 100%;
+                                    min-width: 0;
                                     margin-bottom: var(--caseview-header-margin-bottom, 0px);
                                     background: transparent;
                                 }
@@ -504,6 +506,8 @@ if (!customElements.get('runtime-case-view')) {
 
                                 .article-wrap {
                                     width: min(924px, 100%);
+                                    min-width: 0;
+                                    max-width: 100%;
                                     margin: 0 auto;
                                     padding: 0 clamp(12px, 2vw, 28px) clamp(24px, 4dvh, 48px);
                                     box-sizing: border-box;
@@ -519,6 +523,8 @@ if (!customElements.get('runtime-case-view')) {
 
                                 .article-wrap ds-article {
                                     display: block;
+                                    min-width: 0;
+                                    max-width: 100%;
                                     --ds-article-padding: var(--space-xl, 24px) 0 clamp(36px, 6dvh, 64px);
                                 }
                             </style>
@@ -686,10 +692,12 @@ if (!customElements.get('runtime-case-view')) {
 const template = document.createElement('template');
 template.innerHTML = `
   <style>
-    :host { 
-      display: block; 
-      height: 100vh; 
-      width: 100vw; 
+    :host {
+      display: block;
+      height: 100vh;
+      width: 100%;
+            max-width: 100%;
+            min-width: 0;
             overflow: hidden;
             overflow-x: hidden;
     background-color: var(--color-bg, var(--color-player-bg, #101218));
@@ -3668,6 +3676,7 @@ class AppShell extends HTMLElement {
         const homeConfig = portfoliableDesignConfig?.homeView || {};
         const homeGalleryConfig = this._resolveHomeGalleryConfig();
         this._applyHomeTitleGalleryGapOverrides(homeView, homeGalleryConfig);
+        this._applyHomeGalleryItemGapOverrides(homeView, homeGalleryConfig);
         const titleText = t('h1_title');
         const footerText = t('footer_text');
         const itemCount = Number(homeConfig.itemCount) || Math.min(4, this._portfolioCases.length);
@@ -3729,10 +3738,9 @@ class AppShell extends HTMLElement {
             }
 
             this._applyHomeGalleryContainerHeightOverride(homeView, gallery, homeGalleryConfig);
-
-            const applyReducedGalleryHeights = () => this._applyHomeGalleryHeightOverride(gallery, homeGalleryConfig);
-            requestAnimationFrame(applyReducedGalleryHeights);
-            requestAnimationFrame(() => requestAnimationFrame(applyReducedGalleryHeights));
+            // Apply item heights in the same render pass as Gallery items. Delaying
+            // this to animation frames causes a visible layout shift after entry.
+            this._applyHomeGalleryHeightOverride(gallery, homeGalleryConfig);
 
             const restoreGalleryOffset = () => this._restoreHomeGalleryOffset(gallery);
             requestAnimationFrame(restoreGalleryOffset);
@@ -3756,6 +3764,8 @@ class AppShell extends HTMLElement {
                 mobileOnlyHeight: null,
                 titleGalleryGapDesktop: null,
                 titleGalleryGapMobile: null,
+                itemGapDesktop: null,
+                itemGapMobile: null,
                 categoryHeights: null,
                 pillLabels: null
             };
@@ -3786,6 +3796,12 @@ class AppShell extends HTMLElement {
         const rawTitleGalleryGapMobile = homeGalleryConfig['--ds-home-title-gallery-gap-mobile'];
         const titleGalleryGapMobile = normalizeGalleryCssValue(rawTitleGalleryGapMobile);
 
+        const rawItemGapDesktop = homeGalleryConfig['--gallery-item-gap-desktop'];
+        const itemGapDesktop = normalizeGalleryCssValue(rawItemGapDesktop);
+
+        const rawItemGapMobile = homeGalleryConfig['--gallery-item-gap-mobile'];
+        const itemGapMobile = normalizeGalleryCssValue(rawItemGapMobile);
+
         const rawCategoryHeights = homeGalleryConfig.categoryHeights;
         const categoryHeights = rawCategoryHeights && typeof rawCategoryHeights === 'object'
             ? rawCategoryHeights
@@ -3801,6 +3817,8 @@ class AppShell extends HTMLElement {
             mobileOnlyHeight,
             titleGalleryGapDesktop,
             titleGalleryGapMobile,
+            itemGapDesktop,
+            itemGapMobile,
             categoryHeights,
             pillLabels
         };
@@ -3837,6 +3855,26 @@ class AppShell extends HTMLElement {
             homeView.style.setProperty('--ds-home-title-gallery-gap-mobile', resolvedConfig.titleGalleryGapMobile);
         } else {
             homeView.style.removeProperty('--ds-home-title-gallery-gap-mobile');
+        }
+    }
+
+    _applyHomeGalleryItemGapOverrides(homeView, homeGalleryConfig = null) {
+        if (!(homeView instanceof HTMLElement)) return;
+
+        const resolvedConfig = homeGalleryConfig || this._resolveHomeGalleryConfig();
+        const gallery = homeView.shadowRoot?.querySelector('ds-gallery');
+        if (!(gallery instanceof HTMLElement)) return;
+
+        if (resolvedConfig.itemGapDesktop) {
+            gallery.style.setProperty('--gallery-item-gap-desktop', resolvedConfig.itemGapDesktop);
+        } else {
+            gallery.style.removeProperty('--gallery-item-gap-desktop');
+        }
+
+        if (resolvedConfig.itemGapMobile) {
+            gallery.style.setProperty('--gallery-item-gap-mobile', resolvedConfig.itemGapMobile);
+        } else {
+            gallery.style.removeProperty('--gallery-item-gap-mobile');
         }
     }
 
@@ -4128,8 +4166,12 @@ class AppShell extends HTMLElement {
         const gallery = homeRoot?.querySelector('ds-gallery') || null;
         const galleryItems = gallery?.shadowRoot?.querySelectorAll('ds-gallery-item') || [];
         const hasReadyTargets = Boolean(homeRoot) && (galleryItems.length > 0 || gallery instanceof HTMLElement);
+        const deviceImagesReady = [...galleryItems].every((item) => {
+            const image = item.shadowRoot?.querySelector('ds-thumbnail')?.shadowRoot?.querySelector('.device-image');
+            return !image || image.complete;
+        });
 
-        if (!hasReadyTargets && attempt < 18) {
+        if ((!hasReadyTargets || !deviceImagesReady) && attempt < 120) {
             requestAnimationFrame(() => {
                 this._animateHomeEntrance(attempt + 1, resolvedRunId);
             });
@@ -4229,7 +4271,7 @@ class AppShell extends HTMLElement {
         [...galleryItems].slice(0, profile.maxItems).forEach((itemEl, index) => {
             const animation = itemEl.animate(
                 [
-                    { opacity: 0, transform: `translateY(${profile.itemTranslateY}px) scale(${profile.itemScale})` },
+                    { opacity: 1, transform: `translateY(${profile.itemTranslateY}px) scale(${profile.itemScale})` },
                     { opacity: 1, transform: 'translateY(0) scale(1)' }
                 ],
                 {
