@@ -21,6 +21,12 @@ export default {
       '--ds-home-title-gallery-gap-desktop': '70px',
       // Optional mobile spacing between H1 title and gallery container.
       '--ds-home-title-gallery-gap-mobile': null,
+      // Optional desktop gap between cards in the Home gallery.
+      // Accepts any CSS size, e.g. '48px', '4vw', or 'clamp(24px, 4vw, 72px)'.
+      '--gallery-item-gap-desktop': null,
+      // Optional mobile gap between cards in the Home gallery.
+      // When null, Valence uses its responsive gallery default.
+      '--gallery-item-gap-mobile': null,
       // Sets the ds-gallery host height in Home view only.
       // Use a CSS size string, e.g. '420px', '52vh', 'min(52vh, 520px)'.
       '--ds-gallery-height': null,

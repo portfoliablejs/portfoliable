@@ -14,6 +14,10 @@ export const LANGUAGE_CONFIG = Object.freeze({
     "name": "English",
     "htmlLang": "en-US"
   },
+  "pt": {
+    "name": "Português",
+    "htmlLang": "pt-BR"
+  },
   "he": {
     "name": "עברית",
     "htmlLang": "he-IL"

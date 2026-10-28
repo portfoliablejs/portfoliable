@@ -38,4 +38,23 @@ describe('case markdown rendering', () => {
     expect(html).toContain('<pre><code>');
     expect(html).toContain('const answer = 42;');
   });
+
+  it.each(['md', 'markdown'])('marks %s fences as Markdown code', (language) => {
+    const html = renderLocalizedMarkdownHtml(`\`\`\`${language}\n## Embedded Markdown\n\`\`\``, ['en'])
+      .htmlByLocale.en;
+
+    expect(html).toContain('<pre><code class="language-markdown">');
+    expect(html).toContain('## Embedded Markdown');
+  });
+
+  it('wraps markdown tables in an accessible horizontal scroll region', () => {
+    const html = renderLocalizedMarkdownHtml(
+      '| Layer | Why it matters |\n| --- | --- |\n| Sub-atoms | A deliberately long explanation that should remain readable |',
+      ['en']
+    ).htmlByLocale.en;
+
+    expect(html).toContain('<div class="article-table-scroll" tabindex="0" role="region" aria-label="Scrollable table">');
+    expect(html).toContain('<table');
+    expect(html).toContain('</div>');
+  });
 });

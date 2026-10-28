@@ -96,6 +96,103 @@ export default {
     "gallery_pill_repo": "Repository",
     "gallery_pill_demo": "Demo",
   },
+  "pt": {
+    // SEO Meta
+    "meta_home_title": "",
+    "meta_home_description": "",
+
+    // Home View
+    "h1_title": "",
+    "footer_text": "",
+    "nav_home": "",
+    "about_title": "",
+    "view_about_aria_label": "",
+
+    // Case View and Actions
+    "view_case_aria_label": "",
+    "protected_case": "",
+    "enter_passcode": "",
+    "unlock": "",
+    "case_unlocked": "",
+    "incorrect_passcode": "",
+
+    // Player View
+    "player_video_title": "",
+    "player_label_play": "",
+    "player_label_pause": "",
+    "player_label_cc_on": "",
+    "player_label_cc_off": "",
+    "player_label_mute": "",
+    "player_label_unmute": "",
+    "player_label_speed": "",
+
+    // Audio Player
+    "player_audio_reader": "",
+    "player_audio_play": "",
+    "player_audio_pause": "",
+    "player_audio_mute": "",
+    "player_audio_unmute": "",
+    "player_audio_speed": "",
+    "player_audio_hide": "",
+    "player_audio_show": "",
+    "player_audio_autoscroll_on": "",
+    "player_audio_autoscroll_off": "",
+    "player_audio_volume": "",
+    "player_audio_volume_level": "",
+    "player_audio_position": "",
+
+    // Search and Navigator
+    "btn_return": "",
+    "search_cases_placeholder": "",
+    "search_cases_tooltip_open": "",
+    "search_cases_tooltip_close": "",
+    "search_main_view_title": "",
+    "search_main_view_snippet": "",
+    "search_case_studies_label": "",
+    "case_nav_prev": "",
+    "case_nav_next": "",
+    "case_nav_prev_locked": "",
+    "case_nav_next_locked": "",
+
+    // Breadcrumb Menus
+    "breadcrumb_menu_case_header": "",
+    "breadcrumb_menu_video_header": "",
+
+    // Accessibility Modal
+    "popup_a11y_title": "",
+    "a11y_cat_typography": "",
+    "a11y_size": "",
+    "a11y_dyslexia": "",
+    "a11y_cat_visuals": "",
+    "a11y_dark": "",
+    "a11y_contrast": "",
+    "a11y_motion": "",
+    "a11y_tab": "",
+
+    // Language Modal
+    "popup_lang_title": "",
+    "lang_cat": "",
+
+    // Sharing
+    "share_text": "",
+
+    // Table of Contents
+    "toc_title": "",
+    "toc_top_label": "",
+
+    // Toast
+    "resume_reading": "",
+    "toast_label_close": "",
+    "toast_label_never_show": "",
+
+    // Diagnostics and Errors
+    "mermaid_error": "",
+
+    // Other
+    "gallery_pill_pitch": "",
+    "gallery_pill_repo": "",
+    "gallery_pill_demo": "",
+  },
   "he": {
     // SEO Meta
     "meta_home_title": "פורטפוליאבל",

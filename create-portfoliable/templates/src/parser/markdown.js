@@ -30,6 +30,7 @@ markdownRenderer.renderer.rules.paragraph_open = (tokens, idx, options, env, sel
   const inlineToken = tokens[idx + 1];
   if (inlineToken?.type === 'inline' && inlineToken.children?.some((child) => child.type === 'image')) {
     token.attrJoin('class', 'media-paragraph');
+    token.attrSet('style', 'width:var(--ds-article-media-width,100%);max-width:var(--ds-article-media-width,100%);align-self:stretch;');
   }
   token.attrJoin('class', 'p1');
   if (paragraphOpenDefault) {
@@ -65,6 +66,7 @@ const imageOpenDefault = markdownRenderer.renderer.rules.image;
 markdownRenderer.renderer.rules.image = (tokens, idx, options, env, self) => {
   const token = tokens[idx];
   token.attrSet('draggable', 'false');
+  token.attrSet('style', 'width:100%;max-width:100%;height:auto;display:block;');
 
   if (imageOpenDefault) {
     return imageOpenDefault(tokens, idx, options, env, self);
@@ -73,10 +75,34 @@ markdownRenderer.renderer.rules.image = (tokens, idx, options, env, self) => {
   return self.renderToken(tokens, idx, options);
 };
 
+const tableOpenDefault = markdownRenderer.renderer.rules.table_open;
+markdownRenderer.renderer.rules.table_open = (tokens, idx, options, env, self) => {
+  const token = tokens[idx];
+  token.attrJoin('class', 'article-table-scroll');
+  token.attrSet('style', 'width:max-content !important;min-width:100% !important;max-width:none !important;margin:0 !important;');
+  const table = tableOpenDefault
+    ? tableOpenDefault(tokens, idx, options, env, self)
+    : self.renderToken(tokens, idx, options);
+  return '<div class="article-table-scroll" tabindex="0" role="region" aria-label="Scrollable table">\n' + table;
+};
+
+const tableCloseDefault = markdownRenderer.renderer.rules.table_close;
+markdownRenderer.renderer.rules.table_close = (tokens, idx, options, env, self) => {
+  const table = tableCloseDefault
+    ? tableCloseDefault(tokens, idx, options, env, self)
+    : self.renderToken(tokens, idx, options);
+  return `${table}</div>\n`;
+};
+
 // Emits Mermaid fences as the Valence custom element instead of a code block.
 markdownRenderer.renderer.rules.fence = (tokens, idx) => {
   const token = tokens[idx];
-  if (String(token.info || '').trim().split(/\s+/)[0].toLowerCase() !== 'mermaid') {
+  const language = String(token.info || '').trim().split(/\s+/)[0].toLowerCase();
+  if (language === 'md' || language === 'markdown') {
+    return `<pre><code class="language-markdown">${markdownRenderer.utils.escapeHtml(token.content)}</code></pre>\n`;
+  }
+
+  if (language !== 'mermaid') {
     return `<pre><code>${markdownRenderer.utils.escapeHtml(token.content)}</code></pre>\n`;
   }
 
