@@ -33,6 +33,48 @@
     "locales": {}
   },
 
+  // Actions
+  "actions": {
+    "secondary": {
+      "enabled": true,
+      "variant": "secondary",
+      "label": {
+        "en": "Read the documentation",
+        "pt": "Ler a documentação",
+        "he": "קריאת התיעוד"
+      },
+      "tooltip": {
+        "en": "Open the documentation",
+        "pt": "Abrir a documentação",
+        "he": "פתיחת התיעוד"
+      },
+      "url": {
+        "en": "https://portfoliable.js.org/docs/",
+        "pt": "https://portfoliable.js.org/docs/",
+        "he": "https://portfoliable.js.org/docs/"
+      }
+    },
+    "tertiary": {
+      "enabled": false,
+      "variant": "tertiary",
+      "label": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      },
+      "tooltip": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      },
+      "url": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      }
+    }
+  },
+
   // Social
   "social": {
     "share": {
