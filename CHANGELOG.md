@@ -1,3 +1,10 @@
+## [1.4.8](https://github.com/portfoliablejs/portfoliable/compare/v1.4.7...v1.4.8) (2026-10-28)
+
+### Bug Fixes
+
+* fix: unify About action contract (#117) ([79f4da8](https://github.com/portfoliablejs/portfoliable/commit/79f4da8fd60c6b3b9de5d9f0fdc16f7bdb8b702d))
+* fix: unify About action contract ([356d7e2](https://github.com/portfoliablejs/portfoliable/commit/356d7e234ac48811787d21af1623d20178afeba7))
+
 ## [1.4.7](https://github.com/portfoliablejs/portfoliable/compare/v1.4.6...v1.4.7) (2026-10-28)
 
 ### Bug Fixes
@@ -273,6 +280,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
