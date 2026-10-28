@@ -12,6 +12,16 @@ describe('case markdown rendering', () => {
     expect(html).toContain('<img src="src/content/cases/example/image.avif" alt="Example" width="300">');
   });
 
+  it('marks markdown images as non-draggable', () => {
+    const html = renderLocalizedMarkdownHtml(
+      '![Example](src/content/cases/example/image.avif)',
+      ['en']
+    ).htmlByLocale.en;
+
+    expect(html).toContain('class="media-paragraph p1"');
+    expect(html).toContain('draggable="false"');
+  });
+
   it('renders Mermaid fences as diagram elements', () => {
     const html = renderLocalizedMarkdownHtml('```mermaid\ngraph TD\n  A --> B\n```', ['en'])
       .htmlByLocale.en;

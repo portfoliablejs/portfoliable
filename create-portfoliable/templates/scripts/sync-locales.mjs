@@ -159,6 +159,13 @@ const LABEL_GROUPS = [
     ]
   },
   {
+    title: 'Table of Contents',
+    keys: [
+      'toc_title',
+      'toc_top_label'
+    ]
+  },
+  {
     title: 'Toast',
     keys: [
       'resume_reading',

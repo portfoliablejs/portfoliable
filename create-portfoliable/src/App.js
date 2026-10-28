@@ -435,7 +435,9 @@ const CASEVIEW_ARTICLE_ATTRIBUTES = [
     'show-summary',
     'show-player',
     'show-toc',
-    'show-navigator'
+    'show-navigator',
+    'toc-title-text',
+    'toc-top-label'
 ];
 
 const ACCESSIBILITY_ATTRIBUTES = [
@@ -4639,7 +4641,9 @@ class AppShell extends HTMLElement {
                     'show-social-x': socialControls.x?.enabled ? 'true' : 'false',
                     'show-social-facebook': socialControls.facebook?.enabled ? 'true' : 'false',
                     'show-toc': showToc ? 'true' : 'false',
-                    'show-navigator': showNavigator ? 'true' : 'false'
+                    'show-navigator': showNavigator ? 'true' : 'false',
+                    'toc-title-text': t('toc_title'),
+                    'toc-top-label': t('toc_top_label')
                 });
 
                 const caseMarkup = `
@@ -5557,6 +5561,8 @@ class AppShell extends HTMLElement {
             'show-player': 'false',
             'show-toc': 'false',
             'show-navigator': 'false',
+            'toc-title-text': t('toc_title'),
+            'toc-top-label': t('toc_top_label'),
             'show-action-primary': (showPrimary && primaryAction.label) ? 'true' : 'false',
             'show-action-secondary1': (showSecondary1 && secondaryAction.label) ? 'true' : 'false',
             'show-action-secondary2': (showSecondary2 && tertiaryAction.label) ? 'true' : 'false',
@@ -5675,6 +5681,9 @@ class AppShell extends HTMLElement {
 
         const template = document.createElement('template');
         template.innerHTML = String(html || '');
+        template.content.querySelectorAll('img').forEach((image) => {
+            image.setAttribute('draggable', 'false');
+        });
         template.content.querySelectorAll('[src]').forEach((element) => {
             const source = element.getAttribute('src');
             if (source) element.setAttribute('src', this._resolveRuntimeMediaUrl(source));

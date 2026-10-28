@@ -79,6 +79,10 @@ export default {
     // Sharing
     "share_text": "Check out this case study.",
 
+    // Table of Contents
+    "toc_title": "Contents",
+    "toc_top_label": "Top of the page",
+
     // Toast
     "resume_reading": "Resume:",
     "toast_label_close": "Close",
@@ -171,6 +175,10 @@ export default {
 
     // Sharing
     "share_text": "בדקו את הקייס הזה.",
+
+    // Table of Contents
+    "toc_title": "תוכן העניינים",
+    "toc_top_label": "ראש הדף",
 
     // Toast
     "resume_reading": "המשך:",
