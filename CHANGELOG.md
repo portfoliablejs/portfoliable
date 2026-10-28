@@ -1,3 +1,10 @@
+## [1.4.5](https://github.com/portfoliablejs/portfoliable/compare/v1.4.4...v1.4.5) (2026-10-28)
+
+### Bug Fixes
+
+* fix: consume Valence article accessibility updates (#111) ([3d45301](https://github.com/portfoliablejs/portfoliable/commit/3d45301b3d0a97987338d50b90a6e0ec4d8ac287))
+* fix: consume Valence article accessibility updates ([d7babd5](https://github.com/portfoliablejs/portfoliable/commit/d7babd501edcd85c80fb54f8c90cb66de3c6de69))
+
 ## [1.4.4](https://github.com/portfoliablejs/portfoliable/compare/v1.4.3...v1.4.4) (2026-10-27)
 
 ### Bug Fixes
@@ -252,6 +259,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
