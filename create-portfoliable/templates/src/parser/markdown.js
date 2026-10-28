@@ -27,6 +27,10 @@ const markdownRenderer = new MarkdownIt({
 const paragraphOpenDefault = markdownRenderer.renderer.rules.paragraph_open;
 markdownRenderer.renderer.rules.paragraph_open = (tokens, idx, options, env, self) => {
   const token = tokens[idx];
+  const inlineToken = tokens[idx + 1];
+  if (inlineToken?.type === 'inline' && inlineToken.children?.some((child) => child.type === 'image')) {
+    token.attrJoin('class', 'media-paragraph');
+  }
   token.attrJoin('class', 'p1');
   if (paragraphOpenDefault) {
     return paragraphOpenDefault(tokens, idx, options, env, self);
@@ -51,6 +55,19 @@ markdownRenderer.renderer.rules.link_open = (tokens, idx, options, env, self) =>
 
   if (linkOpenDefault) {
     return linkOpenDefault(tokens, idx, options, env, self);
+  }
+
+  return self.renderToken(tokens, idx, options);
+};
+
+// Marks markdown-authored images as non-draggable while preserving authored attributes.
+const imageOpenDefault = markdownRenderer.renderer.rules.image;
+markdownRenderer.renderer.rules.image = (tokens, idx, options, env, self) => {
+  const token = tokens[idx];
+  token.attrSet('draggable', 'false');
+
+  if (imageOpenDefault) {
+    return imageOpenDefault(tokens, idx, options, env, self);
   }
 
   return self.renderToken(tokens, idx, options);
