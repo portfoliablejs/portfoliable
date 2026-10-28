@@ -200,7 +200,7 @@ function parseAboutMarkdown(markdown) {
         collectLocalesFromValue(item?.ariaLabel ?? item?.['aria-label']);
     });
 
-    ['primary', 'secondary1', 'secondary2'].forEach((actionKey) => {
+    ['primary', 'secondary', 'tertiary'].forEach((actionKey) => {
         const action = rawConfig.actions?.[actionKey];
         collectLocalesFromValue(action?.label);
         collectLocalesFromValue(action?.tooltip);
@@ -356,8 +356,8 @@ function parseAboutMarkdown(markdown) {
             },
             actions: {
                 primary: normalizeAction(rawConfig.actions?.primary, 'primary'),
-                secondary1: normalizeAction(rawConfig.actions?.secondary1, 'secondary'),
-                secondary2: normalizeAction(rawConfig.actions?.secondary2, 'tertiary')
+                secondary: normalizeAction(rawConfig.actions?.secondary, 'secondary'),
+                tertiary: normalizeAction(rawConfig.actions?.tertiary, 'tertiary')
             },
             slugByLocale: localizedSlugByLocale,
             socialImage: localizedSocialImage,
@@ -5551,8 +5551,8 @@ class AppShell extends HTMLElement {
         const socialConfig = aboutConfig.social || {};
         const customButtons = Array.isArray(aboutConfig.customButtons) ? aboutConfig.customButtons : [];
         const actionPrimary = aboutConfig.actions?.primary || {};
-        const actionSecondary1 = aboutConfig.actions?.secondary1 || {};
-        const actionSecondary2 = aboutConfig.actions?.secondary2 || {};
+        const actionSecondary = aboutConfig.actions?.secondary || {};
+        const actionTertiary = aboutConfig.actions?.tertiary || {};
         const socialControls = this._resolveSocialControlsMap(socialConfig, { shareEnabledByDefault: false });
         const aboutSocialLinks = this._resolveSocialLinksMap(socialConfig);
 
@@ -5573,8 +5573,8 @@ class AppShell extends HTMLElement {
         };
 
         const primaryAction = resolveAboutAction(actionPrimary, '', 'primary');
-        const secondaryAction = resolveAboutAction(actionSecondary1, '', 'secondary');
-        const tertiaryAction = resolveAboutAction(actionSecondary2, '', 'tertiary');
+        const secondaryAction = resolveAboutAction(actionSecondary, '', 'secondary');
+        const tertiaryAction = resolveAboutAction(actionTertiary, '', 'tertiary');
 
         const showPrimary = primaryAction.enabled !== false && primaryAction.url.length > 0;
         const showSecondary1 = secondaryAction.enabled !== false && secondaryAction.url.length > 0;
