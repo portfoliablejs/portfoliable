@@ -1,3 +1,10 @@
+## [1.4.7](https://github.com/portfoliablejs/portfoliable/compare/v1.4.6...v1.4.7) (2026-10-28)
+
+### Bug Fixes
+
+* fix: synchronize generated Markdown parser (#115) ([1df816b](https://github.com/portfoliablejs/portfoliable/commit/1df816bb111e6945d55a4171716d233f51058a39))
+* fix: synchronize generated Markdown parser ([4b73b68](https://github.com/portfoliablejs/portfoliable/commit/4b73b68c25e35eb67de67129b3509aa2e3313b54))
+
 ## [1.4.6](https://github.com/portfoliablejs/portfoliable/compare/v1.4.5...v1.4.6) (2026-10-28)
 
 ### Bug Fixes
@@ -266,6 +273,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
