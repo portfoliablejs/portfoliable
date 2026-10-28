@@ -1,7 +1,7 @@
-// File: create-portfoliable/templates/src/parser/markdown.js
-// Purpose: Parse template markdown cases into normalized case data.
+// File: src/parser/markdown.js
+// Purpose: Parse Portfoliable case markdown into structured case data.
 // Author: Lio Schimanko
-// Note: Auto-synced from src/parser/markdown.js. Edit the canonical source only.
+
 import MarkdownIt from 'markdown-it';
 import markdownItDeflist from 'markdown-it-deflist';
 import markdownItFootnote from 'markdown-it-footnote';
