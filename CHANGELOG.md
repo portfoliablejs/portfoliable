@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/portfoliablejs/portfoliable/compare/v1.5.0...v1.5.1) (2026-10-29)
+
+### Bug Fixes
+
+* fix: generate localized SEO metadata pages (#121) ([30002bb](https://github.com/portfoliablejs/portfoliable/commit/30002bb044cd833c1a28545efb57b0db35c259d5))
+* fix: generate localized SEO metadata pages ([ac0440f](https://github.com/portfoliablejs/portfoliable/commit/ac0440f4552b50e8ffbbbaf6abd0b6b44f128344))
+
 ## [1.5.0](https://github.com/portfoliablejs/portfoliable/compare/v1.4.8...v1.5.0) (2026-10-29)
 
 ### Features
@@ -291,6 +298,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
