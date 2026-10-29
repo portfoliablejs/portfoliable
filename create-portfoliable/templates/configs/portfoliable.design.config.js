@@ -42,6 +42,21 @@ export default {
         television: null,
         tv: null
       },
+      // Optional final thumbnail heights by model. The wildcard covers every
+      // model in the category; named entries override it independently of brand.
+      modelHeights: {
+        wearable: { '*': null },
+        mobile: {
+          '*': null,
+          'Apple iPhone 12': '20vh',
+          'Apple iPhone 12 Pro Max': '43.2vh',
+          'Apple iPhone 18 Pro': '43.2vh'
+        },
+        tablet: { '*': null },
+        desktop: { '*': null },
+        television: { '*': null },
+        tv: { '*': null }
+      },
       // Optional i18n override labels for GalleryItem pills in Home view.
       // When null, runtime falls back to i18n labels (gallery_pill_pitch/repo/demo).
       pillLabels: {

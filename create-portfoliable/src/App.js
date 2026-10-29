@@ -3767,6 +3767,7 @@ class AppShell extends HTMLElement {
                 itemGapDesktop: null,
                 itemGapMobile: null,
                 categoryHeights: null,
+                modelHeights: null,
                 pillLabels: null
             };
         }
@@ -3807,6 +3808,11 @@ class AppShell extends HTMLElement {
             ? rawCategoryHeights
             : null;
 
+        const rawModelHeights = homeGalleryConfig.modelHeights;
+        const modelHeights = rawModelHeights && typeof rawModelHeights === 'object'
+            ? rawModelHeights
+            : null;
+
         const rawPillLabels = homeGalleryConfig.pillLabels;
         const pillLabels = rawPillLabels && typeof rawPillLabels === 'object'
             ? rawPillLabels
@@ -3820,6 +3826,7 @@ class AppShell extends HTMLElement {
             itemGapDesktop,
             itemGapMobile,
             categoryHeights,
+            modelHeights,
             pillLabels
         };
     }
@@ -3982,9 +3989,23 @@ class AppShell extends HTMLElement {
         this._homeGalleryRestoreRetryCount = 0;
     }
 
+    _getHomeGalleryBaseHeightForModel(category, model, modelHeights) {
+        const categoryMap = modelHeights?.[String(category || '').trim().toLowerCase()];
+        if (!categoryMap || typeof categoryMap !== 'object') return null;
+
+        const normalizedModel = String(model || '').trim().toLowerCase();
+        const configured = Object.entries(categoryMap).find(([key]) => key.toLowerCase() === normalizedModel)?.[1]
+            ?? categoryMap['*'];
+        const height = resolveDesignString(configured);
+        return height && height.toLowerCase() !== 'null' && height.toLowerCase() !== 'undefined'
+            ? height
+            : null;
+    }
+
     _getHomeGalleryHeightForCategory(category, {
         compact = false,
         categoryHeights = null,
+        modelBaseHeight = null,
         mobileOnlyHeight = null,
         desktopDefaultHeight = null
     } = {}) {
@@ -3998,9 +4019,9 @@ class AppShell extends HTMLElement {
             tv: '30vh'
         };
 
-        const configuredBaseHeight = categoryHeights && typeof categoryHeights === 'object'
+        const configuredBaseHeight = modelBaseHeight || (categoryHeights && typeof categoryHeights === 'object'
             ? categoryHeights[normalized]
-            : null;
+            : null);
         const normalizedConfiguredBaseHeight = typeof configuredBaseHeight === 'string'
             ? configuredBaseHeight.trim()
             : '';
@@ -4009,6 +4030,7 @@ class AppShell extends HTMLElement {
             if (compact) {
                 return `calc(${explicitHeight} * 0.84525)`;
             }
+
             return `calc(${explicitHeight} * 1.25)`;
         }
 
@@ -4058,6 +4080,7 @@ class AppShell extends HTMLElement {
         const isMobileBreakpoint = this._isMobileBreakpoint();
         const resolvedConfig = homeGalleryConfig || this._resolveHomeGalleryConfig();
         const categoryHeights = resolvedConfig.categoryHeights;
+        const modelHeights = resolvedConfig.modelHeights;
         const homeView = this.shadowRoot.getElementById('home-view');
         const sizeDefaults = this._resolveHomeGallerySizeDefaults(homeView);
         const mobileOnlyHeight = resolvedConfig.mobileOnlyHeight || sizeDefaults.mobileHeight;
@@ -4068,18 +4091,19 @@ class AppShell extends HTMLElement {
             if (!(itemEl instanceof HTMLElement)) return;
 
             const thumbCategory = itemEl.getAttribute('thumb-category') || 'mobile';
+            const thumbModel = itemEl.getAttribute('thumb-model') || '';
             const thumbWrapper = itemEl.shadowRoot?.querySelector('.case-thumb-wrapper');
             if (!(thumbWrapper instanceof HTMLElement)) return;
 
-            thumbWrapper.style.setProperty(
-                '--device-h-gallery',
-                this._getHomeGalleryHeightForCategory(thumbCategory, {
+            const modelBaseHeight = this._getHomeGalleryBaseHeightForModel(thumbCategory, thumbModel, modelHeights);
+            const height = this._getHomeGalleryHeightForCategory(thumbCategory, {
                     compact: isMobileBreakpoint,
                     categoryHeights,
+                    modelBaseHeight,
                     mobileOnlyHeight,
                     desktopDefaultHeight
-                })
-            );
+                });
+            thumbWrapper.style.setProperty('--device-h-gallery', height);
         });
     }
 
