@@ -216,6 +216,31 @@ Edit the case header block in the markdown file. This is where you set:
 - `thumbSrc` and thumbnail model metadata
 - visibility and protection flags
 
+### Configure crawler and sharing metadata
+
+Portfoliable writes metadata both during the browser runtime and into the static
+HTML produced by `portfoliable build`. This ensures Open Graph crawlers can read
+the correct values without executing the application bundle.
+
+Set the homepage values in `configs/i18n/i18n.labels.js` for every locale:
+
+- `meta_site_url` — optional public origin such as `https://example.com`; it
+  makes generated canonical, Open Graph, and favicon URLs absolute.
+- `meta_home_title` and `meta_home_description` — localized page title and
+  description.
+- `meta_home_image` — localized Open Graph/Twitter cover URL.
+- `meta_home_favicon` — favicon URL or public path.
+
+Cases use their existing localized `title`, `shortDesc`, and `socialImage`
+metadata. The About document uses localized `title`, `subtitle`, and
+`socialImage` in its `about-config` block. Relative image and favicon paths are
+resolved against `meta_site_url`; use a fully qualified URL when the asset is
+hosted outside the generated site.
+
+After changing these fields, run `npm run build` and inspect the generated
+`dist/<locale>/index.html`, `dist/<locale>/about/index.html`, and
+`dist/<locale>/case/<slug>/index.html` files.
+
 ### Add a new locale
 
 ```bash

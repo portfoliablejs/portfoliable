@@ -990,6 +990,7 @@ class AppShell extends HTMLElement {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this._portfolioCases = getPortfolioCases();
         this._aboutPayload = parseAboutMarkdown(aboutMeMarkdownRaw);
+        this._headMetadataSyncToken = 0;
         this._homeVisibleCases = [...this._portfolioCases];
         this._routeSyncInProgress = false;
         this._boundPopState = () => this._handlePopStateRoute();
@@ -8294,6 +8295,7 @@ class AppShell extends HTMLElement {
     }
 
     async _syncHeadMetadata() {
+        const syncToken = ++this._headMetadataSyncToken;
         const activeCase = this._portfolioCases.find((item) => item.id === this.state.activeCaseId) || null;
         const localeCode = resolveLocaleCode(this.state.lang, DEFAULT_LOCALE);
         const path = this._buildCanonicalPathForState(this.state, localeCode);
@@ -8303,7 +8305,7 @@ class AppShell extends HTMLElement {
 
         let title = t('meta_home_title') || t('h1_title');
         let description = t('meta_home_description') || t('footer_text');
-        let imageUrl = '';
+        let imageUrl = t('meta_home_image') || '';
         let visibility = this._resolveVisibilityFlags();
 
         if (this.state.currentView === 'case' || this.state.currentView === 'player') {
@@ -8335,7 +8337,15 @@ class AppShell extends HTMLElement {
             visibility.ai = false;
         }
 
+        if (syncToken !== this._headMetadataSyncToken) return;
+
         document.title = title;
+        const faviconUrl = t('meta_home_favicon');
+        if (faviconUrl) {
+            this._upsertLinkTag('icon', faviconUrl);
+            this._upsertLinkTag('shortcut icon', faviconUrl);
+            this._upsertLinkTag('apple-touch-icon', faviconUrl);
+        }
         this._upsertMetaTag('name', 'description', description);
         this._upsertMetaTag('property', 'og:title', title);
         this._upsertMetaTag('property', 'og:description', description);

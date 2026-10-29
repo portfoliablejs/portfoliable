@@ -28,6 +28,7 @@ import {
 } from '../scripts/terminal-ui.mjs';
 import { resolveConsumerRuntimeAliases } from '../scripts/consumer-runtime-aliases.mjs';
 import { findPackageUpdates } from '../scripts/package-updates.mjs';
+import { generateSeoPages } from '../scripts/generate-seo-pages.mjs';
 
 function resolveMermaidDevAliases(runtimeAliases) {
   return [
@@ -694,6 +695,7 @@ async function runBuild() {
     ...(runtimeAliases.length > 0 ? { resolve: { alias: runtimeAliases } } : {}),
     plugins: [createCaseContentAssetPlugin()]
   });
+  await generateSeoPages({ cwd: process.cwd() });
   console.log(`${green}Build complete.${reset}`);
   printRailSegment({ dot: true, label: `${green}${bold}Build complete.${reset}` });
 }

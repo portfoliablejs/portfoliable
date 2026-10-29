@@ -1,8 +1,11 @@
 export default {
   "en": {
     // SEO Meta
+    "meta_site_url": "",
     "meta_home_title": "Portfoliable",
     "meta_home_description": "Your cases, your stories.",
+    "meta_home_image": "",
+    "meta_home_favicon": "/favicon.png",
 
     // Home View
     "h1_title": "Welcome to Portfoliable",
@@ -98,8 +101,11 @@ export default {
   },
   "pt": {
     // SEO Meta
+    "meta_site_url": "",
     "meta_home_title": "",
     "meta_home_description": "",
+    "meta_home_image": "",
+    "meta_home_favicon": "/favicon.png",
 
     // Home View
     "h1_title": "",
@@ -195,8 +201,11 @@ export default {
   },
   "he": {
     // SEO Meta
+    "meta_site_url": "",
     "meta_home_title": "פורטפוליאבל",
     "meta_home_description": "הקייסים שלך, הסיפורים שלך.",
+    "meta_home_image": "",
+    "meta_home_favicon": "/favicon.png",
 
     // Home View
     "h1_title": "ברוכים הבאים ל-Portfoliable",
