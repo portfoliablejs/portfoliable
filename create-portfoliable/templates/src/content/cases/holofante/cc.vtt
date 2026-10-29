@@ -1,0 +1,88 @@
+WEBVTT
+
+00:00.000 --> 00:04.200
+How do we scale a high-ticket consultancy through DesignOps and automation?
+
+00:04.200 --> 00:07.500
+Welcome to the Holofante ecosystem.
+
+00:07.500 --> 00:11.000
+In the client app, the interface is state-driven.
+
+00:11.000 --> 00:16.000
+Here we see a project with confirmed payment and deliveries in progress.
+
+00:16.000 --> 00:21.000
+The engine behind it all is our Notion CRM and backend.
+
+00:21.000 --> 00:26.000
+When creating a test quote, the system begins the data orchestration.
+
+00:26.000 --> 00:29.500
+I fill in the email and the company size.
+
+00:29.500 --> 00:36.000
+This variable is critical: it automatically defines the price multiplier and contractual deadlines.
+
+00:36.000 --> 00:41.000
+By clicking send, we trigger an agentic orchestration via LangChain.
+
+00:41.000 --> 00:48.000
+The system takes control, generates a unique UUID, and starts scheduling the client's data.
+
+00:48.000 --> 00:56.000
+In seconds, the Node backend integration processes the data and fires a personalized transactional notification.
+
+00:56.000 --> 01:02.000
+The client receives an email with optimized UX, detailing the next steps.
+
+01:02.000 --> 01:08.000
+Contract via Clicksign E-signature and billing via Asaas Fintech.
+
+01:08.000 --> 01:12.500
+Upon clicking, they are taken to the dynamic quote page.
+
+01:12.500 --> 01:21.000
+Here, the URL uses the UUID to ensure privacy and prevent AI indexing.
+
+01:21.000 --> 01:28.000
+The values you see are calculated in real-time by backend formulas and protected by encryption.
+
+01:28.000 --> 01:30.500
+The sync is bidirectional.
+
+01:30.500 --> 01:38.000
+As soon as the client views the quote, the status in our CRM instantly changes to "Quote Viewed".
+
+01:38.000 --> 01:47.000
+Moving to the roadmap stage, when I finish the client manual in Notion and click send, the DesignOps magic happens.
+
+01:47.000 --> 01:56.000
+The system downloads the file, uploads it to a secure bucket, and triggers a real-time push notification.
+
+01:56.000 --> 02:01.000
+In the app, the stage status changes to "Pending Evaluation".
+
+02:01.000 --> 02:07.500
+The client doesn't access a generic link, but an authenticated route.
+
+02:07.500 --> 02:16.000
+Download links are temporary, expiring in 24 hours to protect the intellectual property of the delivery.
+
+02:16.000 --> 02:18.500
+The approval flow is rigorous.
+
+02:18.500 --> 02:27.500
+The client reviews and approves directly through the interface, which logs the timestamp and moves the project.
+
+02:27.500 --> 02:29.200
+Approval confirmed.
+
+02:29.200 --> 02:33.500
+The app unlocks the next stage, automating the final product delivery.
+
+02:33.500 --> 02:37.500
+In the CRM, the card moves automatically to "Approved".
+
+02:37.500 --> 02:42.500
+This is Product-Led Growth applied to Design as a Service.
