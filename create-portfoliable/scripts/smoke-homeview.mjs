@@ -99,6 +99,14 @@ function main() {
     fail('dist/index.html not found.');
   }
 
+  const generatedHomeHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8');
+  assertIncludes(generatedHomeHtml, 'property="og:title"', 'Static home Open Graph title is missing.');
+  assertIncludes(generatedHomeHtml, 'rel="canonical"', 'Static home canonical link is missing.');
+  assertIncludes(generatedHomeHtml, 'rel="icon"', 'Static home favicon link is missing.');
+  if (generatedHomeHtml.includes('Portfoliable Starter')) {
+    fail('Static home HTML still contains the starter title.');
+  }
+
   // Loads emitted main bundle text for marker assertions.
   const bundleText = readMainBundle();
 
