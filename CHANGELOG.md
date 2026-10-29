@@ -1,3 +1,14 @@
+## [1.5.0](https://github.com/portfoliablejs/portfoliable/compare/v1.4.8...v1.5.0) (2026-10-29)
+
+### Features
+
+* feat(gallery): configure thumbnail height by model ([8ef3157](https://github.com/portfoliablejs/portfoliable/commit/8ef31578de8e3d9ba9dc48892f0c3ca5b9cc5da8))
+
+### Bug Fixes
+
+* chore(template): restore only the main template case ([9be0ab7](https://github.com/portfoliablejs/portfoliable/commit/9be0ab70cefba14764a9218a68bae33217327476))
+* test(create-portfoliable): load portfolio cases for homologation ([360859e](https://github.com/portfoliablejs/portfoliable/commit/360859e7231e1cfba009c78eb2cf19db624e1303))
+
 ## [1.4.8](https://github.com/portfoliablejs/portfoliable/compare/v1.4.7...v1.4.8) (2026-10-28)
 
 ### Bug Fixes
@@ -280,6 +291,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
