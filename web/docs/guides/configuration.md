@@ -44,6 +44,35 @@ export default {
 };
 ```
 
+### PlayerView device sizing
+
+The PlayerView device frame height can be configured independently for each
+device category. The width is calculated automatically from the selected
+device frame, so only the viewport-height value (`vh`) needs to be edited.
+
+```js
+export default {
+  components: {
+    templates: {
+      playerView: {
+        categorySizes: {
+          mobile: {
+            height: '39vh'
+          },
+          desktop: {
+            height: '58vh'
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+Supported categories are `wearable`, `mobile`, `tablet`, `desktop`, and
+`television` (with `tv` accepted as an alias). Set a dimension to `null` to
+use Valence's responsive default for that dimension.
+
 ### Visibility and indexing
 
 Portfoliable supports visibility controls for web navigation, crawlers, and AI indexing. These are important for public-facing portfolios and for controlling what gets indexed.

@@ -37,9 +37,9 @@ export default {
       categoryHeights: {
         wearable: null,
         mobile: null,
-        tablet: null,
-        desktop: null,
-        television: null,
+        tablet: '30vh',
+        desktop: '40vh',
+        television: '40vh',
         tv: null
       },
       // Optional final thumbnail heights by model. The wildcard covers every
@@ -48,7 +48,7 @@ export default {
         wearable: { '*': null },
         mobile: {
           '*': null,
-          'Apple iPhone 12': '20vh',
+          'Apple iPhone 12': '35vh',
           'Apple iPhone 12 Pro Max': '43.2vh',
           'Apple iPhone 18 Pro': '43.2vh'
         },
@@ -467,7 +467,17 @@ export default {
         '--player-view-controls-width': null,
         '--player-view-viewport-padding': null,
         '--player-view-viewport-inline-padding': null,
-        '--player-view-viewport-bottom-padding': null
+        '--player-view-viewport-bottom-padding': null,
+        // Optional device frame heights by category. Width is calculated
+        // automatically from the selected device frame.
+        categorySizes: {
+          wearable: { height: '70vh' },
+          mobile: { height: '77vh' },
+          tablet: { height: '70vh' },
+          desktop: { height: '80vh' },
+          television: { height: '70vh' },
+          tv: { height: '58vh' }
+        }
       }
     }
   },

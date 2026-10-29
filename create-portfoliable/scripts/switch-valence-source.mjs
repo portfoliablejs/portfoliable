@@ -47,7 +47,7 @@ function getDeclaredRange(repoRoot) {
 
 // Detects currently installed valence mode (missing, npm package, or local link).
 function getInstalledState(repoRoot) {
-  const modulePath = path.join(repoRoot, 'node_modules', '@portfoliable', 'valence');
+  const modulePath = path.join(repoRoot, 'node_modules', '@portfoliablejs', 'valence');
 
   if (!fs.existsSync(modulePath)) {
     return {
@@ -73,7 +73,7 @@ function getInstalledState(repoRoot) {
 
 // Warns when required template exports are missing from installed valence source.
 function warnIfTemplateExportsMissing(repoRoot) {
-  const mainPath = path.join(repoRoot, 'node_modules', '@portfoliable', 'valence', 'src', 'main.js');
+  const mainPath = path.join(repoRoot, 'node_modules', '@portfoliablejs', 'valence', 'src', 'main.js');
   if (!fs.existsSync(mainPath)) return;
 
   const source = fs.readFileSync(mainPath, 'utf8');
