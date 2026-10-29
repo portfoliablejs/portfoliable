@@ -1,3 +1,9 @@
+## [1.6.0](https://github.com/portfoliablejs/portfoliable/compare/v1.5.1...v1.6.0) (2026-10-29)
+
+### Features
+
+* feat: configure PlayerView category sizing ([57ac482](https://github.com/portfoliablejs/portfoliable/commit/57ac4828ae9f0018662f7f294a11df9104aaa6e7))
+
 ## [1.5.1](https://github.com/portfoliablejs/portfoliable/compare/v1.5.0...v1.5.1) (2026-10-29)
 
 ### Bug Fixes
@@ -298,6 +304,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
