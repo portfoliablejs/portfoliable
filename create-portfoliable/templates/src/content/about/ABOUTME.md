@@ -52,6 +52,16 @@
         "en": "https://portfoliable.js.org/docs/",
         "pt": "https://portfoliable.js.org/docs/",
         "he": "https://portfoliable.js.org/docs/"
+      },
+      "imageAlt": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      },
+      "ariaLabel": {
+        "en": "",
+        "pt": "",
+        "he": ""
       }
     },
     "tertiary": {
@@ -68,6 +78,16 @@
         "he": ""
       },
       "url": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      },
+      "imageAlt": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      },
+      "ariaLabel": {
         "en": "",
         "pt": "",
         "he": ""
@@ -124,38 +144,6 @@
     }
   },
 
-  // Custom Buttons
-  "customButtons": [
-    {
-      "label": {
-        "en": "Read the documentation",
-        "pt": "Ler a documentação",
-        "he": "קריאת התיעוד"
-      },
-      "url": {
-        "en": "https://portfoliable.js.org/docs/",
-        "pt": "https://portfoliable.js.org/docs/",
-        "he": "https://portfoliable.js.org/docs/"
-      },
-      "tooltip": {
-        "en": "Open the documentation",
-        "pt": "Abrir a documentação",
-        "he": "פתיחת התיעוד"
-      },
-      "variant": "secondary",
-      "icon": "",
-      "imageAlt": {
-        "en": "",
-        "pt": "",
-        "he": ""
-      },
-      "ariaLabel": {
-        "en": "",
-        "pt": "",
-        "he": ""
-      }
-    }
-  ],
 }
 -->
 
