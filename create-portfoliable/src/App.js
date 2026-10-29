@@ -3832,6 +3832,29 @@ class AppShell extends HTMLElement {
         };
     }
 
+    _resolvePlayerViewCategorySizes() {
+        const configuredSizes = portfoliableDesignConfig?.components?.templates?.playerView?.categorySizes;
+        if (!configuredSizes || typeof configuredSizes !== 'object') return null;
+
+        const normalized = {};
+        Object.entries(configuredSizes).forEach(([category, size]) => {
+            if (!size || typeof size !== 'object') return;
+            const width = typeof size.width === 'string' ? size.width.trim() : '';
+            const height = typeof size.height === 'string' ? size.height.trim() : '';
+            if (!width && !height) return;
+            normalized[String(category).trim().toLowerCase()] = { width, height };
+        });
+        return normalized;
+    }
+
+    _getPlayerViewCategorySize(category, categorySizes) {
+        const normalizedCategory = String(category || 'mobile').trim().toLowerCase();
+        return categorySizes?.[normalizedCategory]
+            || (normalizedCategory === 'television' ? categorySizes?.tv : null)
+            || (normalizedCategory === 'tv' ? categorySizes?.television : null)
+            || null;
+    }
+
     _resolveHomeGalleryPillLabels() {
         const homeGalleryConfig = this._resolveHomeGalleryConfig();
         const configuredLabels = homeGalleryConfig?.pillLabels;
@@ -4610,6 +4633,8 @@ class AppShell extends HTMLElement {
         const thumbModel = activeCase.thumbModel || 'Apple iPhone 12';
         // Resolves thumbnail device color with fallback.
         const thumbColor = activeCase.thumbColor || 'Black';
+        const playerViewCategorySizes = this._resolvePlayerViewCategorySizes();
+        const playerViewCategorySize = this._getPlayerViewCategorySize(thumbCategory, playerViewCategorySizes);
         const {
             breadcrumbMenuLabels,
             breadcrumbMenuIconConfig,
@@ -5456,6 +5481,8 @@ class AppShell extends HTMLElement {
         const thumbBrand = activeCase.thumbBrand || 'apple';
         const thumbModel = activeCase.thumbModel || 'Apple iPhone 12';
         const thumbColor = activeCase.thumbColor || 'Black';
+        const playerViewCategorySizes = this._resolvePlayerViewCategorySizes();
+        const playerViewCategorySize = this._getPlayerViewCategorySize(thumbCategory, playerViewCategorySizes);
         const subtitleSrc = this._resolveRuntimeMediaUrl(
             this.getLangCurrentLocaleOnly(this._resolveCasePrimaryVttProp(activeCase))
         );
@@ -5496,7 +5523,10 @@ class AppShell extends HTMLElement {
             brand: thumbBrand,
             model: thumbModel,
             color: thumbColor,
-            'screen-video': videoSrc || ''
+            'screen-video': videoSrc || '',
+            'thumbnail-width': playerViewCategorySize?.width
+                || (playerViewCategorySize?.height ? 'auto' : null),
+            'thumbnail-height': playerViewCategorySize?.height || null
         });
         console.debug('[app-shell][player] bind video case', {
             caseId: activeCase.id,

@@ -10,7 +10,7 @@ import { resolveConsumerRuntimeAliases } from './scripts/consumer-runtime-aliase
 
 // Detects when @portfoliablejs/valence is installed as a local symlink.
 function isLocalLinkedValence() {
-  const valencePath = path.resolve(process.cwd(), 'node_modules', '@portfoliable', 'valence');
+  const valencePath = path.resolve(process.cwd(), 'node_modules', '@portfoliablejs', 'valence');
   try {
     return fs.lstatSync(valencePath).isSymbolicLink();
   } catch {
