@@ -714,7 +714,7 @@ template.innerHTML = `
             position: fixed;
             inset: 0 0 auto 0;
             z-index: 4700;
-            pointer-events: none;
+            pointer-events: auto;
             background: transparent;
             border-bottom: 1px solid transparent;
             opacity: 1;
@@ -742,7 +742,7 @@ template.innerHTML = `
         #global-header {
             display: block;
             width: 100%;
-            pointer-events: none;
+            pointer-events: auto;
         }
         main {
             position: relative;
@@ -1802,10 +1802,11 @@ class AppShell extends HTMLElement {
         if (!(globalHeader instanceof HTMLElement)) return;
 
         if (globalHeaderWrap instanceof HTMLElement) {
-            globalHeaderWrap.style.pointerEvents = 'none';
+            globalHeaderWrap.style.pointerEvents = 'auto';
+            globalHeaderWrap.style.overflow = 'visible';
         }
 
-        globalHeader.style.pointerEvents = 'none';
+        globalHeader.style.pointerEvents = 'auto';
 
         const breadcrumbRegion = globalHeader.shadowRoot?.querySelector('.breadcrumb-region');
         const breadcrumbEl = globalHeader.shadowRoot?.querySelector('ds-breadcrumb');
@@ -1828,6 +1829,11 @@ class AppShell extends HTMLElement {
         if (navigationMenu instanceof HTMLElement) {
             navigationMenu.style.pointerEvents = 'auto';
         }
+
+        if (globalHeaderWrap instanceof HTMLElement) {
+            globalHeaderWrap.style.height = '';
+        }
+        globalHeader.style.height = '';
     }
 
     _resolveReturnTooltipKeyLabel() {
@@ -7600,6 +7606,9 @@ class AppShell extends HTMLElement {
 
         // Sync after menu open/close transitions so ui-hidden waits until menus are closed.
         const queueMenuSync = () => {
+            // Expand the fixed header hitbox synchronously, before the next
+            // pointer event can land outside the header's normal 81px height.
+            this._configureGlobalHeaderHitboxPassThrough();
             this._queueContextualMenuVisibilitySync();
         };
 
@@ -7949,11 +7958,21 @@ class AppShell extends HTMLElement {
             appRoot.setAttribute('dir', direction);
             appRoot.setAttribute('data-dir', direction);
         }
+        this._syncLocaleDirectionAcrossComponents(direction);
 
         return {
             lang: normalizedLang,
             direction
         };
+    }
+
+    _syncLocaleDirectionAcrossComponents(direction) {
+        const roots = this._collectAllOpenShadowRoots(this.shadowRoot);
+        roots.forEach((root) => {
+            root.querySelectorAll('ds-header, ds-navigation-menu, ds-breadcrumb').forEach((element) => {
+                element.setAttribute('dir', direction);
+            });
+        });
     }
 
     _setLanguage(nextLang) {
