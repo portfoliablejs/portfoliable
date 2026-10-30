@@ -818,6 +818,9 @@ template.innerHTML = `
             justify-content: stretch;
             box-sizing: border-box;
         }
+        #view-player.active {
+            z-index: 4701;
+        }
         #player-view-host {
             display: block;
             width: 100%;
@@ -1786,11 +1789,9 @@ class AppShell extends HTMLElement {
     _syncEmbeddedHeadersVisibility() {
         const homeView = this.shadowRoot.getElementById('home-view');
         const caseView = this.shadowRoot.getElementById('case-view');
-        const playerView = this.shadowRoot.getElementById('player-view-host')?.querySelector('ds-player-view');
 
         this._hideEmbeddedHeaderWrap(homeView);
         this._hideEmbeddedHeaderWrap(caseView);
-        this._hideEmbeddedHeaderWrap(playerView);
     }
 
     _configureGlobalHeaderHitboxPassThrough() {
@@ -2001,6 +2002,7 @@ class AppShell extends HTMLElement {
 
         const effectiveUiHidden = this._resolveEffectivePlayerUiHidden();
         playerView.toggleAttribute('ui-hidden', effectiveUiHidden);
+        playerView.render();
         return effectiveUiHidden;
     }
 
