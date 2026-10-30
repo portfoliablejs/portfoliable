@@ -175,11 +175,61 @@ export const shortcutLabelBindings = {
 
 // MARK: PLATFORM DETECTION
 // Normalizes the host platform so shortcut labels can use mac/windows/linux variants.
-function detectPlatform(platformHint) {
-  const raw = String(platformHint || globalThis?.navigator?.platform || '').toLowerCase();
-  if (raw.includes('mac')) return 'mac';
-  if (raw.includes('win')) return 'windows';
+export function detectPlatform(platformHint) {
+  if (platformHint) {
+    const rawHint = String(platformHint).toLowerCase();
+    if (rawHint.includes('mac')) return 'mac';
+    if (rawHint.includes('win')) return 'windows';
+    return 'linux';
+  }
+
+  const navigator = globalThis?.navigator;
+  const userAgent = String(navigator?.userAgent || '').toLowerCase();
+  if (userAgent.includes('mac')) return 'mac';
+  if (userAgent.includes('win')) return 'windows';
+
+  const userAgentDataPlatform = String(navigator?.userAgentData?.platform || '').toLowerCase();
+  if (userAgentDataPlatform.includes('mac')) return 'mac';
+  if (userAgentDataPlatform.includes('win')) return 'windows';
+
+  const platform = String(navigator?.platform || '').toLowerCase();
+  if (platform.includes('mac')) return 'mac';
+  if (platform.includes('win')) return 'windows';
   return 'linux';
+}
+
+// Normalizes key aliases for presentation without changing the KeyboardEvent code used for matching.
+export function normalizeShortcutKeyLabel(keyLabel, platformHint) {
+  const platform = detectPlatform(platformHint);
+  const normalized = String(keyLabel || '').trim();
+  if (!normalized) return '';
+
+  const aliases = {
+    enter: platform === 'mac' ? 'Return' : 'Enter',
+    return: platform === 'mac' ? 'Return' : 'Enter',
+    backspace: platform === 'mac' ? 'Delete' : 'Backspace',
+    delete: platform === 'mac' ? 'Delete' : 'Backspace',
+    esc: 'Escape',
+    escape: 'Escape',
+    space: 'Space',
+    tab: 'Tab'
+  };
+  const alias = aliases[normalized.toLowerCase()];
+  if (alias) return alias;
+
+  if (/^key[a-z]$/i.test(normalized)) return normalized.slice(-1).toUpperCase();
+  if (/^digit\d$/i.test(normalized)) return normalized.slice(-1);
+  if (/^[a-z]+$/i.test(normalized)) {
+    return `${normalized.charAt(0).toUpperCase()}${normalized.slice(1).toLowerCase()}`;
+  }
+
+  return normalized;
+}
+
+function normalizeShortcutDisplay(displayLabel, platformHint) {
+  return String(displayLabel || '').replace(/[A-Za-z]+/g, (part) => (
+    normalizeShortcutKeyLabel(part, platformHint)
+  ));
 }
 
 // MARK: PUBLIC SHORTCUT LOOKUPS
@@ -194,11 +244,14 @@ export function getShortcutDisplay(shortcutId, platformHint) {
   if (!shortcut) return '';
 
   const platform = detectPlatform(platformHint);
-  return shortcut.labels?.[platform] || shortcut.labels?.linux || '';
+  return normalizeShortcutDisplay(
+    shortcut.labels?.[platform] || shortcut.labels?.linux || '',
+    platform
+  );
 }
 
 // Returns contextual tooltip parts split into modifier label and key label.
-export function getShortcutTooltipParts(shortcutId) {
+export function getShortcutTooltipParts(shortcutId, platformHint) {
   const shortcut = getShortcutById(shortcutId);
   if (!shortcut) {
     return {
@@ -208,7 +261,7 @@ export function getShortcutTooltipParts(shortcutId) {
     };
   }
 
-  const platform = detectPlatform();
+  const platform = detectPlatform(platformHint);
 
   const KEY_LABEL_BY_CODE = {
     Enter: {
@@ -225,13 +278,16 @@ export function getShortcutTooltipParts(shortcutId) {
 
   const explicitKeyLabel = KEY_LABEL_BY_CODE[shortcut.code]?.[platform];
 
-  const keyLabel = String(explicitKeyLabel || shortcut.code || '')
-    .replace(/^Key/, '')
-    .replace(/^Digit/, '');
+  const keyLabel = normalizeShortcutKeyLabel(
+    String(explicitKeyLabel || shortcut.code || '')
+      .replace(/^Key/i, '')
+      .replace(/^Digit/i, ''),
+    platform
+  );
 
   const modifierLabels = [];
   if (shortcut.ctrlKey) modifierLabels.push(platform === 'mac' ? '⌃' : 'Ctrl');
-  if (shortcut.altKey) modifierLabels.push('Alt');
+  if (shortcut.altKey) modifierLabels.push(platform === 'mac' ? '⌥' : 'Alt');
   if (shortcut.shiftKey) modifierLabels.push('Shift');
   if (shortcut.metaKey) modifierLabels.push('Cmd');
 

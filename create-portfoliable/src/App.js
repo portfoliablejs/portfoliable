@@ -18,6 +18,7 @@ import {
 } from '../templates/configs/i18n/i18n.config.js';
 import portfoliableDesignConfig from '../templates/configs/portfoliable.design.config.js';
 import {
+    detectPlatform,
     getShortcutTooltipParts,
     matchShortcutEvent
 } from '../templates/configs/portfoliable.a11y.config.js';
@@ -1870,7 +1871,13 @@ class AppShell extends HTMLElement {
             if (!(returnTooltip instanceof HTMLElement)) return;
 
             returnTooltip.setAttribute('text', returnText);
-            returnTooltip.setAttribute('kbd-label', this._resolveReturnTooltipKeyLabel());
+            const keyLabel = this._resolveReturnTooltipKeyLabel();
+            returnTooltip.setAttribute('kbd-label', keyLabel);
+            if (keyLabel) {
+                returnTooltip.setAttribute('show-kbd', '');
+            } else {
+                returnTooltip.removeAttribute('show-kbd');
+            }
         };
 
         applyLabel();
@@ -1893,6 +1900,11 @@ class AppShell extends HTMLElement {
             const tooltipParts = this._resolveOpenPlayerTooltipParts();
 
             tooltipEl.setAttribute('kbd-key', tooltipParts.kbdKey);
+            if (tooltipParts.kbdKey) {
+                tooltipEl.setAttribute('show-kbd', '');
+            } else {
+                tooltipEl.removeAttribute('show-kbd');
+            }
 
             if (tooltipParts.kbdLabel) {
                 tooltipEl.setAttribute('kbd-label', tooltipParts.kbdLabel);
@@ -3372,7 +3384,7 @@ class AppShell extends HTMLElement {
         const accessibilityConfig = navigationConfig?.accessibility || {};
         const aboutConfig = navigationConfig?.about || {};
         const aboutButtonConfig = headerConfig?.aboutButton || {};
-        const isMacPlatform = /mac/i.test(String(globalThis?.navigator?.platform || ''));
+        const isMacPlatform = detectPlatform() === 'mac';
         const modifierLabelFallback = isMacPlatform ? '⌥' : 'Alt';
 
         const toBooleanAttr = (value) => {
@@ -3448,6 +3460,40 @@ class AppShell extends HTMLElement {
             if (element.getAttribute(attrName) !== attrValue) {
                 element.setAttribute(attrName, attrValue);
             }
+        });
+
+        this._applyNavigationMenuShortcutLabels(element);
+    }
+
+    _applyNavigationMenuShortcutLabels(headerEl) {
+        const navigationMenu = headerEl.matches?.('ds-navigation-menu')
+            ? headerEl
+            : headerEl.shadowRoot?.querySelector('ds-navigation-menu');
+        const accessibilityMenu = navigationMenu?.accessibilityMenu
+            || navigationMenu?.shadowRoot?.querySelector('.accessibility-menu');
+        if (!accessibilityMenu || !Array.isArray(accessibilityMenu.items)) return;
+
+        const shortcutByItemId = {
+            'text-size': 'text-size',
+            'dyslexia-font': 'dyslexia-font',
+            'dark-mode': 'dark-mode',
+            'high-contrast': 'high-contrast',
+            'reduce-motion': 'reduce-motion',
+            'tab-navigation': 'tab-navigation'
+        };
+
+        accessibilityMenu.items = accessibilityMenu.items.map((item) => {
+            const shortcutId = shortcutByItemId[item.id];
+            if (!shortcutId) return item;
+
+            const shortcut = getShortcutTooltipParts(shortcutId);
+            return {
+                ...item,
+                showKbd: Boolean(shortcut.kbdKey),
+                kbd: shortcut.kbdLabel,
+                kbdShowPlus: shortcut.showPlus,
+                kbdKey: shortcut.kbdKey
+            };
         });
     }
 
@@ -8630,6 +8676,8 @@ class AppShell extends HTMLElement {
             if (navigationMenu.languageMenu) {
                 navigationMenu.languageMenu.items = languageItems;
             }
+
+            this._applyNavigationMenuShortcutLabels(navigationMenu);
         });
     }
 
