@@ -1,3 +1,15 @@
+## [1.6.1](https://github.com/portfoliablejs/portfoliable/compare/v1.6.0...v1.6.1) (2026-10-30)
+
+### Bug Fixes
+
+* fix: add UI and accessibility validation jobs to PR guardrails workflow ([c0dbf5f](https://github.com/portfoliablejs/portfoliable/commit/c0dbf5f3d5539ec9107db01ed762a4a1f17cccdc))
+* fix: enhance accessibility shortcut handling and tooltip normalization per OS ([e0152a9](https://github.com/portfoliablejs/portfoliable/commit/e0152a9e1b0ae35617abb11c3be756420cba982a))
+* fix: enable pointer events for global header and improve tooltip functionality ([8641882](https://github.com/portfoliablejs/portfoliable/commit/864188260cfc9abaa366dab739fe4558eb3c3266))
+* fix: add seek functionality and improve auto-scroll behavior in AppShell ([0575e6d](https://github.com/portfoliablejs/portfoliable/commit/0575e6de598b799297fb674fd293c401cac1ad42))
+* fix: update audio source paths for mobile and tablet cases ([461d3f7](https://github.com/portfoliablejs/portfoliable/commit/461d3f7b766ea219097abbf304b2cbd7e04df144))
+* fix: seekbar tooltip below header in PlayerView ([354fab7](https://github.com/portfoliablejs/portfoliable/commit/354fab7a1d93afadf530f5bb3174d8201c1a19dd))
+* fix: enhance tooltip functionality for mobile ([27ea725](https://github.com/portfoliablejs/portfoliable/commit/27ea725c92fa3e640607d8166856132188f0f5cc))
+
 ## [1.6.0](https://github.com/portfoliablejs/portfoliable/compare/v1.5.1...v1.6.0) (2026-10-29)
 
 ### Features
@@ -304,6 +316,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
