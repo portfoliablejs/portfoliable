@@ -162,9 +162,6 @@ export const keyboardShortcuts = [
 // Maps translation keys to shortcut IDs used for runtime kbd markup.
 export const shortcutLabelBindings = {
   btn_return: { shortcutId: 'navigate-back' },
-  btn_about: { shortcutId: 'about' },
-  btn_lang: { shortcutId: 'language' },
-  btn_a11y: { shortcutId: 'accessibility' },
   a11y_size: { shortcutId: 'text-size', kbdClass: 'a11y-kbd' },
   a11y_dark: { shortcutId: 'dark-mode', kbdClass: 'a11y-kbd' },
   a11y_contrast: { shortcutId: 'high-contrast', kbdClass: 'a11y-kbd' },

@@ -59,6 +59,7 @@
     "ensure:valence": "node ./scripts/ensure-valence-index-css.mjs",
     "validate:content": "node ./cli/portfoliable.mjs validate",
     "validate:protection": "node ./templates/scripts/validate-protection.mjs",
+    "validate:guardrails": "vitest run templates/configs/portfoliable.a11y.contract.test.js src/header-visibility.contract.test.js src/package-contract.test.js src/prism-runtime.contract.test.js src/runtime-media.contract.test.js src/tooltip.contract.test.js",
     "convert:audio": "node ./templates/scripts/convert-wav-to-mp3.mjs",
     "convert:video": "node ./templates/scripts/convert-video-to-mp4.mjs",
     "password:hash": "node ./templates/scripts/generate-password-hash.mjs",
