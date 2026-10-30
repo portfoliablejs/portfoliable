@@ -1052,6 +1052,7 @@ class AppShell extends HTMLElement {
             onHideToggle: null,
             onAutoToggle: null,
             onTimeUpdate: null,
+            onSeek: null,
             onEnded: null,
             onError: null,
             playing: false,
@@ -1059,7 +1060,8 @@ class AppShell extends HTMLElement {
             autoScroll: false,
             pinned: false,
             anchorTime: 0,
-            anchorScrollTop: 0
+            anchorScrollTop: 0,
+            autoScrollReachedEnd: false
         };
         this._navigationAvatarPreloadedSrc = '';
         this._navigationAvatarPreloadPromise = null;
@@ -4875,6 +4877,9 @@ class AppShell extends HTMLElement {
             if (typeof runtime.onTimeUpdate === 'function') {
                 player.removeEventListener('ds-audio-timeupdate', runtime.onTimeUpdate);
             }
+            if (typeof runtime.onSeek === 'function') {
+                player.removeEventListener('ds-audio-seek', runtime.onSeek);
+            }
             if (typeof runtime.onEnded === 'function') {
                 player.removeEventListener('ds-audio-ended', runtime.onEnded);
             }
@@ -4908,6 +4913,7 @@ class AppShell extends HTMLElement {
             onHideToggle: null,
             onAutoToggle: null,
             onTimeUpdate: null,
+            onSeek: null,
             onEnded: null,
             onError: null,
             playing: false,
@@ -4915,7 +4921,8 @@ class AppShell extends HTMLElement {
             autoScroll: false,
             pinned: false,
             anchorTime: 0,
-            anchorScrollTop: 0
+            anchorScrollTop: 0,
+            autoScrollReachedEnd: false
         };
     }
 
@@ -5014,6 +5021,7 @@ class AppShell extends HTMLElement {
             }
 
             if (runtime.autoScroll) {
+                runtime.autoScrollReachedEnd = false;
                 resetAutoscrollAnchor();
             }
         };
@@ -5021,6 +5029,20 @@ class AppShell extends HTMLElement {
         runtime.onTimeUpdate = (event) => {
             this._setCaseAudioPosition(runtime.caseId, event?.detail?.time, { persist: false });
             this._handleCaseAudioAutoScrollProgress(event?.detail || {});
+        };
+
+        runtime.onSeek = (event) => {
+            const percent = Number.parseFloat(event?.detail?.percent);
+            if (!Number.isFinite(percent)) return;
+
+            const duration = Number.parseFloat(player.getAttribute('duration')) || 0;
+            this._setCaseAudioPosition(
+                runtime.caseId,
+                (Math.max(0, Math.min(100, percent)) / 100) * duration,
+                { persist: false }
+            );
+            if (!runtime.autoScroll) return;
+            this._handleCaseAudioSeekProgress(percent);
         };
 
         runtime.onEnded = () => {
@@ -5037,6 +5059,7 @@ class AppShell extends HTMLElement {
         player.addEventListener('ds-audio-hide-toggle', runtime.onHideToggle);
         player.addEventListener('ds-audio-autoscroll-toggle', runtime.onAutoToggle);
         player.addEventListener('ds-audio-timeupdate', runtime.onTimeUpdate);
+        player.addEventListener('ds-audio-seek', runtime.onSeek);
         player.addEventListener('ds-audio-ended', runtime.onEnded);
         player.addEventListener('ds-audio-error', runtime.onError);
 
@@ -5223,7 +5246,7 @@ class AppShell extends HTMLElement {
     _scrollAppWithLenis(top) {
         const clamped = Math.max(0, Number(top) || 0);
         if (this._appLenis && typeof this._appLenis.scrollTo === 'function') {
-            this._appLenis.scrollTo(clamped, { duration: 0.25 });
+            this._appLenis.scrollTo(clamped, { immediate: false });
             return;
         }
         this._scrollAppTo(clamped, 'auto');
@@ -5231,7 +5254,12 @@ class AppShell extends HTMLElement {
 
     _handleCaseAudioAutoScrollProgress(detail = {}) {
         const runtime = this._caseAudioRuntime;
-        if (!runtime.autoScroll || !runtime.playing || this.state.currentView !== 'case') {
+        if (
+            !runtime.autoScroll
+            || runtime.autoScrollReachedEnd
+            || !runtime.playing
+            || this.state.currentView !== 'case'
+        ) {
             return;
         }
 
@@ -5258,6 +5286,56 @@ class AppShell extends HTMLElement {
         const startTop = Math.min(Math.max(0, runtime.anchorScrollTop), maxScrollTop);
         const normalizedProgress = Math.min(1, Math.max(0, (time - startTime) / Math.max(0.001, duration - startTime)));
         const targetTop = startTop + ((maxScrollTop - startTop) * normalizedProgress);
+
+        if (targetTop >= maxScrollTop - 1 || scrollRoot.scrollTop >= maxScrollTop - 1) {
+            runtime.autoScrollReachedEnd = true;
+            if (this._appLenis && typeof this._appLenis.scrollTo === 'function') {
+                this._appLenis.scrollTo(maxScrollTop, { immediate: true });
+            } else {
+                this._scrollAppTo(maxScrollTop, 'auto');
+            }
+            return;
+        }
+
+        this._scrollAppWithLenis(targetTop);
+    }
+
+    _handleCaseAudioSeekProgress(percent) {
+        if (this.state.currentView !== 'case') return;
+
+        const scrollRoot = this._getAppScrollRoot();
+        if (!(scrollRoot instanceof HTMLElement)) return;
+
+        const maxScrollTop = Math.max(0, scrollRoot.scrollHeight - scrollRoot.clientHeight);
+        if (maxScrollTop <= 0) return;
+
+        const caseView = this.shadowRoot?.getElementById('case-view');
+        const articleWrap = caseView?.shadowRoot?.querySelector('.article-wrap');
+        if (!(articleWrap instanceof HTMLElement)) return;
+
+        const rootRect = scrollRoot.getBoundingClientRect();
+        const articleRect = articleWrap.getBoundingClientRect();
+        const articleStart = Math.max(
+            0,
+            articleRect.top + scrollRoot.scrollTop - rootRect.top
+        );
+        const articleEnd = Math.min(
+            maxScrollTop,
+            Math.max(articleStart, articleRect.bottom + scrollRoot.scrollTop - rootRect.top - scrollRoot.clientHeight)
+        );
+        const normalizedPercent = Math.min(100, Math.max(0, Number(percent) || 0));
+        const targetTop = articleStart + ((articleEnd - articleStart) * (normalizedPercent / 100));
+        const runtime = this._caseAudioRuntime;
+        runtime.autoScrollReachedEnd = normalizedPercent >= 99.9;
+
+        if (runtime.autoScrollReachedEnd) {
+            if (this._appLenis && typeof this._appLenis.scrollTo === 'function') {
+                this._appLenis.scrollTo(articleEnd, { immediate: true });
+            } else {
+                this._scrollAppTo(articleEnd, 'auto');
+            }
+            return;
+        }
 
         this._scrollAppWithLenis(targetTop);
     }
