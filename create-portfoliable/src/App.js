@@ -9931,6 +9931,24 @@ class AppShell extends HTMLElement {
         return this._dispatchPlayerControlAction(action);
     }
 
+    _handleCaseAudioPlayerShortcut(event) {
+        if (this.state.currentView !== 'case') return false;
+
+        const caseView = this.shadowRoot?.getElementById('case-view')
+            || this._getActiveCaseView?.()
+            || document.querySelector('ds-case-view');
+        const player = caseView?.querySelector('ds-audio-player[slot="player"]')
+            || this._getFloatingAudioLayer()?.querySelector('ds-audio-player[slot="player"]');
+        if (!player || typeof player.handleShortcut !== 'function') return false;
+
+        if (event.composedPath?.().includes(player)) return false;
+        if (!event.shiftKey && !['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+            return false;
+        }
+
+        return player.handleShortcut(event);
+    }
+
     // MARK: A11Y KEYBOARD SHORTCUTS
     // Handles global keyboard shortcuts that are valid outside text inputs.
     _handleGlobalKeyDown(e) {
@@ -9947,6 +9965,11 @@ class AppShell extends HTMLElement {
         if (this._isTypingInTextControl(e)) return;
 
         if (this._handlePlayerControlShortcut(e)) {
+            e.preventDefault();
+            return;
+        }
+
+        if (this._handleCaseAudioPlayerShortcut(e)) {
             e.preventDefault();
             return;
         }
