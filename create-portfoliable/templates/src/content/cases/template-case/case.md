@@ -141,7 +141,7 @@
   "audioSrc": {
     "en": "src/content/cases/template-case/template-audio.mp3",
     "pt": "src/content/cases/template-case/template-audio.mp3",
-    "he": ""
+    "he": "src/content/cases/template-case/template-audio.mp3"
   },
   "showPlayer": true,
 

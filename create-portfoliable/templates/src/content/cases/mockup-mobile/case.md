@@ -139,9 +139,9 @@
     "he": "תקציר שמע לקייס"
   },
   "audioSrc": {
-    "en": "src/content/cases/mockup-mobile/template-audio.mp3",
-    "pt": "src/content/cases/mockup-mobile/template-audio.mp3",
-    "he": ""
+    "en": "src/content/cases/template-case/template-audio.mp3",
+    "pt": "src/content/cases/template-case/template-audio.mp3",
+    "he": "src/content/cases/template-case/template-audio.mp3"
   },
   "showPlayer": true,
 

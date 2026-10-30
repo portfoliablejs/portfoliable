@@ -35,6 +35,35 @@
 
   // Actions
   "actions": {
+    "primary": {
+      "enabled": true,
+      "variant": "primary",
+      "label": {
+        "en": "Visit Portfoliable",
+        "pt": "Visitar o Portfoliable",
+        "he": "ביקור ב-Portfoliable"
+      },
+      "tooltip": {
+        "en": "Open the Portfoliable website",
+        "pt": "Abrir o site do Portfoliable",
+        "he": "פתיחת אתר Portfoliable"
+      },
+      "url": {
+        "en": "https://portfoliable.js.org/",
+        "pt": "https://portfoliable.js.org/",
+        "he": "https://portfoliable.js.org/"
+      },
+      "imageAlt": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      },
+      "ariaLabel": {
+        "en": "",
+        "pt": "",
+        "he": ""
+      }
+    },
     "secondary": {
       "enabled": true,
       "variant": "secondary",
@@ -143,7 +172,6 @@
       "facebook": ""
     }
   },
-
 }
 -->
 

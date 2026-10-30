@@ -1,11 +1,8 @@
 export default {
   "en": {
     // SEO Meta
-    "meta_site_url": "",
     "meta_home_title": "Portfoliable",
     "meta_home_description": "Your cases, your stories.",
-    "meta_home_image": "",
-    "meta_home_favicon": "/favicon.png",
 
     // Home View
     "h1_title": "Welcome to Portfoliable",
@@ -95,17 +92,17 @@ export default {
     "mermaid_error": "Error rendering diagram.",
 
     // Other
+    "meta_site_url": "",
+    "meta_home_image": "",
+    "meta_home_favicon": "/favicon.png",
     "gallery_pill_pitch": "Pitch",
     "gallery_pill_repo": "Repository",
     "gallery_pill_demo": "Demo",
   },
   "pt": {
     // SEO Meta
-    "meta_site_url": "",
     "meta_home_title": "",
     "meta_home_description": "",
-    "meta_home_image": "",
-    "meta_home_favicon": "/favicon.png",
 
     // Home View
     "h1_title": "",
@@ -195,17 +192,17 @@ export default {
     "mermaid_error": "",
 
     // Other
+    "meta_site_url": "",
+    "meta_home_image": "",
+    "meta_home_favicon": "/favicon.png",
     "gallery_pill_pitch": "",
     "gallery_pill_repo": "",
     "gallery_pill_demo": "",
   },
   "he": {
     // SEO Meta
-    "meta_site_url": "",
     "meta_home_title": "פורטפוליאבל",
     "meta_home_description": "הקייסים שלך, הסיפורים שלך.",
-    "meta_home_image": "",
-    "meta_home_favicon": "/favicon.png",
 
     // Home View
     "h1_title": "ברוכים הבאים ל-Portfoliable",
@@ -295,6 +292,9 @@ export default {
     "mermaid_error": "שגיאה ברינדור דיאגרמה.",
 
     // Other
+    "meta_site_url": "",
+    "meta_home_image": "",
+    "meta_home_favicon": "/favicon.png",
     "gallery_pill_pitch": "פיץ'",
     "gallery_pill_repo": "מאגר",
     "gallery_pill_demo": "דמו",

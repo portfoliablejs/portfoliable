@@ -18,6 +18,7 @@ import {
 } from '../templates/configs/i18n/i18n.config.js';
 import portfoliableDesignConfig from '../templates/configs/portfoliable.design.config.js';
 import {
+    detectPlatform,
     getShortcutTooltipParts,
     matchShortcutEvent
 } from '../templates/configs/portfoliable.a11y.config.js';
@@ -714,7 +715,7 @@ template.innerHTML = `
             position: fixed;
             inset: 0 0 auto 0;
             z-index: 4700;
-            pointer-events: none;
+            pointer-events: auto;
             background: transparent;
             border-bottom: 1px solid transparent;
             opacity: 1;
@@ -742,7 +743,7 @@ template.innerHTML = `
         #global-header {
             display: block;
             width: 100%;
-            pointer-events: none;
+            pointer-events: auto;
         }
         main {
             position: relative;
@@ -817,6 +818,9 @@ template.innerHTML = `
             align-items: stretch;
             justify-content: stretch;
             box-sizing: border-box;
+        }
+        #view-player.active {
+            z-index: 4701;
         }
         #player-view-host {
             display: block;
@@ -1049,6 +1053,7 @@ class AppShell extends HTMLElement {
             onHideToggle: null,
             onAutoToggle: null,
             onTimeUpdate: null,
+            onSeek: null,
             onEnded: null,
             onError: null,
             playing: false,
@@ -1056,7 +1061,8 @@ class AppShell extends HTMLElement {
             autoScroll: false,
             pinned: false,
             anchorTime: 0,
-            anchorScrollTop: 0
+            anchorScrollTop: 0,
+            autoScrollReachedEnd: false
         };
         this._navigationAvatarPreloadedSrc = '';
         this._navigationAvatarPreloadPromise = null;
@@ -1786,11 +1792,9 @@ class AppShell extends HTMLElement {
     _syncEmbeddedHeadersVisibility() {
         const homeView = this.shadowRoot.getElementById('home-view');
         const caseView = this.shadowRoot.getElementById('case-view');
-        const playerView = this.shadowRoot.getElementById('player-view-host')?.querySelector('ds-player-view');
 
         this._hideEmbeddedHeaderWrap(homeView);
         this._hideEmbeddedHeaderWrap(caseView);
-        this._hideEmbeddedHeaderWrap(playerView);
     }
 
     _configureGlobalHeaderHitboxPassThrough() {
@@ -1799,10 +1803,11 @@ class AppShell extends HTMLElement {
         if (!(globalHeader instanceof HTMLElement)) return;
 
         if (globalHeaderWrap instanceof HTMLElement) {
-            globalHeaderWrap.style.pointerEvents = 'none';
+            globalHeaderWrap.style.pointerEvents = 'auto';
+            globalHeaderWrap.style.overflow = 'visible';
         }
 
-        globalHeader.style.pointerEvents = 'none';
+        globalHeader.style.pointerEvents = 'auto';
 
         const breadcrumbRegion = globalHeader.shadowRoot?.querySelector('.breadcrumb-region');
         const breadcrumbEl = globalHeader.shadowRoot?.querySelector('ds-breadcrumb');
@@ -1825,6 +1830,11 @@ class AppShell extends HTMLElement {
         if (navigationMenu instanceof HTMLElement) {
             navigationMenu.style.pointerEvents = 'auto';
         }
+
+        if (globalHeaderWrap instanceof HTMLElement) {
+            globalHeaderWrap.style.height = '';
+        }
+        globalHeader.style.height = '';
     }
 
     _resolveReturnTooltipKeyLabel() {
@@ -1861,18 +1871,26 @@ class AppShell extends HTMLElement {
             if (!(returnTooltip instanceof HTMLElement)) return;
 
             returnTooltip.setAttribute('text', returnText);
-            returnTooltip.setAttribute('kbd-label', this._resolveReturnTooltipKeyLabel());
+            const keyLabel = this._resolveReturnTooltipKeyLabel();
+            returnTooltip.setAttribute('kbd-label', keyLabel);
+            if (keyLabel) {
+                returnTooltip.setAttribute('show-kbd', '');
+            } else {
+                returnTooltip.removeAttribute('show-kbd');
+            }
         };
 
         applyLabel();
         requestAnimationFrame(applyLabel);
     }
 
-    _applyCasePrimaryActionTooltipKeyLabel(caseViewEl) {
-        if (!(caseViewEl instanceof HTMLElement)) return;
+    _applyPrimaryActionTooltipKeyLabel(articleHostEl) {
+        if (!(articleHostEl instanceof HTMLElement)) return;
 
         const applyLabel = () => {
-            const articleEl = caseViewEl.shadowRoot?.querySelector('ds-article');
+            const articleEl = articleHostEl.localName === 'ds-article'
+                ? articleHostEl
+                : articleHostEl.shadowRoot?.querySelector('ds-article');
             const articleRoot = articleEl?.shadowRoot;
             if (!articleRoot) return;
 
@@ -1882,6 +1900,11 @@ class AppShell extends HTMLElement {
             const tooltipParts = this._resolveOpenPlayerTooltipParts();
 
             tooltipEl.setAttribute('kbd-key', tooltipParts.kbdKey);
+            if (tooltipParts.kbdKey) {
+                tooltipEl.setAttribute('show-kbd', '');
+            } else {
+                tooltipEl.removeAttribute('show-kbd');
+            }
 
             if (tooltipParts.kbdLabel) {
                 tooltipEl.setAttribute('kbd-label', tooltipParts.kbdLabel);
@@ -1898,6 +1921,28 @@ class AppShell extends HTMLElement {
 
         applyLabel();
         requestAnimationFrame(applyLabel);
+    }
+
+    _syncArticleTooltipMobileVisibility(articleEl) {
+        const articleRoot = articleEl?.shadowRoot;
+        if (!articleRoot) return;
+
+        const isMobile = this._isMobileBreakpoint();
+        const direction = articleEl.getAttribute('dir') || document.documentElement.getAttribute('dir') || 'ltr';
+        articleRoot.querySelectorAll('ds-tooltip').forEach((tooltipEl) => {
+            if (!(tooltipEl instanceof HTMLElement)) return;
+            tooltipEl.toggleAttribute('disabled', isMobile);
+            tooltipEl.setAttribute('dir', direction);
+
+            const kbdEl = tooltipEl.shadowRoot?.querySelector('ds-kbd');
+            if (kbdEl instanceof HTMLElement) {
+                kbdEl.setAttribute('dir', direction);
+            }
+
+            if (isMobile) {
+                tooltipEl.removeAttribute('visible');
+            }
+        });
     }
 
     _applyGlobalHeaderReturnOnlyMode(headerEl, isEnabled) {
@@ -1977,6 +2022,7 @@ class AppShell extends HTMLElement {
 
         const effectiveUiHidden = this._resolveEffectivePlayerUiHidden();
         playerView.toggleAttribute('ui-hidden', effectiveUiHidden);
+        playerView.render();
         return effectiveUiHidden;
     }
 
@@ -3338,7 +3384,7 @@ class AppShell extends HTMLElement {
         const accessibilityConfig = navigationConfig?.accessibility || {};
         const aboutConfig = navigationConfig?.about || {};
         const aboutButtonConfig = headerConfig?.aboutButton || {};
-        const isMacPlatform = /mac/i.test(String(globalThis?.navigator?.platform || ''));
+        const isMacPlatform = detectPlatform() === 'mac';
         const modifierLabelFallback = isMacPlatform ? '⌥' : 'Alt';
 
         const toBooleanAttr = (value) => {
@@ -3414,6 +3460,40 @@ class AppShell extends HTMLElement {
             if (element.getAttribute(attrName) !== attrValue) {
                 element.setAttribute(attrName, attrValue);
             }
+        });
+
+        this._applyNavigationMenuShortcutLabels(element);
+    }
+
+    _applyNavigationMenuShortcutLabels(headerEl) {
+        const navigationMenu = headerEl.matches?.('ds-navigation-menu')
+            ? headerEl
+            : headerEl.shadowRoot?.querySelector('ds-navigation-menu');
+        const accessibilityMenu = navigationMenu?.accessibilityMenu
+            || navigationMenu?.shadowRoot?.querySelector('.accessibility-menu');
+        if (!accessibilityMenu || !Array.isArray(accessibilityMenu.items)) return;
+
+        const shortcutByItemId = {
+            'text-size': 'text-size',
+            'dyslexia-font': 'dyslexia-font',
+            'dark-mode': 'dark-mode',
+            'high-contrast': 'high-contrast',
+            'reduce-motion': 'reduce-motion',
+            'tab-navigation': 'tab-navigation'
+        };
+
+        accessibilityMenu.items = accessibilityMenu.items.map((item) => {
+            const shortcutId = shortcutByItemId[item.id];
+            if (!shortcutId) return item;
+
+            const shortcut = getShortcutTooltipParts(shortcutId);
+            return {
+                ...item,
+                showKbd: Boolean(shortcut.kbdKey),
+                kbd: shortcut.kbdLabel,
+                kbdShowPlus: shortcut.showPlus,
+                kbdKey: shortcut.kbdKey
+            };
         });
     }
 
@@ -4793,7 +4873,7 @@ class AppShell extends HTMLElement {
                     tertiaryAction,
                     socialControls
                 });
-                this._applyCasePrimaryActionTooltipKeyLabel(caseView);
+                this._applyPrimaryActionTooltipKeyLabel(caseView);
 
                 this._animateCaseArticleTextReveal(activeCase.id);
     }
@@ -4849,6 +4929,9 @@ class AppShell extends HTMLElement {
             if (typeof runtime.onTimeUpdate === 'function') {
                 player.removeEventListener('ds-audio-timeupdate', runtime.onTimeUpdate);
             }
+            if (typeof runtime.onSeek === 'function') {
+                player.removeEventListener('ds-audio-seek', runtime.onSeek);
+            }
             if (typeof runtime.onEnded === 'function') {
                 player.removeEventListener('ds-audio-ended', runtime.onEnded);
             }
@@ -4882,6 +4965,7 @@ class AppShell extends HTMLElement {
             onHideToggle: null,
             onAutoToggle: null,
             onTimeUpdate: null,
+            onSeek: null,
             onEnded: null,
             onError: null,
             playing: false,
@@ -4889,7 +4973,8 @@ class AppShell extends HTMLElement {
             autoScroll: false,
             pinned: false,
             anchorTime: 0,
-            anchorScrollTop: 0
+            anchorScrollTop: 0,
+            autoScrollReachedEnd: false
         };
     }
 
@@ -4988,6 +5073,7 @@ class AppShell extends HTMLElement {
             }
 
             if (runtime.autoScroll) {
+                runtime.autoScrollReachedEnd = false;
                 resetAutoscrollAnchor();
             }
         };
@@ -4995,6 +5081,20 @@ class AppShell extends HTMLElement {
         runtime.onTimeUpdate = (event) => {
             this._setCaseAudioPosition(runtime.caseId, event?.detail?.time, { persist: false });
             this._handleCaseAudioAutoScrollProgress(event?.detail || {});
+        };
+
+        runtime.onSeek = (event) => {
+            const percent = Number.parseFloat(event?.detail?.percent);
+            if (!Number.isFinite(percent)) return;
+
+            const duration = Number.parseFloat(player.getAttribute('duration')) || 0;
+            this._setCaseAudioPosition(
+                runtime.caseId,
+                (Math.max(0, Math.min(100, percent)) / 100) * duration,
+                { persist: false }
+            );
+            if (!runtime.autoScroll) return;
+            this._handleCaseAudioSeekProgress(percent);
         };
 
         runtime.onEnded = () => {
@@ -5011,6 +5111,7 @@ class AppShell extends HTMLElement {
         player.addEventListener('ds-audio-hide-toggle', runtime.onHideToggle);
         player.addEventListener('ds-audio-autoscroll-toggle', runtime.onAutoToggle);
         player.addEventListener('ds-audio-timeupdate', runtime.onTimeUpdate);
+        player.addEventListener('ds-audio-seek', runtime.onSeek);
         player.addEventListener('ds-audio-ended', runtime.onEnded);
         player.addEventListener('ds-audio-error', runtime.onError);
 
@@ -5197,7 +5298,7 @@ class AppShell extends HTMLElement {
     _scrollAppWithLenis(top) {
         const clamped = Math.max(0, Number(top) || 0);
         if (this._appLenis && typeof this._appLenis.scrollTo === 'function') {
-            this._appLenis.scrollTo(clamped, { duration: 0.25 });
+            this._appLenis.scrollTo(clamped, { immediate: false });
             return;
         }
         this._scrollAppTo(clamped, 'auto');
@@ -5205,7 +5306,12 @@ class AppShell extends HTMLElement {
 
     _handleCaseAudioAutoScrollProgress(detail = {}) {
         const runtime = this._caseAudioRuntime;
-        if (!runtime.autoScroll || !runtime.playing || this.state.currentView !== 'case') {
+        if (
+            !runtime.autoScroll
+            || runtime.autoScrollReachedEnd
+            || !runtime.playing
+            || this.state.currentView !== 'case'
+        ) {
             return;
         }
 
@@ -5232,6 +5338,56 @@ class AppShell extends HTMLElement {
         const startTop = Math.min(Math.max(0, runtime.anchorScrollTop), maxScrollTop);
         const normalizedProgress = Math.min(1, Math.max(0, (time - startTime) / Math.max(0.001, duration - startTime)));
         const targetTop = startTop + ((maxScrollTop - startTop) * normalizedProgress);
+
+        if (targetTop >= maxScrollTop - 1 || scrollRoot.scrollTop >= maxScrollTop - 1) {
+            runtime.autoScrollReachedEnd = true;
+            if (this._appLenis && typeof this._appLenis.scrollTo === 'function') {
+                this._appLenis.scrollTo(maxScrollTop, { immediate: true });
+            } else {
+                this._scrollAppTo(maxScrollTop, 'auto');
+            }
+            return;
+        }
+
+        this._scrollAppWithLenis(targetTop);
+    }
+
+    _handleCaseAudioSeekProgress(percent) {
+        if (this.state.currentView !== 'case') return;
+
+        const scrollRoot = this._getAppScrollRoot();
+        if (!(scrollRoot instanceof HTMLElement)) return;
+
+        const maxScrollTop = Math.max(0, scrollRoot.scrollHeight - scrollRoot.clientHeight);
+        if (maxScrollTop <= 0) return;
+
+        const caseView = this.shadowRoot?.getElementById('case-view');
+        const articleWrap = caseView?.shadowRoot?.querySelector('.article-wrap');
+        if (!(articleWrap instanceof HTMLElement)) return;
+
+        const rootRect = scrollRoot.getBoundingClientRect();
+        const articleRect = articleWrap.getBoundingClientRect();
+        const articleStart = Math.max(
+            0,
+            articleRect.top + scrollRoot.scrollTop - rootRect.top
+        );
+        const articleEnd = Math.min(
+            maxScrollTop,
+            Math.max(articleStart, articleRect.bottom + scrollRoot.scrollTop - rootRect.top - scrollRoot.clientHeight)
+        );
+        const normalizedPercent = Math.min(100, Math.max(0, Number(percent) || 0));
+        const targetTop = articleStart + ((articleEnd - articleStart) * (normalizedPercent / 100));
+        const runtime = this._caseAudioRuntime;
+        runtime.autoScrollReachedEnd = normalizedPercent >= 99.9;
+
+        if (runtime.autoScrollReachedEnd) {
+            if (this._appLenis && typeof this._appLenis.scrollTo === 'function') {
+                this._appLenis.scrollTo(articleEnd, { immediate: true });
+            } else {
+                this._scrollAppTo(articleEnd, 'auto');
+            }
+            return;
+        }
 
         this._scrollAppWithLenis(targetTop);
     }
@@ -5269,6 +5425,7 @@ class AppShell extends HTMLElement {
 
             this._syncArticleCustomActionButtons(article, customButtons, 'case');
             this._syncArticleSocialButtons(article, socialControls);
+            this._syncArticleTooltipMobileVisibility(article);
         });
     }
 
@@ -5699,6 +5856,8 @@ class AppShell extends HTMLElement {
 
         this._syncArticleCustomActionButtons(aboutArticle, customButtons, 'about');
         this._syncArticleSocialButtons(aboutArticle, socialControls);
+        this._syncArticleTooltipMobileVisibility(aboutArticle);
+        this._applyPrimaryActionTooltipKeyLabel(aboutArticle);
 
         aboutArticle.dataset.aboutPrimaryUrl = primaryAction.url || '';
         aboutArticle.dataset.aboutSecondary1Url = secondaryAction.url || '';
@@ -7493,6 +7652,9 @@ class AppShell extends HTMLElement {
 
         // Sync after menu open/close transitions so ui-hidden waits until menus are closed.
         const queueMenuSync = () => {
+            // Expand the fixed header hitbox synchronously, before the next
+            // pointer event can land outside the header's normal 81px height.
+            this._configureGlobalHeaderHitboxPassThrough();
             this._queueContextualMenuVisibilitySync();
         };
 
@@ -7842,11 +8004,21 @@ class AppShell extends HTMLElement {
             appRoot.setAttribute('dir', direction);
             appRoot.setAttribute('data-dir', direction);
         }
+        this._syncLocaleDirectionAcrossComponents(direction);
 
         return {
             lang: normalizedLang,
             direction
         };
+    }
+
+    _syncLocaleDirectionAcrossComponents(direction) {
+        const roots = this._collectAllOpenShadowRoots(this.shadowRoot);
+        roots.forEach((root) => {
+            root.querySelectorAll('ds-header, ds-navigation-menu, ds-breadcrumb').forEach((element) => {
+                element.setAttribute('dir', direction);
+            });
+        });
     }
 
     _setLanguage(nextLang) {
@@ -8504,6 +8676,8 @@ class AppShell extends HTMLElement {
             if (navigationMenu.languageMenu) {
                 navigationMenu.languageMenu.items = languageItems;
             }
+
+            this._applyNavigationMenuShortcutLabels(navigationMenu);
         });
     }
 
@@ -9902,6 +10076,24 @@ class AppShell extends HTMLElement {
         return this._dispatchPlayerControlAction(action);
     }
 
+    _handleCaseAudioPlayerShortcut(event) {
+        if (this.state.currentView !== 'case') return false;
+
+        const caseView = this.shadowRoot?.getElementById('case-view')
+            || this._getActiveCaseView?.()
+            || document.querySelector('ds-case-view');
+        const player = caseView?.querySelector('ds-audio-player[slot="player"]')
+            || this._getFloatingAudioLayer()?.querySelector('ds-audio-player[slot="player"]');
+        if (!player || typeof player.handleShortcut !== 'function') return false;
+
+        if (event.composedPath?.().includes(player)) return false;
+        if (!event.shiftKey && !['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+            return false;
+        }
+
+        return player.handleShortcut(event);
+    }
+
     // MARK: A11Y KEYBOARD SHORTCUTS
     // Handles global keyboard shortcuts that are valid outside text inputs.
     _handleGlobalKeyDown(e) {
@@ -9918,6 +10110,11 @@ class AppShell extends HTMLElement {
         if (this._isTypingInTextControl(e)) return;
 
         if (this._handlePlayerControlShortcut(e)) {
+            e.preventDefault();
+            return;
+        }
+
+        if (this._handleCaseAudioPlayerShortcut(e)) {
             e.preventDefault();
             return;
         }

@@ -53,6 +53,18 @@ jobs:
       - name: Run package tests
         run: npm --prefix ./create-portfoliable run test
 
+      - name: Validate UI and accessibility contracts
+        run: npm --prefix ./create-portfoliable run validate:guardrails
+
+      - name: Verify generated package integration
+        run: npm --prefix ./create-portfoliable run smoke:initializer
+
+      - name: Verify production bundle contracts
+        run: npm --prefix ./create-portfoliable run smoke:homeview
+
+      - name: Verify packed package integration
+        run: npm --prefix ./create-portfoliable run smoke:packed
+
       - name: Validate package build
         run: npm --prefix ./create-portfoliable run build
 
