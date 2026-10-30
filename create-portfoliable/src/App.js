@@ -1868,11 +1868,13 @@ class AppShell extends HTMLElement {
         requestAnimationFrame(applyLabel);
     }
 
-    _applyCasePrimaryActionTooltipKeyLabel(caseViewEl) {
-        if (!(caseViewEl instanceof HTMLElement)) return;
+    _applyPrimaryActionTooltipKeyLabel(articleHostEl) {
+        if (!(articleHostEl instanceof HTMLElement)) return;
 
         const applyLabel = () => {
-            const articleEl = caseViewEl.shadowRoot?.querySelector('ds-article');
+            const articleEl = articleHostEl.localName === 'ds-article'
+                ? articleHostEl
+                : articleHostEl.shadowRoot?.querySelector('ds-article');
             const articleRoot = articleEl?.shadowRoot;
             if (!articleRoot) return;
 
@@ -1898,6 +1900,28 @@ class AppShell extends HTMLElement {
 
         applyLabel();
         requestAnimationFrame(applyLabel);
+    }
+
+    _syncArticleTooltipMobileVisibility(articleEl) {
+        const articleRoot = articleEl?.shadowRoot;
+        if (!articleRoot) return;
+
+        const isMobile = this._isMobileBreakpoint();
+        const direction = articleEl.getAttribute('dir') || document.documentElement.getAttribute('dir') || 'ltr';
+        articleRoot.querySelectorAll('ds-tooltip').forEach((tooltipEl) => {
+            if (!(tooltipEl instanceof HTMLElement)) return;
+            tooltipEl.toggleAttribute('disabled', isMobile);
+            tooltipEl.setAttribute('dir', direction);
+
+            const kbdEl = tooltipEl.shadowRoot?.querySelector('ds-kbd');
+            if (kbdEl instanceof HTMLElement) {
+                kbdEl.setAttribute('dir', direction);
+            }
+
+            if (isMobile) {
+                tooltipEl.removeAttribute('visible');
+            }
+        });
     }
 
     _applyGlobalHeaderReturnOnlyMode(headerEl, isEnabled) {
@@ -4793,7 +4817,7 @@ class AppShell extends HTMLElement {
                     tertiaryAction,
                     socialControls
                 });
-                this._applyCasePrimaryActionTooltipKeyLabel(caseView);
+                this._applyPrimaryActionTooltipKeyLabel(caseView);
 
                 this._animateCaseArticleTextReveal(activeCase.id);
     }
@@ -5269,6 +5293,7 @@ class AppShell extends HTMLElement {
 
             this._syncArticleCustomActionButtons(article, customButtons, 'case');
             this._syncArticleSocialButtons(article, socialControls);
+            this._syncArticleTooltipMobileVisibility(article);
         });
     }
 
@@ -5699,6 +5724,8 @@ class AppShell extends HTMLElement {
 
         this._syncArticleCustomActionButtons(aboutArticle, customButtons, 'about');
         this._syncArticleSocialButtons(aboutArticle, socialControls);
+        this._syncArticleTooltipMobileVisibility(aboutArticle);
+        this._applyPrimaryActionTooltipKeyLabel(aboutArticle);
 
         aboutArticle.dataset.aboutPrimaryUrl = primaryAction.url || '';
         aboutArticle.dataset.aboutSecondary1Url = secondaryAction.url || '';
