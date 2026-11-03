@@ -1,3 +1,9 @@
+## [1.6.2](https://github.com/portfoliablejs/portfoliable/compare/v1.6.1...v1.6.2) (2026-11-03)
+
+### Bug Fixes
+
+* fix: enhance SEO/GEO page generation with structured data and visibility checks ([5641844](https://github.com/portfoliablejs/portfoliable/commit/56418441e4ba1c52cee2f3736edbaead9263a6e1))
+
 ## [1.6.1](https://github.com/portfoliablejs/portfoliable/compare/v1.6.0...v1.6.1) (2026-10-30)
 
 ### Bug Fixes
@@ -316,6 +322,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
