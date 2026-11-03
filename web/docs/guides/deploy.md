@@ -30,12 +30,21 @@ When `portfoliable build` runs in a generated portfolio, it also writes:
 dist/robots.txt
 dist/sitemap.xml
 dist/404.html
+dist/index.md
+dist/.well-known/mcp/server-card.json
 ```
 
 Set `PORTFOLIABLE_SITE_URL` (or `SITE_URL`) in the production build
 environment so canonical URLs and the sitemap use the public origin. The
 generated `robots.txt` allows discovery and declares
 `Content-Signal: search=yes, ai-train=no`.
+
+Consumers can add `configs/seo/seo.config.js` to customize identity,
+`sameAs`, contact/license links, and the optional MCP server card. The
+generator emits `<lastmod>` values, JSON-LD for Person/Organization/WebSite
+and public cases, plus a Markdown homepage alternate. The generated Apache
+template advertises the Markdown and `llms.txt` resources with a `Link`
+header.
 
 Static hosts must serve real files and generated route directories before
 handling unknown paths as 404 responses. Do not send every unknown path to
