@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Preserve real files and directories, including generated crawler artifacts.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Keep the PHP unlock endpoint responsible for its own responses.
+RewriteRule ^api(?:/|$) - [L]
+
+# Unknown paths must return a real 404 for crawlers.
+ErrorDocument 404 /404.html
+RewriteRule ^ - [R=404,L]

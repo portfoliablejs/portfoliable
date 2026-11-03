@@ -22,6 +22,26 @@ web/.vitepress/dist
 
 That is the artifact deployed by the web release workflow.
 
+## Consumer portfolio artifacts
+
+When `portfoliable build` runs in a generated portfolio, it also writes:
+
+```text
+dist/robots.txt
+dist/sitemap.xml
+dist/404.html
+```
+
+Set `PORTFOLIABLE_SITE_URL` (or `SITE_URL`) in the production build
+environment so canonical URLs and the sitemap use the public origin. The
+generated `robots.txt` allows discovery and declares
+`Content-Signal: search=yes, ai-train=no`.
+
+Static hosts must serve real files and generated route directories before
+handling unknown paths as 404 responses. Do not send every unknown path to
+the SPA entrypoint, or crawlers may interpret missing pages as successful
+content.
+
 ## Recommended production checklist
 
 Before publishing the site, confirm:
