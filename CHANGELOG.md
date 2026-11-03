@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/portfoliablejs/portfoliable/compare/v1.7.0...v1.7.1) (2026-11-03)
+
+### Bug Fixes
+
+* fix: improve app-shell mounting logic to prevent duplicate instances (#134) ([2480034](https://github.com/portfoliablejs/portfoliable/commit/2480034aeeafa1d03275f5038b5a5b4e3f60f65c))
+* fix: improve app-shell mounting logic to prevent duplicate instances ([56071c8](https://github.com/portfoliablejs/portfoliable/commit/56071c87d0fa47101b4d32a6ea27fdf56bd7c23d))
+
 ## [1.7.0](https://github.com/portfoliablejs/portfoliable/compare/v1.6.2...v1.7.0) (2026-11-03)
 
 ### Features
@@ -329,6 +336,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
