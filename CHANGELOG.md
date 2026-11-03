@@ -1,3 +1,10 @@
+## [1.7.0](https://github.com/portfoliablejs/portfoliable/compare/v1.6.2...v1.7.0) (2026-11-03)
+
+### Features
+
+* feat: implement SEO enhancements with structured data, sitemap update… (#132) ([94c6bfe](https://github.com/portfoliablejs/portfoliable/commit/94c6bfe8793862494e18179ad56695b69bc633ad))
+* feat: implement SEO enhancements with structured data, sitemap updates, and MCP server card support ([f72648f](https://github.com/portfoliablejs/portfoliable/commit/f72648f653f3761b953171acc38107c92697d919))
+
 ## [1.6.2](https://github.com/portfoliablejs/portfoliable/compare/v1.6.1...v1.6.2) (2026-11-03)
 
 ### Bug Fixes
@@ -322,6 +329,7 @@ This changelog tracks runtime package and initializer changes for `create-portfo
 ## Historical Notes
 
 Earlier entries remain valid as release artifacts evolve. Future release notes should include exact migration impact when contract or parser behavior changes.
+
 
 
 
