@@ -1,5 +1,14 @@
 RewriteEngine On
 
+<IfModule mod_headers.c>
+  Header always set Link "</llms.txt>; rel=\"describedby\", </index.md>; rel=\"alternate\"; type=\"text/markdown\""
+</IfModule>
+
+AddType text/markdown .md
+RewriteCond %{HTTP_ACCEPT} text/markdown [NC]
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /index.md [L]
+
 # Preserve real files and directories, including generated crawler artifacts.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d

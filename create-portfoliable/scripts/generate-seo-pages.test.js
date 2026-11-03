@@ -37,8 +37,13 @@ describe('static SEO page generation', () => {
     const sitemap = fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8');
     expect(sitemap).toContain('<loc>/en</loc>');
     expect(sitemap).toContain('<loc>/en/case/template-case</loc>');
+    expect(sitemap).toContain('<lastmod>');
 
     expect(fs.existsSync(path.join(dist, '404.html'))).toBe(true);
+    expect(fs.existsSync(path.join(dist, 'index.md'))).toBe(true);
+    expect(fs.existsSync(path.join(dist, '.well-known', 'mcp', 'server-card.json'))).toBe(true);
+    expect(home).toContain('"@type":"Organization"');
+    expect(home).toContain('"@type":"Person"');
     const llms = fs.readFileSync(path.join(dist, 'llms.txt'), 'utf8');
     expect(llms).toContain('# Portfoliable');
     expect(llms).toContain('- [/en](/en)');

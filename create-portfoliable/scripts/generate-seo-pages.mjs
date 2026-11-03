@@ -72,6 +72,13 @@ function readAboutConfig(filePath) {
   }
 }
 
+async function readSeoConfig(cwd) {
+  const filePath = path.resolve(cwd, 'configs/seo/seo.config.js');
+  if (!fs.existsSync(filePath)) return {};
+  const module = await import(`${pathToFileURL(filePath).href}?seo-config=${Date.now()}`);
+  return module.default && typeof module.default === 'object' ? module.default : {};
+}
+
 function readAboutBodies(filePath, locales) {
   if (!fs.existsSync(filePath)) return {};
   const source = fs.readFileSync(filePath, 'utf8')
@@ -185,7 +192,17 @@ function renderMetadataTags(metadata) {
   return buildMetadata(metadata);
 }
 
-function resolvePageMetadata({ localeCode, labels, config, title, description, canonical, siteUrl, type }) {
+function resolvePageMetadata({
+  localeCode,
+  labels,
+  config,
+  seoConfig,
+  title,
+  description,
+  canonical,
+  siteUrl,
+  type
+}) {
   const image = absoluteUrl(localizedValue(config?.socialImage, localeCode, labels?.meta_home_image), siteUrl);
   const favicon = absoluteUrl(
     localizedValue(config?.favicon, localeCode, labels?.meta_home_favicon),
@@ -204,16 +221,69 @@ function resolvePageMetadata({ localeCode, labels, config, title, description, c
     favicon,
     type,
     robots: isCrawlable ? 'index,follow' : 'noindex,nofollow',
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': type === 'profile' ? 'Person' : type === 'article' ? 'Article' : 'WebSite',
-      name: title,
+    structuredData: buildStructuredData({
+      localeCode,
+      seoConfig,
+      config,
+      title,
+      description,
+      canonical,
+      image,
+      type
+    })
+  };
+}
+
+function buildStructuredData({ localeCode, seoConfig = {}, config, title, description, canonical, image, type }) {
+  const identity = seoConfig.identity || {};
+  const sameAs = [...new Set([
+    ...collectHttpUrls(identity),
+    ...collectHttpUrls(config),
+    ...(seoConfig.sameAs || [])
+  ])];
+  const person = {
+    '@type': 'Person',
+    '@id': `${absoluteUrl('/', seoConfig.siteUrl || '')}#person`,
+    name: identity.personName || title,
+    url: identity.personUrl || canonical,
+    ...(identity.email ? { email: identity.email } : {}),
+    ...(sameAs.length ? { sameAs } : {})
+  };
+  const organization = {
+    '@type': 'Organization',
+    '@id': `${absoluteUrl('/', seoConfig.siteUrl || '')}#organization`,
+    name: identity.organizationName || identity.personName || title,
+    url: identity.organizationUrl || canonical,
+    ...(identity.email ? { email: identity.email } : {}),
+    ...(identity.logo ? { logo: absoluteUrl(identity.logo, seoConfig.siteUrl) } : {}),
+    ...(identity.email ? {
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: identity.email,
+        contactType: 'customer support'
+      }
+    } : {}),
+    ...(sameAs.length ? { sameAs } : {})
+  };
+  const nodes = [
+    { '@type': 'WebSite', '@id': `${canonical}#website`, name: title, description, url: canonical },
+    person,
+    organization
+  ];
+  if (type === 'article') {
+    nodes.push({
+      '@type': 'Article',
+      '@id': `${canonical}#article`,
+      headline: title,
       description,
       url: canonical,
       ...(image ? { image } : {}),
-      ...(type === 'profile' ? { sameAs: collectHttpUrls(config) } : {})
-    }
-  };
+      author: { '@id': person['@id'] },
+      publisher: { '@id': organization['@id'] }
+    });
+  }
+  if (type === 'profile') nodes.push({ ...person, description, image: image || undefined });
+  return { '@context': 'https://schema.org', '@graph': nodes };
 }
 
 function collectHttpUrls(value) {
@@ -252,7 +322,7 @@ function renderStaticBody({ localeCode, title, description, bodyHtml = '', route
     .map((route) => `<li><a href="${escapeHtml(route.path)}">${escapeHtml(route.title)}</a></li>`)
     .join('');
   return [
-    `<main><h1>${escapeHtml(title)}</h1>`,
+    `<main data-portfoliable-seo-fallback><h1>${escapeHtml(title)}</h1>`,
     description ? `<p>${escapeHtml(description)}</p>` : '',
     `<p><a href="${escapeHtml(routePath)}">${escapeHtml(title)}</a></p>`,
     bodyHtml,
@@ -309,7 +379,12 @@ function writeRobotsFile(distDir, siteUrl) {
 }
 
 function writeSitemapFile(distDir, routes, siteUrl) {
-  const urls = routes.map((route) => `  <url><loc>${escapeXml(absoluteUrl(route, siteUrl))}</loc></url>`).join('\n');
+  const urls = routes.map((route) => [
+    '  <url>',
+    `    <loc>${escapeXml(absoluteUrl(route.path, siteUrl))}</loc>`,
+    `    <lastmod>${escapeXml(route.lastmod)}</lastmod>`,
+    '  </url>'
+  ].join('\n')).join('\n');
   const sitemap = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -318,6 +393,36 @@ function writeSitemapFile(distDir, routes, siteUrl) {
     ''
   ].join('\n');
   fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemap, 'utf8');
+}
+
+function writeMarkdownFile(distDir, title, description, routes, siteUrl, seoConfig = {}) {
+  const lines = [
+    `# ${title}`,
+    '',
+    `> ${description}`,
+    '',
+    '## Pages',
+    ...routes.map((route) => `- [${route.title}](${absoluteUrl(route.path, siteUrl)})`),
+    ...(seoConfig.identity?.email ? ['', `- [Contact](mailto:${seoConfig.identity.email})`] : []),
+    ...(seoConfig.pages?.terms ? [`- [Terms](${localizedValue(seoConfig.pages.terms, DEFAULT_LOCALE, '')})`] : []),
+    ''
+  ];
+  fs.writeFileSync(path.join(distDir, 'index.md'), lines.join('\n'), 'utf8');
+}
+
+function writeMcpServerCard(distDir, siteUrl, seoConfig) {
+  const config = seoConfig.mcp || {};
+  if (config.enabled === false) return;
+  const card = {
+    name: config.name || seoConfig.identity?.organizationName || 'Portfoliable site',
+    version: config.version || '1.0.0',
+    description: config.description || 'Machine-readable information about this portfolio.',
+    endpoint: config.endpoint || absoluteUrl('/mcp', siteUrl),
+    capabilities: config.capabilities || { tools: true, resources: false, prompts: false }
+  };
+  const target = path.join(distDir, '.well-known', 'mcp');
+  fs.mkdirSync(target, { recursive: true });
+  fs.writeFileSync(path.join(target, 'server-card.json'), `${JSON.stringify(card, null, 2)}\n`, 'utf8');
 }
 
 function writeLlmsFile(distDir, routes, siteUrl, labels) {
@@ -376,16 +481,30 @@ export async function generateSeoPages({ cwd = process.cwd(), distDir = path.res
   const siteUrl = resolveSiteUrl(activeLabels);
   const template = fs.readFileSync(templatePath, 'utf8');
   const aboutConfig = readAboutConfig(path.join(cwd, 'src/content/about/ABOUTME.md'));
+  const seoConfig = await readSeoConfig(cwd);
   const aboutBodies = readAboutBodies(path.join(cwd, 'src/content/about/ABOUTME.md'), locales);
   const contentRoot = fs.existsSync(path.join(cwd, 'src/content/cases'))
     ? path.join(cwd, 'src/content/cases')
     : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../templates/src/content/cases');
   const cases = readCaseFiles(contentRoot).map((filePath) => parseCase(filePath, locales));
   const publicRoutes = buildPublicRoutes({ locales, aboutConfig, cases });
+  const homepageLinks = [
+    ...(seoConfig.pages?.contact ? [{ label: 'Contact', url: localizedValue(seoConfig.pages.contact, DEFAULT_LOCALE, '') }] : []),
+    ...(seoConfig.pages?.terms ? [{ label: 'Terms', url: localizedValue(seoConfig.pages.terms, DEFAULT_LOCALE, '') }] : []),
+    ...(seoConfig.pages?.license ? [{ label: 'License', url: localizedValue(seoConfig.pages.license, DEFAULT_LOCALE, '') }] : [])
+  ].filter((link) => link.url);
+  const sourceLastmod = new Date(Math.max(
+    fs.statSync(templatePath).mtimeMs,
+    fs.existsSync(path.join(cwd, 'src/content/about/ABOUTME.md'))
+      ? fs.statSync(path.join(cwd, 'src/content/about/ABOUTME.md')).mtimeMs
+      : 0,
+    ...readCaseFiles(contentRoot).map((filePath) => fs.statSync(filePath).mtimeMs)
+  )).toISOString();
   const routeRecords = publicRoutes.map((pathValue) => ({
     path: pathValue,
     localeCode: pathValue.split('/')[1],
-    title: pathValue
+    title: pathValue,
+    lastmod: sourceLastmod
   }));
 
   for (const localeCode of locales) {
@@ -395,6 +514,7 @@ export async function generateSeoPages({ cwd = process.cwd(), distDir = path.res
       localeCode,
       labels,
       config: {},
+      seoConfig,
       title: localizedValue(labels.meta_home_title, localeCode, 'Portfoliable') || 'Portfoliable',
       description: localizedValue(labels.meta_home_description, localeCode, 'Your cases, your stories.'),
       canonical: absoluteUrl(homePath, siteUrl),
@@ -405,6 +525,7 @@ export async function generateSeoPages({ cwd = process.cwd(), distDir = path.res
       title: localizedValue(labels.meta_home_title, localeCode, 'Portfolio'),
       description: localizedValue(labels.meta_home_description, localeCode, ''),
       bodyHtml: `<p><a href="${escapeHtml(buildRoute(localeCode, 'about', localizedValue(aboutConfig.slugByLocale, localeCode, 'about')))}">About</a></p>`,
+      links: homepageLinks,
       routePath: homePath,
       type: 'website',
       routes: routeRecords
@@ -416,6 +537,7 @@ export async function generateSeoPages({ cwd = process.cwd(), distDir = path.res
       localeCode,
       labels,
       config: aboutConfig,
+      seoConfig,
       title: localizedValue(aboutConfig.title, localeCode, localizedValue(labels.meta_home_title, localeCode, 'Portfoliable')) || 'Portfoliable',
       description: localizedValue(aboutConfig.subtitle, localeCode, localizedValue(labels.meta_home_description, localeCode, 'Your cases, your stories.')),
       canonical: absoluteUrl(aboutPath, siteUrl),
@@ -442,6 +564,7 @@ export async function generateSeoPages({ cwd = process.cwd(), distDir = path.res
         localeCode,
         labels,
         config: caseData,
+        seoConfig,
         title: localizedValue(caseData.title, localeCode, localizedValue(labels.meta_home_title, localeCode, 'Portfoliable')) || 'Portfoliable',
         description: localizedValue(caseData.shortDesc, localeCode, localizedValue(labels.meta_home_description, localeCode, 'Your cases, your stories.')),
         canonical: absoluteUrl(casePath, siteUrl),
@@ -465,6 +588,7 @@ export async function generateSeoPages({ cwd = process.cwd(), distDir = path.res
     localeCode: DEFAULT_LOCALE,
     labels: activeLabels?.[DEFAULT_LOCALE] || {},
     config: {},
+    seoConfig,
     title: rootTitle,
     description: rootDescription,
     canonical: absoluteUrl(buildRoute(DEFAULT_LOCALE, 'home'), siteUrl),
@@ -479,7 +603,16 @@ export async function generateSeoPages({ cwd = process.cwd(), distDir = path.res
     routes: routeRecords
   })), 'utf8');
   writeRobotsFile(distDir, siteUrl);
-  writeSitemapFile(distDir, publicRoutes, siteUrl);
+  writeSitemapFile(distDir, routeRecords, siteUrl);
+  writeMarkdownFile(
+    distDir,
+    rootTitle,
+    rootDescription,
+    routeRecords,
+    siteUrl,
+    seoConfig
+  );
   writeLlmsFile(distDir, routeRecords, siteUrl, activeLabels);
+  writeMcpServerCard(distDir, siteUrl, seoConfig);
   writeNotFoundPage(distDir);
 }
