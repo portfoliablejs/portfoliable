@@ -9,4 +9,7 @@ import './style.css';
 
 // MARK: APP MOUNT
 // Mount the custom element that renders the runtime shell.
-document.getElementById('app').innerHTML = `<app-shell></app-shell>`;
+const appContainer = document.getElementById('app');
+if (!appContainer.querySelector('app-shell')) {
+  appContainer.insertAdjacentHTML('beforeend', '<app-shell></app-shell>');
+}
